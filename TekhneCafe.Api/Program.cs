@@ -1,5 +1,4 @@
 using Serilog;
-using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using TekhneCafe.Api.Extensions;
 using TekhneCafe.Business.Extensions;
@@ -28,12 +27,46 @@ builder.Services.AddBusinessServices();
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+#region ExceptionHandler Configuration
+//app.UseExceptionHandler(
+//    options =>
+//    {
+//        options.Run(async context =>
+//        {
+//            context.Response.ContentType = "application/json";
+//            var exceptionObject = context.Features.Get<IExceptionHandlerFeature>();
+
+//            if (exceptionObject != null)
+//            {
+//                context.Response.StatusCode = exceptionObject.Error switch
+//                {
+//                    BadRequestException exception => StatusCodes.Status400BadRequest,
+//                    NotFoundException exception => StatusCodes.Status404NotFound,
+//                    InternalServerErrorException exception => StatusCodes.Status500InternalServerError,
+//                    _ => 111111
+//                };
+//                var errorMessage = $"{exceptionObject.Error.Message}";
+//                await context.Response
+//                    .WriteAsync(JsonSerializer.Serialize(new 
+//                    { 
+//                        context.Response.StatusCode, 
+//                        exceptionObject.Error.Message 
+//                    }))
+//                    .ConfigureAwait(false);
+//            }
+//        });
+//    }
+//);
+#endregion
+
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
