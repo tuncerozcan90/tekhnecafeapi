@@ -14,11 +14,17 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
         {
 
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=.;Database=TEKHNECAFEDB;Trusted_Connection=True;TrustServerCertificate=True");
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=.;Database=TEKHNECAFEDB;Trusted_Connection=True;TrustServerCertificate=True");
+            }
+
             base.OnConfiguring(optionsBuilder);
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -26,8 +32,10 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
               .HasOne(a => a.Cart)
               .WithOne(b => b.Order)
               .HasForeignKey<Cart>(e => e.Id);
+
             base.OnModelCreating(modelBuilder);
         }
+
         public DbSet<AppRole> AppRole { get; set; }
         public DbSet<AppUser> AppUser { get; set; }
         public DbSet<Cart> Cart { get; set; }
