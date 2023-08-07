@@ -5,5 +5,6 @@ namespace TekhneCafe.DataAccess.Abstract
 {
     public interface IImageDal : IEntityRepository<Image>
     {
+      
     }
 }
