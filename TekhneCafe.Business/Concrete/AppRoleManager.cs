@@ -33,7 +33,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task<AppRoleListDto> GetRoleByIdAsync(string id)
         {
-            AppRole role = await GetRoleById(id);
+            var role = await GetRoleById(id);
             return _mapper.Map<AppRoleListDto>(role);
         }
 
