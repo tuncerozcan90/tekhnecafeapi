@@ -5,6 +5,5 @@ namespace TekhneCafe.DataAccess.Abstract
 {
     public interface ICartDal : IEntityRepository<Cart>
     {
-
     }
 }

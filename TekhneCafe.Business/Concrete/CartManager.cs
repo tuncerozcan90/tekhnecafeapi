@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -6,7 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.Helpers.FilterServices;
+using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DataAccess.Concrete.EntityFramework;
+using TekhneCafe.Core.DTOs.AppRole;
+using TekhneCafe.Core.DTOs.Cart;
+using TekhneCafe.Core.Exceptions.AppRole;
+using TekhneCafe.Core.Exceptions.Cart;
+using TekhneCafe.Core.Filters.AppRole;
+using TekhneCafe.Core.Filters.Cart;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 
@@ -14,39 +24,55 @@ namespace TekhneCafe.Business.Concrete
 {
     public class CartManager : ICartService
     {
-        private ICartDal _cartDal;
+        private readonly ICartDal _cartDal;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public CartManager(ICartDal cartDal)
+        public CartManager(ICartDal cartDal, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _cartDal = cartDal;
-        }
-        public async Task<Cart> GetCartByIdAsync(Guid cartId)
-        {
-            return await _cartDal.GetByIdAsync(cartId);
+            _mapper = mapper;
+            _httpContext = httpContext;
         }
 
-        public async Task<List<Cart>> GetAllCartsAsync()
+        public async Task CreateCartAsync(CartAddDto cartAddDto)
         {
-            return await _cartDal.GetAll().ToListAsync();
-        }
-
-        public async Task CreateCartAsync(Cart cart)
-        {
+            Cart cart = _mapper.Map<Cart>(cartAddDto);
             await _cartDal.AddAsync(cart);
         }
 
-        public async Task UpdateCartAsync(Cart cart)
+        public async Task DeleteCartAsync(string id)
         {
-            await _cartDal.UpdateAsync(cart);
+            Cart cart = await GetCartById(id);
+            await _cartDal.SafeDeleteAsync(cart);
         }
 
-        public async Task DeleteCartAsync(Guid cartId)
+        public List<CartListDto> GetAllCarts(CartRequestFilter filters = null)
         {
-            var cart = await _cartDal.GetByIdAsync(cartId);
-            if (cart != null)
-            {
-                await _cartDal.HardDeleteAsync(cart);
-            }
+            var filteredResult = new CartFilterService().FilterCarts(_cartDal.GetAll(), filters);
+            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            return _mapper.Map<List<CartListDto>>(filteredResult.ResponseValue);
+        }
+
+        public async Task<CartListDto> GetCartByIdAsync(string id)
+        {
+            var cart = await GetCartById(id);
+            return _mapper.Map<CartListDto>(cart);
+        }
+
+        public async Task UpdateCartAsync(CartUpdateDto cartUpdateDto)
+        {
+            Cart cart = await GetCartById(cartUpdateDto.Id);
+            _mapper.Map(cartUpdateDto, cart);
+            await _cartDal.UpdateAsync(cart);
+        }
+        private async Task<Cart> GetCartById(string id)
+        {
+            Cart cart = await _cartDal.GetByIdAsync(Guid.Parse(id));
+            if (cart is null)
+                throw new CartNotFoundException();
+
+            return cart;
         }
     }
 }

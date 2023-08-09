@@ -1,4 +1,4 @@
-﻿namespace TekhneCafe.Core.Filters.AppRole
+﻿namespace TekhneCafe.Core.Filters
 {
     public class ResponseFilter<T> where T : class, new()
     {

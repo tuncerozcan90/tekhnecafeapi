@@ -1,9 +1,13 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Core.DTOs.CartLine;
+using TekhneCafe.Core.Exceptions.CartLine;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 
@@ -11,35 +15,64 @@ namespace TekhneCafe.Business.Concrete
 {
     public class CartLineManager : ICartLineService
     {
+        
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContext;
         private readonly ICartLineDal _cartLineDal;
 
-        public CartLineManager(ICartLineDal cartLineDal)
+        public CartLineManager(ICartLineDal cartLineDal, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _cartLineDal = cartLineDal;
+            _mapper = mapper;
+            _httpContext = httpContext;
         }
 
-        public async Task<CartLine> GetByIdAsync(Guid id)
-        {
-            return await _cartLineDal.GetByIdAsync(id);
-        }
+        //public async Task AddCartLineAsync(CartLine cartLine)
+        //{
+        //    await _cartLineDal.AddAsync(cartLine);
+        //}
 
-        public async Task AddCartLineAsync(CartLine cartLine)
+        //public async Task UpdateCartLineAsync(CartLine cartLine)
+        //{
+        //    await _cartLineDal.UpdateAsync(cartLine);
+        //}
+
+        //public async Task DeleteCartLineAsync(Guid cartLineId)
+        //{
+        //    var cartLine = await _cartLineDal.GetByIdAsync(cartLineId);
+        //    if (cartLine != null)
+        //    {
+        //        await _cartLineDal.HardDeleteAsync(cartLine);
+        //    }
+        //}
+
+        public async Task AddCartLineAsync(CartLineAddDto cartLineAddDto)
         {
+
+            CartLine cartLine = _mapper.Map<CartLine>(cartLineAddDto);
             await _cartLineDal.AddAsync(cartLine);
         }
 
-        public async Task UpdateCartLineAsync(CartLine cartLine)
+        public async Task UpdateCartLineAsync(CartLineUpdateDto cartLineUpdateDto)
         {
-            await _cartLineDal.UpdateAsync(cartLine);
+            CartLine cart = await GetCartLineById(cartLineUpdateDto.Id);
+            _mapper.Map(cartLineUpdateDto, cart);
+            await _cartLineDal.UpdateAsync(cart);
         }
 
-        public async Task DeleteCartLineAsync(Guid cartLineId)
+        public async Task DeleteCartLineAsync(string id)
         {
-            var cartLine = await _cartLineDal.GetByIdAsync(cartLineId);
-            if (cartLine != null)
-            {
-                await _cartLineDal.HardDeleteAsync(cartLine);
-            }
+            CartLine cartLine = await GetCartLineById(id);
+            await _cartLineDal.SafeDeleteAsync(cartLine);
+        }
+        private async Task<CartLine> GetCartLineById(string id)
+        {
+            CartLine cartLine = await _cartLineDal.GetByIdAsync(Guid.Parse(id));
+            if (cartLine is null)
+                throw new CartLineNotFoundException();
+
+            return cartLine;
         }
     }
+    
 }
