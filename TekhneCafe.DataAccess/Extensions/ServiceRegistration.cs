@@ -12,7 +12,7 @@ namespace TekhneCafe.DataAccess.Extensions
         public static void AddDataAccessServices(this IServiceCollection services, IConfiguration configurations)
         {
             services.AddDbContext<EfTekhneCafeContext>(_ => _.UseSqlServer(configurations.GetConnectionString("EfTekhneCafeContext")));
-            services.AddScoped<IAppRoleDal, EfAppRoleDal>();
+
             services.AddScoped<IAppUserDal, EfAppUserDal>();
             services.AddScoped<ICartDal, EfCartDal>();
             services.AddScoped<ICartLineDal, EfCartLineDal>();

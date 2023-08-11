@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Filters\NewFolder\" />
   </ItemGroup>
 
 </Project>

@@ -36,7 +36,7 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<AppRole> AppRole { get; set; }
+        //public DbSet<AppRole> AppRole { get; set; }
         public DbSet<AppUser> AppUser { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartLine> CartLine { get; set; }

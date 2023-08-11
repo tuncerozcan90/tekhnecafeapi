@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TekhneCafe.DataAccess.Abstract;
 
 namespace TekhneCafe.Api.Controllers
 {
@@ -7,21 +6,11 @@ namespace TekhneCafe.Api.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private readonly IAppRoleDal _roleDal;
-
-        public TestController(IAppRoleDal roleDal)
-        {
-            _roleDal = roleDal;
-        }
 
         [HttpGet]
         public IActionResult Index()
         {
-            _roleDal.AddAsync(new Entity.Concrete.AppRole
-            {
-                Id = Guid.NewGuid(),
-                Name = "Test",
-            });
+
 
             return Ok();
         }
@@ -29,7 +18,7 @@ namespace TekhneCafe.Api.Controllers
         [HttpGet("[action]")]
         public IActionResult GetAll()
         {
-            return Ok(_roleDal.GetAll());
+            return Ok();
         }
     }
 }

@@ -7,6 +7,6 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfImageDal : EfEntityRepositoryBase<Image, EfTekhneCafeContext>, IImageDal
     {
-       
+
     }
 }

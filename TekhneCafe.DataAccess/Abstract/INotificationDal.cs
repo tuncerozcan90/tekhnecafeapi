@@ -5,6 +5,6 @@ namespace TekhneCafe.DataAccess.Abstract
 {
     public interface INotificationDal : IEntityRepository<Notification>
     {
-        
+
     }
 }

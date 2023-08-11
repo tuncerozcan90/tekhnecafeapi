@@ -1,12 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Core.DataAccess.Concrete.EntityFramework;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 
