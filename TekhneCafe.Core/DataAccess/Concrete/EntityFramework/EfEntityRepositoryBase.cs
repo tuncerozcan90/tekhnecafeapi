@@ -11,6 +11,8 @@ namespace TekhneCafe.Core.DataAccess.Concrete.EntityFramework
     {
 
         public TContext _dbContext = new TContext();
+        private async Task SaveChangesAsync()
+            => await _dbContext.SaveChangesAsync();
         public EfEntityRepositoryBase()
         {
 
@@ -19,19 +21,19 @@ namespace TekhneCafe.Core.DataAccess.Concrete.EntityFramework
         public async Task AddAsync(TEntity entity)
         {
             await _dbContext.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task SafeDeleteAsync(TEntity entity)
         {
             _dbContext.Update(entity);
-            await _dbContext.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task HardDeleteAsync(TEntity entity)
         {
             _dbContext.Remove(entity);
-            await _dbContext.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public IQueryable<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate = null)
@@ -48,7 +50,7 @@ namespace TekhneCafe.Core.DataAccess.Concrete.EntityFramework
         public async Task UpdateAsync(TEntity entity)
         {
             _dbContext.Update(entity);
-            await _dbContext.SaveChangesAsync();
+            await SaveChangesAsync();
         }
     }
 }

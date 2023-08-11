@@ -11,7 +11,7 @@ using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Abstract
 {
-    public interface ICartService 
+    public interface ICartService
     {
         Task<CartListDto> GetCartByIdAsync(string id);
         List<CartListDto> GetAllCarts(CartRequestFilter filters = null);

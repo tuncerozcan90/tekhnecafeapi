@@ -4,10 +4,10 @@ namespace TekhneCafe.Entity.Concrete
 {
     public class TransactionHistory : BaseEntity
     {
-        public decimal Amount { get; set; }
+        public float Amount { get; set; }
         public string? Description { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public Guid WalletId { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        //public Guid WalletId { get; set; }
         public Guid? OrderId { get; set; }
         public Guid TransactionTypeId { get; set; }
         public Guid AppUserId { get; set; }
