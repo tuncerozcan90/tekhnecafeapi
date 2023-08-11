@@ -10,9 +10,10 @@ namespace TekhneCafe.Core.DataAccess.Concrete.EntityFramework
         where TContext : DbContext, new()
     {
 
-        public TContext _dbContext = new TContext();
+        protected TContext _dbContext = new TContext();
         private async Task SaveChangesAsync()
             => await _dbContext.SaveChangesAsync();
+
         public EfEntityRepositoryBase()
         {
 

@@ -44,9 +44,11 @@ namespace TekhneCafe.Business.Extensions
                 });
             #endregion
 
+            #region IOC Scoped Services
             services.AddScoped<ITokenService, JwtManager>();
             services.AddScoped<IAppUserService, AppUserManager>();
             services.AddScoped<IAuthenticationService, LdapAuthenticationManager>();
+            #endregion
         }
     }
 }

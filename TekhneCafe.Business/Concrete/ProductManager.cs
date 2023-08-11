@@ -7,7 +7,7 @@ namespace TekhneCafe.Business.Concrete
 {
     public class ProductManager : IProductService
     {
-        private readonly IProductDal  _productDal;
+        private readonly IProductDal _productDal;
 
         public ProductManager(IProductDal productDal)
         {
@@ -21,7 +21,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task DeleteOrderAsync(Guid productId)
         {
-           var product = await _productDal.GetByIdAsync(productId);
+            var product = await _productDal.GetByIdAsync(productId);
             if (product != null)
             {
                 await _productDal.HardDeleteAsync(product);
@@ -30,7 +30,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task<List<Product>> GetAllProductsAsync()
         {
-           return await _productDal.GetAll().ToListAsync();
+            return await _productDal.GetAll().ToListAsync();
         }
 
         public async Task<Product> GetProductByIdAsync(Guid orderId)
@@ -40,7 +40,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task UpdateOrderAsync(Product product)
         {
-           await _productDal.UpdateAsync(product);
+            await _productDal.UpdateAsync(product);
         }
     }
 }

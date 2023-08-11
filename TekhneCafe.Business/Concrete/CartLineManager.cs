@@ -1,10 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.DTOs.CartLine;
 using TekhneCafe.Core.Exceptions.CartLine;
@@ -15,7 +10,7 @@ namespace TekhneCafe.Business.Concrete
 {
     public class CartLineManager : ICartLineService
     {
-        
+
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
         private readonly ICartLineDal _cartLineDal;
@@ -74,5 +69,5 @@ namespace TekhneCafe.Business.Concrete
             return cartLine;
         }
     }
-    
+
 }
