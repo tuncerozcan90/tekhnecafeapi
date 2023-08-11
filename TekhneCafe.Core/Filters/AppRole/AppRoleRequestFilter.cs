@@ -1,6 +1,4 @@
-﻿using TekhneCafe.Core.Filters;
-
-namespace TekhneCafe.Core.Filters.AppRole
+﻿namespace TekhneCafe.Core.Filters.AppRole
 {
     public class AppRoleRequestFilter : Pagination
     {

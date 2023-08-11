@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Core.DTOs.Product;
 
 namespace TekhneCafe.Api.Controllers
 {
@@ -6,7 +8,12 @@ namespace TekhneCafe.Api.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
+        private readonly IValidator<ProductAddDto> _validator;
 
+        public TestController(IValidator<ProductAddDto> validator)
+        {
+            _validator = validator;
+        }
         [HttpGet]
         public IActionResult Index()
         {
@@ -15,9 +22,11 @@ namespace TekhneCafe.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("[action]")]
-        public IActionResult GetAll()
+        [HttpPost]
+        public IActionResult GetAll(ProductAddDto product)
         {
+            var res = _validator.Validate(product);
+            var result = ModelState.IsValid;
             return Ok();
         }
     }
