@@ -7,6 +7,5 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfCartDal : EfEntityRepositoryBase<Cart, EfTekhneCafeContext>, ICartDal
     {
-        public Guid cartId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

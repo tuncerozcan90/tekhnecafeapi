@@ -1,4 +1,22 @@
-﻿using TekhneCafe.Business.Abstract;
+﻿
+
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.Helpers.FilterServices;
+using TekhneCafe.Business.Helpers.HeaderServices;
+using TekhneCafe.Core.DTOs.AppRole;
+using TekhneCafe.Core.DTOs.Image;
+using TekhneCafe.Core.Exceptions.AppRole;
+using TekhneCafe.Core.Exceptions.Image;
+using TekhneCafe.Core.Filters.AppRole;
+using TekhneCafe.Core.Filters.Image;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 
@@ -7,39 +25,54 @@ namespace TekhneCafe.Business.Concrete
     public class ImageManager : IImageService
     {
         private readonly IImageDal _imageDal;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public ImageManager(IImageDal imageDal)
+        public ImageManager(IImageDal imageDal, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _imageDal = imageDal;
+            _mapper = mapper;
+            _httpContext = httpContext;
         }
-
-        public async Task<Entity.Concrete.Image> GetImageByIdAsync(Guid imageId)
+        public async Task CreateImageAsync(ImageAddDto imageAddDto)
         {
-            return await _imageDal.GetByIdAsync(imageId);
-        }
-
-        public async Task CreateImageAsync(Entity.Concrete.Image image)
-        {
+            Image image = _mapper.Map<Image>(imageAddDto);
             await _imageDal.AddAsync(image);
         }
 
-        public async Task UpdateImageAsync(Entity.Concrete.Image image)
+        public async Task DeleteImageAsync(string id)
         {
+            Image image = await GetImageById(id);
+            await _imageDal.SafeDeleteAsync(image);
+        }
+
+        public List<ImageListDto> GetAllImages(ImageRequestFilter filters = null)
+        {
+            var filteredResult = new ImageFilterService().FilterRoles(_imageDal.GetAll(), filters);
+            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            return _mapper.Map<List<ImageListDto>>(filteredResult.ResponseValue);
+        }
+
+        public async Task<ImageListDto> GetImageByIdAsync(string id)
+        {
+            var image = await GetImageById(id);
+            return _mapper.Map<ImageListDto>(image);
+        }
+
+        public async Task UpdateImageAsync(ImageUpdateDto imageUpdateDto)
+        {
+            Image image = await GetImageById(imageUpdateDto.Id);
+            _mapper.Map(imageUpdateDto, image);
             await _imageDal.UpdateAsync(image);
         }
 
-        public async Task DeleteImageAsync(Guid imageId)
+        private async Task<Image> GetImageById(string id)
         {
-            var image = await _imageDal.GetByIdAsync(imageId);
-            if (image != null)
-            {
-                await _imageDal.HardDeleteAsync(image);
-            }
-        }
+            Image image = await _imageDal.GetByIdAsync(Guid.Parse(id));
+            if (image is null)
+                throw new ImageNotFoundException();
 
-        public Task<List<Image>> GetAllImagesAsync()
-        {
-            throw new NotImplementedException();
+            return image;
         }
     }
 }
