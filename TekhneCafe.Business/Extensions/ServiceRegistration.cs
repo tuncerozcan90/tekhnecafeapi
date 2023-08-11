@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -48,6 +50,10 @@ namespace TekhneCafe.Business.Extensions
             services.AddScoped<ITokenService, JwtManager>();
             services.AddScoped<IAppUserService, AppUserManager>();
             services.AddScoped<IAuthenticationService, LdapAuthenticationManager>();
+            #endregion
+
+            #region FluentValidation
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             #endregion
         }
     }
