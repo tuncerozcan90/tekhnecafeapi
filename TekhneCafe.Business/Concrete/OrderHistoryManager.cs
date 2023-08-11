@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
@@ -26,7 +21,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task DeleteOrderHistoryAsync(Guid orderHistoryId)
         {
-           var orderHistory = await _orderHistoryDal.GetByIdAsync(orderHistoryId);
+            var orderHistory = await _orderHistoryDal.GetByIdAsync(orderHistoryId);
             if (orderHistory != null)
             {
                 await _orderHistoryDal.HardDeleteAsync(orderHistory);
@@ -35,7 +30,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task<List<OrderHistory>> GetAllOrderHistoryAsync()
         {
-           return await _orderHistoryDal.GetAll().ToListAsync();
+            return await _orderHistoryDal.GetAll().ToListAsync();
         }
 
         public async Task<OrderHistory> GetOrderHistoryByIdAsync(Guid orderHistoryId)
@@ -45,7 +40,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task UpdateOrderHistoryAsync(OrderHistory orderHistory)
         {
-           await UpdateOrderHistoryAsync(orderHistory);
+            await UpdateOrderHistoryAsync(orderHistory);
         }
     }
 }

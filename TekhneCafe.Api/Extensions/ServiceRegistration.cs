@@ -13,7 +13,10 @@ namespace TekhneCafe.Api.Extensions
                 options.SuppressModelStateInvalidFilter = true;
             });
             services.AddEndpointsApiExplorer();
+
+            #region Swagger Configuration
             services.AddSwaggerGen();
+            #endregion
         }
     }
 }

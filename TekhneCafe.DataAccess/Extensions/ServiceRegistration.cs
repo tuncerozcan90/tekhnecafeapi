@@ -11,8 +11,11 @@ namespace TekhneCafe.DataAccess.Extensions
     {
         public static void AddDataAccessServices(this IServiceCollection services, IConfiguration configurations)
         {
+            #region EntityFramework Context
             services.AddDbContext<EfTekhneCafeContext>(_ => _.UseSqlServer(configurations.GetConnectionString("EfTekhneCafeContext")));
+            #endregion
 
+            #region IOC Scoped Services
             services.AddScoped<IAppUserDal, EfAppUserDal>();
             services.AddScoped<ICartDal, EfCartDal>();
             services.AddScoped<ICartLineDal, EfCartLineDal>();
@@ -23,6 +26,7 @@ namespace TekhneCafe.DataAccess.Extensions
             services.AddScoped<IProductDal, EfProductDal>();
             services.AddScoped<ITransactionHistoryDal, EfTransactionHistoryDal>();
             services.AddScoped<ITransactionTypeDal, EfTransactionTypeDal>();
+            #endregion
         }
     }
 }

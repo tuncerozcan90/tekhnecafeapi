@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TekhneCafe.Core.DTOs.CartLine;
-using TekhneCafe.Entity.Concrete;
+﻿using TekhneCafe.Core.DTOs.CartLine;
 
 namespace TekhneCafe.Business.Abstract
 {

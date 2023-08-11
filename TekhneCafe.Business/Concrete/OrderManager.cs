@@ -1,17 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Helpers.FilterServices;
 using TekhneCafe.Business.Helpers.HeaderServices;
-using TekhneCafe.Core.DTOs.AppRole;
 using TekhneCafe.Core.DTOs.Order;
-using TekhneCafe.Core.Exceptions.AppRole;
 using TekhneCafe.Core.Exceptions.Order;
 using TekhneCafe.Core.Filters.Order;
 using TekhneCafe.DataAccess.Abstract;

@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Core.Filters
+﻿namespace TekhneCafe.Core.Filters
 {
     public class Pagination
     {

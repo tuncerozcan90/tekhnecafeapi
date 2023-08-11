@@ -1,4 +1,4 @@
-﻿using ECommerce.Core.Filters;
+﻿using TekhneCafe.Core.Filters;
 
 namespace TekhneCafe.Core.Filters.Cart
 {
