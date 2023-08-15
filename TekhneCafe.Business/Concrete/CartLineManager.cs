@@ -48,13 +48,6 @@ namespace TekhneCafe.Business.Concrete
             await _cartLineDal.AddAsync(cartLine);
         }
 
-        public async Task UpdateCartLineAsync(CartLineUpdateDto cartLineUpdateDto)
-        {
-            CartLine cart = await GetCartLineById(cartLineUpdateDto.Id);
-            _mapper.Map(cartLineUpdateDto, cart);
-            await _cartLineDal.UpdateAsync(cart);
-        }
-
         public async Task DeleteCartLineAsync(string id)
         {
             CartLine cartLine = await GetCartLineById(id);

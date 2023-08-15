@@ -3,9 +3,9 @@ using TekhneCafe.Core.DTOs.Product;
 
 namespace TekhneCafe.Business.ValidationRules.FluentValidations.Product
 {
-    public class ProductValidator : AbstractValidator<ProductAddDto>
+    public class ProductAddDtoValidator : AbstractValidator<ProductAddDto>
     {
-        public ProductValidator()
+        public ProductAddDtoValidator()
         {
             RuleFor(_ => _.Name)
                 .NotNull()

@@ -4,10 +4,7 @@ namespace TekhneCafe.Business.Abstract
 {
     public interface IProductService
     {
-        Task<Product> GetProductByIdAsync(Guid orderId);
+        Task<Product> GetProductByIdAsync(string id);
         Task<List<Product>> GetAllProductsAsync();
-        Task CreateOrderAsync(Product product);
-        Task UpdateOrderAsync(Product product);
-        Task DeleteOrderAsync(Guid productId);
     }
 }

@@ -1,7 +1,10 @@
-﻿namespace TekhneCafe.Core.DTOs.Cart
+﻿using TekhneCafe.Core.DTOs.CartLine;
+
+namespace TekhneCafe.Core.DTOs.Cart
 {
     public class CartAddDto
     {
-        public string Name { get; set; }
+        public string? Description { get; set; }
+        public virtual ICollection<CartLineAddDto> CartLines { get; set; }
     }
 }

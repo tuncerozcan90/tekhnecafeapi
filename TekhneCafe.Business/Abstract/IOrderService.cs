@@ -1,4 +1,5 @@
-﻿using TekhneCafe.Core.DTOs.Order;
+﻿using TekhneCafe.Core.DTOs.Cart;
+using TekhneCafe.Core.DTOs.Order;
 using TekhneCafe.Core.Filters.Order;
 
 namespace TekhneCafe.Business.Abstract
@@ -7,8 +8,6 @@ namespace TekhneCafe.Business.Abstract
     {
         List<OrderListDto> GetOrders(OrderRequestFilter filters = null);
         Task<OrderListDto> GetOrderByIdAsync(string id);
-        Task CreateOrderAsync(OrderAddDto orderAddDto);
-        Task RemoveOrderAsync(string id);
-        Task UpdateOrderAsync(OrderUpdateDto orderUpdateDto);
+        Task CreateOrderAsync(CartAddDto cartAddDto);
     }
 }

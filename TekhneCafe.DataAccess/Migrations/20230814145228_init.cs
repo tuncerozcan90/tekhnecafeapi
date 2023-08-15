@@ -11,16 +11,24 @@ namespace TekhneCafe.DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AppRole",
+                name: "AppUser",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsValid = table.Column<bool>(type: "bit", nullable: false)
+                    LdapId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InternalPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Wallet = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppRole", x => x.Id);
+                    table.PrimaryKey("PK_AppUser", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,9 +52,9 @@ namespace TekhneCafe.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPrice = table.Column<float>(type: "real", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsValid = table.Column<bool>(type: "bit", nullable: false)
+                    OrderStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,7 +71,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     Price = table.Column<float>(type: "real", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsValid = table.Column<bool>(type: "bit", nullable: false),
                     CartLineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -72,44 +80,17 @@ namespace TekhneCafe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TranscationType",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TranscationType", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppUser",
+                name: "ProductAttribute",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InternalPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Wallet = table.Column<float>(type: "real", nullable: false),
-                    AppRoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    IsValid = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppUser", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppUser_AppRole_AppRoleId",
-                        column: x => x.AppRoleId,
-                        principalTable: "AppRole",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_ProductAttribute", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,8 +98,7 @@ namespace TekhneCafe.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -136,10 +116,10 @@ namespace TekhneCafe.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderStatus = table.Column<bool>(type: "bit", nullable: false),
-                    ActiveAuthorized = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ActiveAuthorizedId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderStatus = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -150,6 +130,34 @@ namespace TekhneCafe.DataAccess.Migrations
                         principalTable: "Order",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TransactionHistory",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Amount = table.Column<float>(type: "real", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TransactionType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransactionHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TransactionHistory_AppUser_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AppUser",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TransactionHistory_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -172,36 +180,28 @@ namespace TekhneCafe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TransactionHistory",
+                name: "ProductAttributeProduct",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WalletId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    TransactionTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductAttributeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsRequired = table.Column<bool>(type: "bit", nullable: false),
+                    IsValid = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TransactionHistory", x => x.Id);
+                    table.PrimaryKey("PK_ProductAttributeProduct", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TransactionHistory_AppUser_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AppUser",
+                        name: "FK_ProductAttributeProduct_ProductAttribute_ProductAttributeId",
+                        column: x => x.ProductAttributeId,
+                        principalTable: "ProductAttribute",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TransactionHistory_Order_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Order",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_TransactionHistory_TranscationType_TransactionTypeId",
-                        column: x => x.TransactionTypeId,
-                        principalTable: "TranscationType",
+                        name: "FK_ProductAttributeProduct_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -211,9 +211,6 @@ namespace TekhneCafe.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<short>(type: "smallint", nullable: false),
-                    QuantityPrice = table.Column<float>(type: "real", nullable: false),
                     CartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -225,18 +222,52 @@ namespace TekhneCafe.DataAccess.Migrations
                         principalTable: "Cart",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CartLineProduct",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CartLineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartLineProduct", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CartLine_Product_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Product",
+                        name: "FK_CartLineProduct_CartLine_CartLineId",
+                        column: x => x.CartLineId,
+                        principalTable: "CartLine",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_AppUser_AppRoleId",
-                table: "AppUser",
-                column: "AppRoleId");
+            migrationBuilder.CreateTable(
+                name: "CartLineProductAttribute",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductAttributeProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CartProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartLineProductAttribute", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartLineProductAttribute_CartLineProduct_CartProductId",
+                        column: x => x.CartProductId,
+                        principalTable: "CartLineProduct",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CartLine_CartId",
@@ -244,9 +275,14 @@ namespace TekhneCafe.DataAccess.Migrations
                 column: "CartId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartLine_ProductId",
-                table: "CartLine",
-                column: "ProductId");
+                name: "IX_CartLineProduct_CartLineId",
+                table: "CartLineProduct",
+                column: "CartLineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartLineProductAttribute_CartProductId",
+                table: "CartLineProductAttribute",
+                column: "CartProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Image_ProductId",
@@ -259,6 +295,16 @@ namespace TekhneCafe.DataAccess.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductAttributeProduct_ProductAttributeId",
+                table: "ProductAttributeProduct",
+                column: "ProductAttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductAttributeProduct_ProductId",
+                table: "ProductAttributeProduct",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TransactionHistory_AppUserId",
                 table: "TransactionHistory",
                 column: "AppUserId");
@@ -267,18 +313,13 @@ namespace TekhneCafe.DataAccess.Migrations
                 name: "IX_TransactionHistory_OrderId",
                 table: "TransactionHistory",
                 column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransactionHistory_TransactionTypeId",
-                table: "TransactionHistory",
-                column: "TransactionTypeId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CartLine");
+                name: "CartLineProductAttribute");
 
             migrationBuilder.DropTable(
                 name: "Image");
@@ -290,10 +331,16 @@ namespace TekhneCafe.DataAccess.Migrations
                 name: "OrderHistory");
 
             migrationBuilder.DropTable(
+                name: "ProductAttributeProduct");
+
+            migrationBuilder.DropTable(
                 name: "TransactionHistory");
 
             migrationBuilder.DropTable(
-                name: "Cart");
+                name: "CartLineProduct");
+
+            migrationBuilder.DropTable(
+                name: "ProductAttribute");
 
             migrationBuilder.DropTable(
                 name: "Product");
@@ -302,13 +349,13 @@ namespace TekhneCafe.DataAccess.Migrations
                 name: "AppUser");
 
             migrationBuilder.DropTable(
-                name: "TranscationType");
+                name: "CartLine");
+
+            migrationBuilder.DropTable(
+                name: "Cart");
 
             migrationBuilder.DropTable(
                 name: "Order");
-
-            migrationBuilder.DropTable(
-                name: "AppRole");
         }
     }
 }

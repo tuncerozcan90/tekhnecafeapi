@@ -13,7 +13,6 @@ namespace TekhneCafe.Business.Concrete
 {
     public class LdapAuthenticationManager : IAuthenticationService
     {
-        //ldap settings
         private readonly string ldapPath;
         private readonly string ldapUser;
         private readonly string ldapPassword;

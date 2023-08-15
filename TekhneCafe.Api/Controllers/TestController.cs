@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.DTOs.Product;
 
 namespace TekhneCafe.Api.Controllers
@@ -9,17 +10,19 @@ namespace TekhneCafe.Api.Controllers
     public class TestController : ControllerBase
     {
         private readonly IValidator<ProductAddDto> _validator;
+        private readonly IAppUserService _userService;
 
-        public TestController(IValidator<ProductAddDto> validator)
+        public TestController(IValidator<ProductAddDto> validator, IAppUserService userService, IHttpContextAccessor httpContextAccessor)
         {
             _validator = validator;
+            _userService = userService;
         }
         [HttpGet]
         public IActionResult Index()
         {
 
-
-            return Ok();
+            var users = _userService.GetUserList();
+            return Ok(users);
         }
 
         [HttpPost]

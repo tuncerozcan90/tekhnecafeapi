@@ -14,33 +14,15 @@ namespace TekhneCafe.Business.Concrete
             _productDal = productDal;
         }
 
-        public async Task CreateOrderAsync(Product product)
-        {
-            await _productDal.AddAsync(product);
-        }
-
-        public async Task DeleteOrderAsync(Guid productId)
-        {
-            var product = await _productDal.GetByIdAsync(productId);
-            if (product != null)
-            {
-                await _productDal.HardDeleteAsync(product);
-            }
-        }
 
         public async Task<List<Product>> GetAllProductsAsync()
         {
             return await _productDal.GetAll().ToListAsync();
         }
 
-        public async Task<Product> GetProductByIdAsync(Guid orderId)
+        public async Task<Product> GetProductByIdAsync(string id)
         {
-            return await _productDal.GetByIdAsync(orderId);
-        }
-
-        public async Task UpdateOrderAsync(Product product)
-        {
-            await _productDal.UpdateAsync(product);
+            return await _productDal.GetByIdAsync(Guid.Parse(id));
         }
     }
 }
