@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
@@ -18,34 +19,29 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-            {
                 optionsBuilder.UseSqlServer("Server=.;Database=TEKHNECAFEDB;Trusted_Connection=True;TrustServerCertificate=True");
-            }
 
             base.OnConfiguring(optionsBuilder);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-            modelBuilder.Entity<Order>()
-              .HasOne(a => a.Cart)
-              .WithOne(b => b.Order)
-              .HasForeignKey<Cart>(e => e.Id);
-
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
         }
 
-        //public DbSet<AppRole> AppRole { get; set; }
         public DbSet<AppUser> AppUser { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartLine> CartLine { get; set; }
+        public DbSet<CartLineProduct> CartLineProduct { get; set; }
+        public DbSet<CartLineProductAttribute> CartLineProductAttribute { get; set; }
         public DbSet<Image> Image { get; set; }
         public DbSet<Notification> Notification { get; set; }
         public DbSet<Order> Order { get; set; }
         public DbSet<OrderHistory> OrderHistory { get; set; }
         public DbSet<Product> Product { get; set; }
+        public DbSet<ProductAttribute> ProductAttribute { get; set; }
+        public DbSet<ProductAttributeProduct> ProductAttributeProduct { get; set; }
         public DbSet<TransactionHistory> TransactionHistory { get; set; }
-        public DbSet<TranscationType> TranscationType { get; set; }
     }
 }

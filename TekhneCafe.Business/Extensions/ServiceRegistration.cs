@@ -50,6 +50,10 @@ namespace TekhneCafe.Business.Extensions
             services.AddScoped<ITokenService, JwtManager>();
             services.AddScoped<IAppUserService, AppUserManager>();
             services.AddScoped<IAuthenticationService, LdapAuthenticationManager>();
+            services.AddScoped<IAppUserService, AppUserManager>();
+            services.AddScoped<IOrderService, OrderManager>();
+            services.AddScoped<ICartService, CartManager>();
+            services.AddScoped<IProductService, ProductManager>();
             #endregion
 
             #region FluentValidation

@@ -12,8 +12,8 @@ using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 namespace TekhneCafe.DataAccess.Migrations
 {
     [DbContext(typeof(EfTekhneCafeContext))]
-    [Migration("20230807075425_init")]
-    partial class init
+    [Migration("20230815053239_init2")]
+    partial class init2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,31 +25,10 @@ namespace TekhneCafe.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TekhneCafe.Entity.Concrete.AppRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppRole");
-                });
-
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppRoleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
@@ -62,26 +41,20 @@ namespace TekhneCafe.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InternalPhone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("LdapId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
@@ -93,17 +66,12 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppRoleId");
-
                     b.ToTable("AppUser");
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Cart", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -123,22 +91,72 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<Guid>("CartId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<short>("Quantity")
-                        .HasColumnType("smallint");
-
-                    b.Property<float>("QuantityPrice")
-                        .HasColumnType("real");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CartId");
 
-                    b.HasIndex("ProductId");
-
                     b.ToTable("CartLine");
+                });
+
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.CartLineProduct", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CartLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartLineId");
+
+                    b.ToTable("CartLineProduct");
+                });
+
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.CartLineProductAttribute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CartProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("ProductAttributeProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartProductId");
+
+                    b.ToTable("CartLineProductAttribute");
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Image", b =>
@@ -199,11 +217,11 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("bit");
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<float>("TotalPrice")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
@@ -216,9 +234,8 @@ namespace TekhneCafe.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ActiveAuthorized")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ActiveAuthorizedId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -226,8 +243,8 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("OrderStatus")
-                        .HasColumnType("bit");
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -248,11 +265,11 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
@@ -269,14 +286,62 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.ToTable("Product");
                 });
 
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.ProductAttribute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductAttribute");
+                });
+
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.ProductAttributeProduct", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ProductAttributeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductAttributeId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductAttributeProduct");
+                });
+
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.TransactionHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<float>("Amount")
+                        .HasColumnType("real");
 
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
@@ -290,11 +355,8 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<Guid?>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TransactionTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("WalletId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -302,35 +364,7 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("TransactionTypeId");
-
                     b.ToTable("TransactionHistory");
-                });
-
-            modelBuilder.Entity("TekhneCafe.Entity.Concrete.TranscationType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TranscationType");
-                });
-
-            modelBuilder.Entity("TekhneCafe.Entity.Concrete.AppUser", b =>
-                {
-                    b.HasOne("TekhneCafe.Entity.Concrete.AppRole", "AppRole")
-                        .WithMany("AppUsers")
-                        .HasForeignKey("AppRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppRole");
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Cart", b =>
@@ -346,21 +380,33 @@ namespace TekhneCafe.DataAccess.Migrations
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.CartLine", b =>
                 {
-                    b.HasOne("TekhneCafe.Entity.Concrete.Cart", "Cart")
+                    b.HasOne("TekhneCafe.Entity.Concrete.Cart", null)
                         .WithMany("CartLines")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.HasOne("TekhneCafe.Entity.Concrete.Product", "Product")
-                        .WithMany("CartLines")
-                        .HasForeignKey("ProductId")
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.CartLineProduct", b =>
+                {
+                    b.HasOne("TekhneCafe.Entity.Concrete.CartLine", "CartLine")
+                        .WithMany("CartLineProducts")
+                        .HasForeignKey("CartLineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cart");
+                    b.Navigation("CartLine");
+                });
 
-                    b.Navigation("Product");
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.CartLineProductAttribute", b =>
+                {
+                    b.HasOne("TekhneCafe.Entity.Concrete.CartLineProduct", "CartProduct")
+                        .WithMany("CartLineProductAttributes")
+                        .HasForeignKey("CartProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CartProduct");
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Image", b =>
@@ -377,12 +423,31 @@ namespace TekhneCafe.DataAccess.Migrations
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.OrderHistory", b =>
                 {
                     b.HasOne("TekhneCafe.Entity.Concrete.Order", "Order")
-                        .WithMany("OrderHistories")
+                        .WithMany("OrderHistory")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.ProductAttributeProduct", b =>
+                {
+                    b.HasOne("TekhneCafe.Entity.Concrete.ProductAttribute", "ProductAttribute")
+                        .WithMany("ProductAttributeProducts")
+                        .HasForeignKey("ProductAttributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TekhneCafe.Entity.Concrete.Product", "Product")
+                        .WithMany("ProductAttributeProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ProductAttribute");
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.TransactionHistory", b =>
@@ -394,25 +459,12 @@ namespace TekhneCafe.DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("TekhneCafe.Entity.Concrete.Order", "Order")
-                        .WithMany("TransactionHistories")
+                        .WithMany("TransactionHistory")
                         .HasForeignKey("OrderId");
-
-                    b.HasOne("TekhneCafe.Entity.Concrete.TranscationType", "TransactionType")
-                        .WithMany("TransactionHistories")
-                        .HasForeignKey("TransactionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("AppUser");
 
                     b.Navigation("Order");
-
-                    b.Navigation("TransactionType");
-                });
-
-            modelBuilder.Entity("TekhneCafe.Entity.Concrete.AppRole", b =>
-                {
-                    b.Navigation("AppUsers");
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.AppUser", b =>
@@ -425,26 +477,36 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Navigation("CartLines");
                 });
 
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.CartLine", b =>
+                {
+                    b.Navigation("CartLineProducts");
+                });
+
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.CartLineProduct", b =>
+                {
+                    b.Navigation("CartLineProductAttributes");
+                });
+
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Order", b =>
                 {
                     b.Navigation("Cart")
                         .IsRequired();
 
-                    b.Navigation("OrderHistories");
+                    b.Navigation("OrderHistory");
 
-                    b.Navigation("TransactionHistories");
+                    b.Navigation("TransactionHistory");
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Product", b =>
                 {
-                    b.Navigation("CartLines");
-
                     b.Navigation("Images");
+
+                    b.Navigation("ProductAttributeProducts");
                 });
 
-            modelBuilder.Entity("TekhneCafe.Entity.Concrete.TranscationType", b =>
+            modelBuilder.Entity("TekhneCafe.Entity.Concrete.ProductAttribute", b =>
                 {
-                    b.Navigation("TransactionHistories");
+                    b.Navigation("ProductAttributeProducts");
                 });
 #pragma warning restore 612, 618
         }

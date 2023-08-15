@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Core.DTOs.AppUser;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 
@@ -19,6 +20,13 @@ namespace TekhneCafe.Business.Concrete
             _mapper = mapper;
             _httpContext = httpContext;
         }
+
+        public List<AppUserListDto> GetUserList()
+        {
+            var users = _userDal.GetAll();
+            return _mapper.Map<List<AppUserListDto>>(users);
+        }
+
         public async Task<AppUser> GetUserByLdapIdAsync(string id)
             => await _userDal.GetAll(_ => _.LdapId == Guid.Parse(id)).FirstOrDefaultAsync();
 

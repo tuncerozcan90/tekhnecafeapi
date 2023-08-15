@@ -25,7 +25,6 @@ namespace TekhneCafe.DataAccess.Extensions
             services.AddScoped<IOrderHistoryDal, EfOrderHistoryDal>();
             services.AddScoped<IProductDal, EfProductDal>();
             services.AddScoped<ITransactionHistoryDal, EfTransactionHistoryDal>();
-            services.AddScoped<ITransactionTypeDal, EfTransactionTypeDal>();
             #endregion
         }
     }
