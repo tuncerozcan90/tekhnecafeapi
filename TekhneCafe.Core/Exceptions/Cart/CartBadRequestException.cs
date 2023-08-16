@@ -2,7 +2,7 @@
 {
     public class CartBadRequestException : BadRequestException
     {
-        public CartBadRequestException() : base("Role bad request!")
+        public CartBadRequestException() : base("CartCart bad request!")
         {
 
         }

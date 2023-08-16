@@ -1,4 +1,5 @@
-﻿using TekhneCafe.Core.DataAccess.Concrete.EntityFramework;
+﻿using System.Security.Claims;
+using TekhneCafe.Core.DataAccess.Concrete.EntityFramework;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 using TekhneCafe.Entity.Concrete;
@@ -7,5 +8,9 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfAppUserDal : EfEntityRepositoryBase<AppUser, EfTekhneCafeContext>, IAppUserDal
     {
+        public Task GetByIdAsync(ClaimsPrincipal username)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

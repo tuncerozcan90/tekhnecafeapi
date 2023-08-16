@@ -2,7 +2,7 @@
 {
     public class CartNotFoundException : NotFoundException
     {
-        public CartNotFoundException() : base("Role not found exception!")
+        public CartNotFoundException() : base("Cart not found exception!")
         {
 
         }

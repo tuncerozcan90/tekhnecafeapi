@@ -2,7 +2,7 @@
 {
     public class CartInternalServerError : InternalServerErrorException
     {
-        public CartInternalServerError() : base("A server side error occured with role transaction!")
+        public CartInternalServerError() : base("A server side error occured with Cart transaction!")
         {
 
         }

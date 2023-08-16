@@ -39,7 +39,7 @@ namespace TekhneCafe.Business.Concrete
 
         public List<ImageListDto> GetAllImages(ImageRequestFilter filters = null)
         {
-            var filteredResult = new ImageFilterService().FilterRoles(_imageDal.GetAll(), filters);
+            var filteredResult = new ImageFilterService().FilterImages(_imageDal.GetAll(), filters);
             new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
             return _mapper.Map<List<ImageListDto>>(filteredResult.ResponseValue);
         }

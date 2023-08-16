@@ -2,7 +2,7 @@
 {
     public class CartAlreadyExistsException : BadRequestException
     {
-        public CartAlreadyExistsException() : base("Role already exists!")
+        public CartAlreadyExistsException() : base("Cart already exists!")
         {
 
         }

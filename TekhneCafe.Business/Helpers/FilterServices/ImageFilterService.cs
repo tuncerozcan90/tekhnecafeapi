@@ -7,7 +7,7 @@ namespace TekhneCafe.Business.Helpers.FilterServices
 {
     public class ImageFilterService
     {
-        public ImageResponseFilter<List<Image>> FilterRoles(IQueryable<Image> images, ImageRequestFilter filters)
+        public ImageResponseFilter<List<Image>> FilterImages(IQueryable<Image> images, ImageRequestFilter filters)
         {
             var filteredImages = images.Skip(filters.Page * filters.Size).Take(filters.Size).ToList();
             Metadata metadata = new()
