@@ -1,4 +1,5 @@
 ﻿using TekhneCafe.Entity.Concrete;
+using TekhneCafe.Entity.Enums;
 
 namespace TekhneCafe.Business.Abstract
 {
@@ -6,8 +7,7 @@ namespace TekhneCafe.Business.Abstract
     {
         Task<OrderHistory> GetOrderHistoryByIdAsync(Guid orderHistoryId);
         Task<List<OrderHistory>> GetAllOrderHistoryAsync();
-        Task CreateOrderHistoryAsync(OrderHistory orderHistory);
-        Task UpdateOrderHistoryAsync(OrderHistory orderHistory);
-        Task DeleteOrderHistoryAsync(Guid orderHistoryId);
+        Task CreateOrderHistoryAsync(OrderStatus orderStatus);
+        OrderHistory CreateOrderHistory(OrderStatus orderStatus);
     }
 }

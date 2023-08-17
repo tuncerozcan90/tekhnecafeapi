@@ -52,8 +52,10 @@ namespace TekhneCafe.Business.Extensions
             services.AddScoped<IAuthenticationService, LdapAuthenticationManager>();
             services.AddScoped<IAppUserService, AppUserManager>();
             services.AddScoped<IOrderService, OrderManager>();
-            services.AddScoped<ICartService, CartManager>();
             services.AddScoped<IProductService, ProductManager>();
+            services.AddScoped<IOrderProductAttributeService, OrderProductAttributeManager>();
+            services.AddScoped<IOrderProductService, OrderProductManager>();
+            services.AddScoped<IOrderHistoryService, OrderHistoryManager>();
             #endregion
 
             #region FluentValidation

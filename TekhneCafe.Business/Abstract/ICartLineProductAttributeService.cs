@@ -1,7 +1,9 @@
-﻿namespace TekhneCafe.Business.Abstract
+﻿using TekhneCafe.Entity.Concrete;
+
+namespace TekhneCafe.Business.Abstract
 {
-    public interface ICartLineProductAttributeService
+    public interface IOrderProductAttributeService
     {
-        Task<bool> CartLineProductAttributeExistsAsync(string id);
+        Task ValidateOrderProductAttributeAsync(OrderProduct orderProduct);
     }
 }

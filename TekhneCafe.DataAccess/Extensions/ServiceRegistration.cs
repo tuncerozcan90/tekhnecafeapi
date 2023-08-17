@@ -17,14 +17,15 @@ namespace TekhneCafe.DataAccess.Extensions
 
             #region IOC Scoped Services
             services.AddScoped<IAppUserDal, EfAppUserDal>();
-            services.AddScoped<ICartDal, EfCartDal>();
-            services.AddScoped<ICartLineDal, EfCartLineDal>();
             services.AddScoped<IImageDal, EfImageDal>();
             services.AddScoped<INotificationDal, EfNotificationDal>();
             services.AddScoped<IOrderDal, EfOrderDal>();
             services.AddScoped<IOrderHistoryDal, EfOrderHistoryDal>();
             services.AddScoped<IProductDal, EfProductDal>();
             services.AddScoped<ITransactionHistoryDal, EfTransactionHistoryDal>();
+            services.AddScoped<IOrderProductAttributeDal, EfIOrderProductAttributeDal>();
+            services.AddScoped<IOrderProductDal, EfOrderProductDal>();
+            services.AddScoped<IOrderHistoryDal, EfOrderHistoryDal>();
             #endregion
         }
     }

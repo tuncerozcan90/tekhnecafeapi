@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Authentication;
 
 namespace TekhneCafe.Api.Controllers
@@ -11,12 +9,10 @@ namespace TekhneCafe.Api.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authService;
-        private readonly IHttpContextAccessor _httpContext;
 
-        public AuthenticationController(IAuthenticationService authService, IHttpContextAccessor httpContext)
+        public AuthenticationController(IAuthenticationService authService)
         {
             _authService = authService;
-            _httpContext = httpContext;
         }
 
         [HttpPost("[action]")]
@@ -24,13 +20,6 @@ namespace TekhneCafe.Api.Controllers
         {
             var token = await _authService.Login(user.Email, user.Password);
             return Ok(token);
-        }
-
-        [HttpGet("[action]")]
-        [Authorize(Roles = $"{RoleConsts.CafeAdmin}")]
-        public async Task<IActionResult> Test()
-        {
-            return Ok();
         }
     }
 }
