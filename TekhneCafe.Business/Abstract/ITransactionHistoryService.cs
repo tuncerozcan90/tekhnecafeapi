@@ -8,10 +8,9 @@ namespace TekhneCafe.Business.Abstract
 {
     public interface ITransactionHistoryService
     {
-        Task<TransactionHistoryListDto> GetTransactionHistoryByIdAsync(string id);
         List<TransactionHistoryListDto> GetAllTransactionHistory(TransactionHistoryRequestFilter filters = null);
-        Task CreateTransactionHistoryAsync(TransactionHistoryAddDto transactionHistoryAddDto);
         Task UpdateTransactionHistoryAsync(TransactionHistoryUpdateDto transactionHistoryUpdateDto);
         Task DeleteTransactionHistoryAsync(string id);
+        Task CreateOrderTransactionAsync(Guid userId, float amount);
     }
 }
