@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.DTOs.AppUser;
 using TekhneCafe.Core.Exceptions.AppUser;
-using TekhneCafe.Core.Exceptions.Order;
 using TekhneCafe.DataAccess.Abstract;
-using TekhneCafe.DataAccess.Concrete.EntityFramework;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Concrete
@@ -38,7 +36,7 @@ namespace TekhneCafe.Business.Concrete
         public async Task<AppUser> GetUserByLdapIdAsync(string id)
             => await _userDal.GetAll(_ => _.LdapId == Guid.Parse(id)).FirstOrDefaultAsync();
 
-        public async Task<AppUser> GetUserByIdAsync(string id) 
+        public async Task<AppUser> GetUserByIdAsync(string id)
         {
             AppUser appUser = await _userDal.GetAll(_ => _.Id == Guid.Parse(id)).FirstOrDefaultAsync();
 

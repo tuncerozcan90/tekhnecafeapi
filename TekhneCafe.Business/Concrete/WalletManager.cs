@@ -1,12 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Core.Exceptions.AppUser;
 using TekhneCafe.DataAccess.Abstract;
 
 namespace TekhneCafe.Business.Concrete
@@ -16,15 +10,13 @@ namespace TekhneCafe.Business.Concrete
         private readonly IOrderDal _orderDal;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
-        private readonly ICartService _cartService;
         private readonly IAppUserService _userService;
 
-        public WalletManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, ICartService cartService, IAppUserService userService)
+        public WalletManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, IAppUserService userService)
         {
             _orderDal = orderDal;
             _mapper = mapper;
             _httpContext = httpContext;
-            _cartService = cartService;
             _userService = userService;
         }
 

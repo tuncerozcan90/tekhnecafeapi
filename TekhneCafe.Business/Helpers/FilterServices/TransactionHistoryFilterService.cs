@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TekhneCafe.Core.Filters.Order;
-using TekhneCafe.Core.Filters;
+﻿using TekhneCafe.Core.Filters;
+using TekhneCafe.Core.Filters.Transaction;
 using TekhneCafe.Core.ResponseHeaders;
 using TekhneCafe.Entity.Concrete;
-using TekhneCafe.Core.Filters.Transaction;
 
 namespace TekhneCafe.Business.Helpers.FilterServices
 {

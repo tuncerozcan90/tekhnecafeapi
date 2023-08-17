@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Extensions;
-using TekhneCafe.Business.Helpers.FilterServices;
-using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.Order;
 using TekhneCafe.Core.Exceptions;
-using TekhneCafe.Core.Filters.Order;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 using TekhneCafe.Entity.Enums;
