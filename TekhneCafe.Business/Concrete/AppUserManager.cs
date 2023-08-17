@@ -27,6 +27,11 @@ namespace TekhneCafe.Business.Concrete
             return _mapper.Map<List<AppUserListDto>>(users);
         }
 
+        public async Task GetUserByIdAsnyc(string id)
+        {
+            AppUser user = await _userDal.GetByIdAsync(Guid.Parse(id));
+        }
+
         public async Task<AppUser> GetUserByLdapIdAsync(string id)
             => await _userDal.GetAll(_ => _.LdapId == Guid.Parse(id)).FirstOrDefaultAsync();
 

@@ -7,10 +7,12 @@ namespace TekhneCafe.Entity.Concrete
     {
         public float TotalPrice { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public string? Description { get; set; }
+        public Guid AppUserId { get; set; }
         public virtual OrderStatus OrderStatus { get; set; }
-        public virtual Cart Cart { get; set; }
-        public virtual ICollection<OrderHistory> OrderHistory { get; set; }
-        public virtual ICollection<TransactionHistory> TransactionHistory { get; set; }
+        public virtual ICollection<OrderHistory> OrderHistories { get; set; }
+        public virtual ICollection<TransactionHistory> TransactionHistories { get; set; }
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
     }
 }
 

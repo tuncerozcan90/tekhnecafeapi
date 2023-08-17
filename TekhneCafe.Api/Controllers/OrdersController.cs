@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Core.DTOs.Cart;
+using TekhneCafe.Core.DTOs.Order;
 
 namespace TekhneCafe.Api.Controllers
 {
@@ -15,16 +15,25 @@ namespace TekhneCafe.Api.Controllers
             _orderService = orderService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CompleteOrder([FromBody] CartAddDto cartAddDto)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateOrder([FromBody] OrderAddDto orderDto)
         {
-            await _orderService.CreateOrderAsync(cartAddDto);
+            await _orderService.CreateOrderAsync(orderDto);
             return Ok();
         }
 
-        //public async Task ConfirmOrder()
-        //{
+        [HttpPost("confirm")]
+        public async Task<IActionResult> ConfirmOrder([FromQuery] string id)
+        {
+            await _orderService.ConfirmOrderAsync(id);
+            return Ok();
+        }
 
-        //}
+        [HttpGet]
+        public async Task<IActionResult> Orders([FromQuery] string id)
+        {
+            var order = await _orderService.GetOrderByIdAsync(id);
+            return Ok(order);
+        }
     }
 }

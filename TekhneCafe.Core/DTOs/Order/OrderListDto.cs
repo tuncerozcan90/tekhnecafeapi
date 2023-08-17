@@ -1,8 +1,14 @@
-﻿namespace TekhneCafe.Core.DTOs.Order
+﻿using TekhneCafe.Core.DTOs.OrderProduct;
+
+namespace TekhneCafe.Core.DTOs.Order
 {
     public class OrderListDto
     {
         public string Id { get; set; }
-        public string Name { get; set; }
+        public float TotalPrice { get; set; }
+        public string Description { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string OrderStatus { get; set; }
+        public List<OrderProductListDto> OrderProducts { get; set; }
     }
 }
