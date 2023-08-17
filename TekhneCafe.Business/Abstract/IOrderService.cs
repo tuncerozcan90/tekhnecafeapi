@@ -1,6 +1,4 @@
 ﻿using TekhneCafe.Core.DTOs.Order;
-using TekhneCafe.Core.Filters.Order;
-using TekhneCafe.Entity.Enums;
 
 namespace TekhneCafe.Business.Abstract
 {

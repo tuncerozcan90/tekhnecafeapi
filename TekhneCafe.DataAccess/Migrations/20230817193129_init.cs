@@ -99,7 +99,7 @@ namespace TekhneCafe.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ActiveAuthorizedId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderStatus = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
