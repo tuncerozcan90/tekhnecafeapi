@@ -27,6 +27,21 @@ builder.Services.AddApiServices();
 builder.Services.AddDataAccessServices(builder.Configuration);
 builder.Services.AddBusinessServices(builder.Configuration);
 
+
+var allowedHosts = builder.Configuration.GetValue<string>("AllowedHosts");
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("_myAllowSpecificOrigins",
+        builder =>
+        {
+            builder.WithOrigins(allowedHosts) // Burada eriþime izin vermek istediðiniz orijinleri belirtin
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -35,7 +50,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("_myAllowSpecificOrigins");
 #region ExceptionHandler Configuration
 app.UseExceptionHandler(
     options =>
