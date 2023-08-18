@@ -19,7 +19,6 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
         {
             if (!optionsBuilder.IsConfigured)
                 optionsBuilder.UseSqlServer("Server=192.168.254.224;Database=EfTekhneCafe;User Id=TekhneStars;Password=Tekhne1234;TrustServerCertificate=True;");
-            //optionsBuilder.UseSqlServer("Server:192.168.254.224;User:TekhneStarsPass:Tekhne1234;Db:EfTekhneCafe;");
             base.OnConfiguring(optionsBuilder);
         }
 

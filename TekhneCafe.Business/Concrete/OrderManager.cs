@@ -22,7 +22,7 @@ namespace TekhneCafe.Business.Concrete
         private readonly ITransactionHistoryService _transactionHistoryService;
         private readonly ITransactionManagement _transactionManagement;
 
-        public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, IOrderHistoryService orderHistoryService,IWalletService walletService,
+        public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, IOrderHistoryService orderHistoryService, IWalletService walletService,
             IOrderProductService orderProductService, ITransactionHistoryService transactionHistoryService, ITransactionManagement transactionManagement)
         {
             _orderDal = orderDal;
