@@ -48,9 +48,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(_ =>
+    {
+        _.SwaggerEndpoint("/swagger/v1/swagger.json", "TekhneCafe API v1");
+    });
 }
+
 app.UseCors("_myAllowSpecificOrigins");
+
 #region ExceptionHandler Configuration
 app.UseExceptionHandler(
     options =>

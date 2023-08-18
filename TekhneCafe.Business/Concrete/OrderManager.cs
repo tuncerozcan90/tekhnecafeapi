@@ -46,10 +46,10 @@ namespace TekhneCafe.Business.Concrete
             {
                 await CreateOrderWhenValidAsync(order);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await _transactionManagement.RollbackTransactionAsync();
-                throw new InternalServerErrorException("Unexpected error occured!");
+                _transactionManagement.RollbackTransactionAsync();
+                throw new InternalServerErrorException(ex.Message);
             }
 
             await _transactionManagement.CommitTransactionAsync();
@@ -73,19 +73,6 @@ namespace TekhneCafe.Business.Concrete
             await _orderDal.AddAsync(order);
         }
 
-        private float GetOrderTotalPrice(Order order)
-        {
-            float totalPrice = 0;
-            foreach (var orderProduct in order.OrderProducts)
-            {
-                totalPrice += orderProduct.Price * orderProduct.Quantity;
-                foreach (var orderProductAttribute in orderProduct.OrderProductAttributes)
-                    totalPrice += orderProductAttribute.Price * orderProductAttribute.Quantity;
-            }
-
-            return totalPrice;
-        }
-
         public async Task ConfirmOrderAsync(string id)
         {
             var order = await _orderDal.GetByIdAsync(Guid.Parse(id));
@@ -103,6 +90,19 @@ namespace TekhneCafe.Business.Concrete
             if (order is null)
                 throw new NotFoundException("Order Not Found!");
             return _mapper.Map<OrderListDto>(order);
+        }
+
+        private float GetOrderTotalPrice(Order order)
+        {
+            float totalPrice = 0;
+            foreach (var orderProduct in order.OrderProducts)
+            {
+                totalPrice += orderProduct.Price * orderProduct.Quantity;
+                foreach (var orderProductAttribute in orderProduct.OrderProductAttributes)
+                    totalPrice += orderProductAttribute.Price * orderProductAttribute.Quantity;
+            }
+
+            return totalPrice;
         }
     }
 }

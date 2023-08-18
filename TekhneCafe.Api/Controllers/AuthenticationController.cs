@@ -15,6 +15,14 @@ namespace TekhneCafe.Api.Controllers
             _authService = authService;
         }
 
+        /// <summary>
+        /// Log into account
+        /// </summary>
+        /// <param name="user">Enter user email and password</param>
+        /// <returns>jwt token information</returns>
+        /// <response code="200">User successful login</response>
+        /// <response code="400">Invalid credentials</response>
+        /// <response code="404">User not found</response>
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {

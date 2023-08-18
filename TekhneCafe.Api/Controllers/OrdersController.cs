@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.DTOs.Order;
 
@@ -6,6 +7,7 @@ namespace TekhneCafe.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -15,13 +17,28 @@ namespace TekhneCafe.Api.Controllers
             _orderService = orderService;
         }
 
+        /// <summary>
+        /// Create new order
+        /// </summary>
+        /// <param name="orderDto">Order parameteres</param>
+        /// <returns></returns>
+        /// <response code="201">Order created</response>
+        /// <response code="400">Invalid order</response>
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderAddDto orderDto)
         {
             await _orderService.CreateOrderAsync(orderDto);
-            return Ok();
+            return StatusCode(StatusCodes.Status201Created);
         }
 
+        /// <summary>
+        /// Confirm Order
+        /// </summary>
+        /// <param name="id">Order id</param>
+        /// <returns></returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="404">Order not found</response>
         [HttpPost("confirm")]
         public async Task<IActionResult> ConfirmOrder([FromQuery] string id)
         {
@@ -29,6 +46,13 @@ namespace TekhneCafe.Api.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get Order By Id
+        /// </summary>
+        /// <param name="id">Order id</param>
+        /// <returns>Order with given id</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">Order not found</response>
         [HttpGet]
         public async Task<IActionResult> Orders([FromQuery] string id)
         {
