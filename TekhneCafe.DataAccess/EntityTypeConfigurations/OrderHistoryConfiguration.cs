@@ -9,11 +9,23 @@ using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.EntityTypeConfigurations
 {
-    public class OrderHistoryConfiguration : IEntityTypeConfiguration<OrderHistoryConfiguration>
+    public class OrderHistoryConfiguration : IEntityTypeConfiguration<OrderHistory>
     {
-        public void Configure(EntityTypeBuilder<OrderHistoryConfiguration> builder)
+        public void Configure(EntityTypeBuilder<OrderHistory> builder)
         {
-            throw new NotImplementedException();
+            builder.ToTable("OrderHistorie");
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.AppUserId).IsRequired();
+            builder.Property(x => x.OrderId).IsRequired();
+            builder.Property(x => x.OrderStatus).IsRequired();
+
+            builder.HasOne(x => x.Order)
+                   .WithMany()
+                   .HasForeignKey(x => x.OrderId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(x => x.CreatedDate).IsRequired();
         }
     }
 }

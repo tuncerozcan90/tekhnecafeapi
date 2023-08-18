@@ -13,7 +13,7 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Notification> builder)
         {
-            builder.ToTable("Notifications");
+            builder.ToTable("Notification");
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.To).HasMaxLength(100).IsRequired();

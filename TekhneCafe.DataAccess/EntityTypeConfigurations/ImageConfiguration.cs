@@ -13,7 +13,7 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Entity.Concrete.Image> builder)
         {
-            builder.ToTable("Images");
+            builder.ToTable("Image");
             builder.HasKey(x => x.Id);
 
             

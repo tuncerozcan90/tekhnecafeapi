@@ -13,33 +13,26 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            
             builder.ToTable("Order");
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).IsRequired();
-            builder.Property(x => x.CreatedDate).HasDefaultValue(DateTime.Now);
-            builder.Property(x => x.Description).HasMaxLength(200); 
 
-            builder.HasOne(x => x.AppUser)
-                   .WithMany()
-                   .HasForeignKey(x => x.AppUserId)
-                   .OnDelete(DeleteBehavior.Restrict); 
+            builder.Property(x => x.TotalPrice).IsRequired();
+            builder.Property(x => x.CreatedDate).IsRequired();
+            builder.Property(x => x.Description).HasMaxLength(200);
 
-            builder.Property(x => x.OrderStatus)
-                   .IsRequired()
-                   .HasColumnType("int");
-
-            builder.HasMany(x => x.OrderProducts)
-                   .WithOne(op => op.Order)
-                   .HasForeignKey(op => op.OrderId);
+            builder.Property(x => x.AppUserId).IsRequired();
 
             builder.HasMany(x => x.OrderHistories)
-                   .WithOne(oh => oh.Order)
-                   .HasForeignKey(oh => oh.OrderId);
+                   .WithOne(x => x.Order)
+                   .HasForeignKey(x => x.OrderId);
 
             builder.HasMany(x => x.TransactionHistories)
-                   .WithOne(th => th.Order)
-                   .HasForeignKey(th => th.OrderId);
+                   .WithOne(x => x.Order)
+                   .HasForeignKey(x => x.OrderId);
+
+            builder.HasMany(x => x.OrderProducts)
+                   .WithOne(x => x.Order)
+                   .HasForeignKey(x => x.OrderId);
         }
     }
 }
