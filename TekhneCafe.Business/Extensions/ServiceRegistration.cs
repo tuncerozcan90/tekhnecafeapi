@@ -56,6 +56,8 @@ namespace TekhneCafe.Business.Extensions
             services.AddScoped<IOrderProductAttributeService, OrderProductAttributeManager>();
             services.AddScoped<IOrderProductService, OrderProductManager>();
             services.AddScoped<IOrderHistoryService, OrderHistoryManager>();
+            services.AddScoped<ITransactionHistoryService, TransactionHistoryManager>();
+            services.AddScoped<IWalletService, WalletManager>();
             #endregion
 
             #region FluentValidation

@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Business.Helpers.FilterServices;
-using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.Transaction;
 using TekhneCafe.Core.Exceptions.TransactionHistory;
-using TekhneCafe.Core.Filters.Transaction;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 using TekhneCafe.Entity.Enums;
@@ -16,27 +13,38 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly ITransactionHistoryDal _transactionHistoryDal;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContext;
 
 
-        public TransactionHistoryManager(ITransactionHistoryDal transactionHistoryDal, IMapper mapper, IHttpContextAccessor httpContext)
+        public TransactionHistoryManager(ITransactionHistoryDal transactionHistoryDal, IMapper mapper)
         {
             _transactionHistoryDal = transactionHistoryDal;
             _mapper = mapper;
-            _httpContext = httpContext;
         }
 
-        public async Task DeleteTransactionHistoryAsync(string id)
-        {
-            TransactionHistory transactionHistory = await GetTransactionHistoryById(id);
-            await _transactionHistoryDal.SafeDeleteAsync(transactionHistory);
-        }
+        public TransactionHistory GetNewTransactionHistory(float amount, TransactionType transactionType, string description, Guid userId)
+            => new TransactionHistory()
+            {
+                Amount = amount,
+                TransactionType = transactionType,
+                Description = description,
+                AppUserId = userId
+            };
+        public void SetTransactionHistoryForOrder(Order order, float amount, string description, Guid userId)
+            => order.TransactionHistories = new List<TransactionHistory>()
+            {
+                GetNewTransactionHistory(amount, TransactionType.Order, description, userId)
+            };
 
-        public List<TransactionHistoryListDto> GetAllTransactionHistory(TransactionHistoryRequestFilter filters = null)
+        //sonra bakılacak
+        public void SetTransactionHistoryForPayment(Order order, float amount, string description, Guid userId)
+            => order.TransactionHistories = new List<TransactionHistory>()
+            {
+                GetNewTransactionHistory(amount, TransactionType.Payment, description, userId)
+            };
+
+        public async Task CreateTransactionHistoryAsync(TransactionHistory transactionHistory)
         {
-            var filteredResult = new TransactionHistoryFilterService().FilterTransactionHistory(_transactionHistoryDal.GetAll(), filters);
-            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
-            return _mapper.Map<List<TransactionHistoryListDto>>(filteredResult.ResponseValue);
+            await _transactionHistoryDal.AddAsync(transactionHistory);
         }
 
         public async Task UpdateTransactionHistoryAsync(TransactionHistoryUpdateDto transactionHistoryUpdateDto)
@@ -53,18 +61,6 @@ namespace TekhneCafe.Business.Concrete
                 throw new TransactionHistoryNotFoundException();
 
             return transactionHistory;
-        }
-        public async Task CreateOrderTransactionAsync(Guid userId, float amount)
-        {
-            TransactionHistory transaction = new TransactionHistory()
-            {
-                AppUserId = userId,
-                Amount = amount,
-                Description = "Sipariş verildi.",
-                TransactionType = TransactionType.Order,
-            };
-
-            await _transactionHistoryDal.AddAsync(transaction);
         }
     }
 }

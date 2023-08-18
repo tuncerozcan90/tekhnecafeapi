@@ -13,13 +13,11 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly IAppUserDal _userDal;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContext;
 
-        public AppUserManager(IAppUserDal userDal, IMapper mapper, IHttpContextAccessor httpContext)
+        public AppUserManager(IAppUserDal userDal, IMapper mapper)
         {
             _userDal = userDal;
             _mapper = mapper;
-            _httpContext = httpContext;
         }
 
         public List<AppUserListDto> GetUserList()
@@ -48,5 +46,8 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task CreateUserAsync(AppUser roleDto)
             => await _userDal.AddAsync(roleDto);
+
+        public async Task UpdateUserAsync(AppUser user)
+            => await _userDal.UpdateAsync(user);
     }
 }

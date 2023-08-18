@@ -32,7 +32,7 @@ namespace TekhneCafe.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Orders([FromQuery] string id)
         {
-            var order = await _orderService.GetOrderByIdAsync(id);
+            var order = await _orderService.GetOrderDetailById(id);
             return Ok(order);
         }
     }

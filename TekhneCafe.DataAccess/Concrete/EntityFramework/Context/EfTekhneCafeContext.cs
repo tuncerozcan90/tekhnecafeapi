@@ -18,7 +18,8 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseSqlServer("Server=.;Database=TEKHNECAFEDB;Trusted_Connection=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=192.168.254.224;Database=EfTekhneCafe;User Id=TekhneStars;Password=Tekhne1234;TrustServerCertificate=True;");
+            //optionsBuilder.UseSqlServer("Server:192.168.254.224;User:TekhneStarsPass:Tekhne1234;Db:EfTekhneCafe;");
             base.OnConfiguring(optionsBuilder);
         }
 

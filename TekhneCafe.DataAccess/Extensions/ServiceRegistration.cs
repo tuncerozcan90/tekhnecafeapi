@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.DataAccess.Concrete.EntityFramework;
 using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
+using TekhneCafe.DataAccess.Helpers.Transaction;
 
 namespace TekhneCafe.DataAccess.Extensions
 {
@@ -26,6 +27,7 @@ namespace TekhneCafe.DataAccess.Extensions
             services.AddScoped<IOrderProductAttributeDal, EfIOrderProductAttributeDal>();
             services.AddScoped<IOrderProductDal, EfOrderProductDal>();
             services.AddScoped<IOrderHistoryDal, EfOrderHistoryDal>();
+            services.AddScoped<ITransactionManagement, EfTransactionManagement>();
             #endregion
         }
     }
