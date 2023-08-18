@@ -8,6 +8,7 @@ namespace TekhneCafe.Business.Abstract
         List<AppUserListDto> GetUserList();
         Task<AppUser> GetUserByLdapIdAsync(string id);
         Task CreateUserAsync(AppUser roleDto);
-        Task GetUserByIdAsnyc(string id);
+        Task<AppUser> GetUserByIdAsync(string id);
+        Task UpdateUserAsync(AppUser user);
     }
 }

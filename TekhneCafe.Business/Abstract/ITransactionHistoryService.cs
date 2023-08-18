@@ -1,13 +1,13 @@
 ﻿using TekhneCafe.Entity.Concrete;
+using TekhneCafe.Entity.Enums;
 
 namespace TekhneCafe.Business.Abstract
 {
     public interface ITransactionHistoryService
     {
-        Task<TransactionHistory> GetTransactionHistoryByIdAsync(Guid orderId);
-        Task<List<TransactionHistory>> GetAllTransactionHistoryAsync();
+        void SetTransactionHistoryForOrder(Order order, float amount, string description, Guid userId);
+        void SetTransactionHistoryForPayment(Order order, float amount, string description, Guid userId);
+        TransactionHistory GetNewTransactionHistory(float amount, TransactionType transactionType, string description, Guid userId);
         Task CreateTransactionHistoryAsync(TransactionHistory transactionHistory);
-        Task UpdateTransactionHistoryAsync(TransactionHistory transactionHistory);
-        Task DeleteTransactionHistoryAsync(Guid transactionHistoryId);
     }
 }

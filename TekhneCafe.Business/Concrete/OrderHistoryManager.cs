@@ -39,11 +39,14 @@ namespace TekhneCafe.Business.Concrete
             return await GetOrderHistoryByIdAsync(orderHistoryId);
         }
 
-        public OrderHistory CreateOrderHistory(OrderStatus orderStatus)
+        public OrderHistory GetNewOrderHistory(OrderStatus orderStatus)
             => new()
             {
                 AppUserId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId()),
                 OrderStatus = orderStatus,
             };
+
+        public void SetOrderHistoryForOrder(Order order)
+            => order.OrderHistories = new List<OrderHistory>() { GetNewOrderHistory(OrderStatus.Ordered) };
     }
 }
