@@ -9,11 +9,27 @@ using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.EntityTypeConfigurations
 {
-    public class ProductConfiguration : IEntityTypeConfiguration<ProductConfiguration>
+    public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
-        public void Configure(EntityTypeBuilder<ProductConfiguration> builder)
+        public void Configure(EntityTypeBuilder<Product> builder)
         {
-            throw new NotImplementedException();
+            builder.ToTable("Product");
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
+            builder.Property(x => x.Price).IsRequired();
+            builder.Property(x => x.CreatedDate).IsRequired();
+
+            builder.Property(x => x.Description).HasMaxLength(200); 
+
+            builder.HasMany(x => x.Images)
+                   .WithOne(x => x.Product)
+                   .HasForeignKey(x => x.ProductId)
+                   .OnDelete(DeleteBehavior.Cascade); 
+
+            builder.HasMany(x => x.ProductAttributes)
+                   .WithOne(x => x.Product)
+                   .HasForeignKey(x => x.ProductId);
         }
     }
 }

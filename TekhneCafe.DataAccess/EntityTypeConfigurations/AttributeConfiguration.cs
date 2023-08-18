@@ -13,7 +13,7 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Entity.Concrete.Attribute> builder)
         {
-            builder.ToTable("Attributes");
+            builder.ToTable("Attribute");
             builder.HasKey(x => x.Id);
 
             
