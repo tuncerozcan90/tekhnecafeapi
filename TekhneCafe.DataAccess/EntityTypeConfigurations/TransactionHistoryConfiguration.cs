@@ -13,7 +13,7 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<TransactionHistory> builder)
         {
-            builder.ToTable("TransactionHistories");
+            builder.ToTable("TransactionHistory");
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Amount).IsRequired();
