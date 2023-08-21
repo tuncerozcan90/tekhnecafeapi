@@ -15,16 +15,16 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         {
 
             builder.ToTable("OrderProductAttribute");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
 
-            builder.Property(x => x.ProductAttributeId).IsRequired();
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.Price).IsRequired();
-            builder.Property(x => x.Quantity).IsRequired();
+            builder.Property(_ => _.ProductAttributeId).IsRequired();
+            builder.Property(_ => _.Name).IsRequired().HasMaxLength(100);
+            builder.Property(_ => _.Price).IsRequired();
+            builder.Property(_ => _.Quantity).IsRequired();
 
-            builder.HasOne(x => x.OrderProduct)
-                   .WithMany(x => x.OrderProductAttributes)
-                   .HasForeignKey(x => x.OrderProductId)
+            builder.HasOne(_ => _.OrderProduct)
+                   .WithMany(_ => _.OrderProductAttributes)
+                   .HasForeignKey(_ => _.OrderProductId)
                    .OnDelete(DeleteBehavior.Cascade); 
         }
     }

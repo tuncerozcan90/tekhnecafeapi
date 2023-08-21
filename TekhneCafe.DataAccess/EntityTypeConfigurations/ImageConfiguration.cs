@@ -14,18 +14,18 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Entity.Concrete.Image> builder)
         {
             builder.ToTable("Image");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
 
             
-            builder.Property(x => x.Path).HasMaxLength(255).IsRequired();
+            builder.Property(_ => _.Path).HasMaxLength(255).IsRequired();
 
             
-            builder.Property(x => x.ProductId).IsRequired();
+            builder.Property(_ => _.ProductId).IsRequired();
 
             
-            builder.HasOne(x => x.Product)
+            builder.HasOne(_ => _.Product)
                    .WithMany(p => p.Images)
-                   .HasForeignKey(x => x.ProductId);
+                   .HasForeignKey(_ => _.ProductId);
         }
     }
 }

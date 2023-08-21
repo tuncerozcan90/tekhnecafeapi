@@ -13,19 +13,19 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<OrderHistory> builder)
         {
-            builder.ToTable("OrderHistorie");
-            builder.HasKey(x => x.Id);
+            builder.ToTable("OrderHistory");
+            builder.HasKey(_ => _.Id);
 
-            builder.Property(x => x.AppUserId).IsRequired();
-            builder.Property(x => x.OrderId).IsRequired();
-            builder.Property(x => x.OrderStatus).IsRequired();
+            builder.Property(_ => _.AppUserId).IsRequired();
+            builder.Property(_ => _.OrderId).IsRequired();
+            builder.Property(_ => _.OrderStatus).IsRequired();
 
-            builder.HasOne(x => x.Order)
+            builder.HasOne(_ => _.Order)
                    .WithMany()
-                   .HasForeignKey(x => x.OrderId)
+                   .HasForeignKey(_ => _.OrderId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Property(x => x.CreatedDate).IsRequired();
+            builder.Property(_ => _.CreatedDate).IsRequired();
         }
     }
 }

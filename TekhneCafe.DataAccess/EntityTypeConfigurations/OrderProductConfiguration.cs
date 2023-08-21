@@ -14,21 +14,22 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<OrderProduct> builder)
         {
             builder.ToTable("OrderProduct");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
 
-            builder.Property(x => x.ProductId).IsRequired();
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.Price).IsRequired();
-            builder.Property(x => x.Quantity).IsRequired();
+            builder.Property(_ => _.ProductId).IsRequired();
+            builder.Property(_ => _.Name).IsRequired().HasMaxLength(100);
+            builder.Property(_ => _.Price).IsRequired();
+            builder.Property(_ => _.Quantity).IsRequired();
+            builder.Property(_ => _.Description).IsRequired().HasMaxLength(200);
 
-            builder.HasOne(x => x.Order)
-                   .WithMany(x => x.OrderProducts)
-                   .HasForeignKey(x => x.OrderId)
+            builder.HasOne(_ => _.Order)
+                   .WithMany(_ => _.OrderProducts)
+                   .HasForeignKey(_ => _.OrderId)
                    .OnDelete(DeleteBehavior.Cascade); 
 
-            builder.HasMany(x => x.OrderProductAttributes)
-                   .WithOne(x => x.OrderProduct)
-                   .HasForeignKey(x => x.OrderProductId);
+            builder.HasMany(_ => _.OrderProductAttributes)
+                   .WithOne(_ => _.OrderProduct)
+                   .HasForeignKey(_ => _.OrderProductId);
         }
     }
 }

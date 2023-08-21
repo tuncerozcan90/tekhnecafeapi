@@ -14,15 +14,15 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Notification> builder)
         {
             builder.ToTable("Notification");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
 
-            builder.Property(x => x.To).HasMaxLength(100).IsRequired();
-            builder.Property(x => x.From).HasMaxLength(100).IsRequired();
-            builder.Property(x => x.Message).IsRequired();
+            builder.Property(_ => _.To).HasMaxLength(100).IsRequired();
+            builder.Property(_ => _.From).HasMaxLength(100).IsRequired();
+            builder.Property(_ => _.Message).IsRequired().HasMaxLength(150);
 
-            builder.Property(x => x.CreatedDate).HasDefaultValue(DateTime.Now).IsRequired();
+            builder.Property(_ => _.CreatedDate).HasDefaultValue(DateTime.Now).IsRequired();
 
-            builder.Property(x => x.DeletedDate).IsRequired(false);
+            builder.Property(_ => _.DeletedDate).IsRequired(false);
         }
     }
 }
