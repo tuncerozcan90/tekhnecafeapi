@@ -17,7 +17,7 @@ namespace TekhneCafe.DataAccess.Helpers.Transaction
         public async Task CommitTransactionAsync()
             => await _context.Database.CommitTransactionAsync();
 
-        public async Task RollbackTransactionAsync()
-            => await _context.Database.RollbackTransactionAsync();
+        public void RollbackTransactionAsync()
+            => _context.Database.RollbackTransaction();
     }
 }

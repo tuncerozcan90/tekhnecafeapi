@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using TekhneCafe.Core.DTOs.Transaction;
-using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Mappers
 {
@@ -8,7 +6,6 @@ namespace TekhneCafe.Business.Mappers
     {
         public TransactionHistoryProfile()
         {
-            CreateMap<TransactionHistoryAddDto, TransactionHistory>();
         }
     }
 }

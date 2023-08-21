@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Core.DTOs.Transaction;
 using TekhneCafe.Core.Exceptions.TransactionHistory;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
@@ -13,7 +11,6 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly ITransactionHistoryDal _transactionHistoryDal;
         private readonly IMapper _mapper;
-
 
         public TransactionHistoryManager(ITransactionHistoryDal transactionHistoryDal, IMapper mapper)
         {
@@ -29,29 +26,17 @@ namespace TekhneCafe.Business.Concrete
                 Description = description,
                 AppUserId = userId
             };
+
         public void SetTransactionHistoryForOrder(Order order, float amount, string description, Guid userId)
-            => order.TransactionHistories = new List<TransactionHistory>()
-            {
-                GetNewTransactionHistory(amount, TransactionType.Order, description, userId)
-            };
+            => order.TransactionHistories = new List<TransactionHistory>() { GetNewTransactionHistory(amount, TransactionType.Order, description, userId) };
 
-        //sonra bakılacak
         public void SetTransactionHistoryForPayment(Order order, float amount, string description, Guid userId)
-            => order.TransactionHistories = new List<TransactionHistory>()
-            {
-                GetNewTransactionHistory(amount, TransactionType.Payment, description, userId)
-            };
+            => order.TransactionHistories = new List<TransactionHistory>() { GetNewTransactionHistory(amount, TransactionType.Payment, description, userId) };
 
-        public async Task CreateTransactionHistoryAsync(TransactionHistory transactionHistory)
+        public async Task CreateTransactionHistoryAsync(float amount, TransactionType transactionType, string description, Guid userId)
         {
+            var transactionHistory = GetNewTransactionHistory(amount, transactionType, description, userId);
             await _transactionHistoryDal.AddAsync(transactionHistory);
-        }
-
-        public async Task UpdateTransactionHistoryAsync(TransactionHistoryUpdateDto transactionHistoryUpdateDto)
-        {
-            TransactionHistory transactionHistory = await GetTransactionHistoryById(transactionHistoryUpdateDto.Id);
-            _mapper.Map(transactionHistoryUpdateDto, transactionHistory);
-            await _transactionHistoryDal.UpdateAsync(transactionHistory);
         }
 
         private async Task<TransactionHistory> GetTransactionHistoryById(string id)
@@ -61,6 +46,11 @@ namespace TekhneCafe.Business.Concrete
                 throw new TransactionHistoryNotFoundException();
 
             return transactionHistory;
+        }
+
+        public void GetAllTransactionHistories()
+        {
+
         }
     }
 }
