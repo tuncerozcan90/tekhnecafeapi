@@ -16,7 +16,7 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.Property(_ => _.OrderStatus).IsRequired();
 
             builder.HasOne(_ => _.Order)
-                   .WithMany()
+                   .WithMany(_ => _.OrderHistories)
                    .HasForeignKey(_ => _.OrderId)
                    .OnDelete(DeleteBehavior.Restrict);
 

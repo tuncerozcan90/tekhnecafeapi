@@ -26,15 +26,13 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.Property(_ => _.Phone).HasMaxLength(15);
             builder.Property(_ => _.InternalPhone).HasMaxLength(20);
 
-            builder.Property(_ => _.ImagePath).HasMaxLength(270);
+            builder.Property(_ => _.ImagePath).HasMaxLength(300);
 
             builder.Property(x => x.CreatedDate).HasDefaultValue(DateTime.Now);
 
-            builder.Property(_ => _.Wallet).HasDefaultValue(0.0);
-
             builder.HasMany(_ => _.TransactionHistories)
-                   .WithOne()
-                   .HasForeignKey(th => th.AppUserId);
+                   .WithOne(_ => _.AppUser)
+                   .HasForeignKey(_ => _.AppUserId);
         }
     }
 }
