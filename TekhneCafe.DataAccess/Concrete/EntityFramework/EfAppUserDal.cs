@@ -8,6 +8,11 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfAppUserDal : EfEntityRepositoryBase<AppUser, EfTekhneCafeContext>, IAppUserDal
     {
+        public EfAppUserDal(EfTekhneCafeContext context) : base(context)
+        {
+
+        }
+
         public Task GetByIdAsync(ClaimsPrincipal username)
         {
             throw new NotImplementedException();

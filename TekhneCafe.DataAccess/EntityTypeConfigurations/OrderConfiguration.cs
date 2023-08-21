@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.EntityTypeConfigurations
@@ -14,25 +9,25 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.ToTable("Order");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
+            builder.ToTable(_ => _.HasCheckConstraint("Order_Price_NonNegative", "TotalPrice >= 0"));
 
-            builder.Property(x => x.TotalPrice).IsRequired();
-            builder.Property(x => x.CreatedDate).IsRequired();
-            builder.Property(x => x.Description).HasMaxLength(200);
+            builder.Property(_ => _.TotalPrice).IsRequired();
+            builder.Property(_ => _.Description).HasMaxLength(200);
 
-            builder.Property(x => x.AppUserId).IsRequired();
+            builder.Property(_ => _.AppUserId).IsRequired();
 
-            builder.HasMany(x => x.OrderHistories)
-                   .WithOne(x => x.Order)
-                   .HasForeignKey(x => x.OrderId);
+            builder.HasMany(_ => _.OrderHistories)
+                   .WithOne(_ => _.Order)
+                   .HasForeignKey(_ => _.OrderId);
 
-            builder.HasMany(x => x.TransactionHistories)
-                   .WithOne(x => x.Order)
-                   .HasForeignKey(x => x.OrderId);
+            builder.HasMany(_ => _.TransactionHistories)
+                   .WithOne(_ => _.Order)
+                   .HasForeignKey(_ => _.OrderId);
 
-            builder.HasMany(x => x.OrderProducts)
-                   .WithOne(x => x.Order)
-                   .HasForeignKey(x => x.OrderId);
+            builder.HasMany(_ => _.OrderProducts)
+                   .WithOne(_ => _.Order)
+                   .HasForeignKey(_ => _.OrderId);
         }
     }
 }

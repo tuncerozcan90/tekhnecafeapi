@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.EntityTypeConfigurations
@@ -14,22 +9,23 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.ToTable("Product");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
 
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.Price).IsRequired();
-            builder.Property(x => x.CreatedDate).IsRequired();
+            builder.Property(_ => _.Name).IsRequired().HasMaxLength(100);
+            builder.Property(_ => _.Price).IsRequired();
+            builder.ToTable(_ => _.HasCheckConstraint("Product_Price_NonNegative", "Price >= 0"));
+            builder.Property(_ => _.CreatedDate).IsRequired();
 
-            builder.Property(x => x.Description).HasMaxLength(200); 
+            builder.Property(_ => _.Description).HasMaxLength(200);
 
-            builder.HasMany(x => x.Images)
-                   .WithOne(x => x.Product)
-                   .HasForeignKey(x => x.ProductId)
-                   .OnDelete(DeleteBehavior.Cascade); 
+            builder.HasMany(_ => _.Images)
+                   .WithOne(_ => _.Product)
+                   .HasForeignKey(_ => _.ProductId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(x => x.ProductAttributes)
-                   .WithOne(x => x.Product)
-                   .HasForeignKey(x => x.ProductId);
+            builder.HasMany(_ => _.ProductAttributes)
+                   .WithOne(_ => _.Product)
+                   .HasForeignKey(_ => _.ProductId);
         }
     }
 }

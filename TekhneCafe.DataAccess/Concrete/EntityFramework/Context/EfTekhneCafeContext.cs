@@ -6,6 +6,7 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
 {
     public class EfTekhneCafeContext : DbContext
     {
+        public Guid Guid { get; set; }
         public EfTekhneCafeContext(DbContextOptions<EfTekhneCafeContext> options) : base(options)
         {
             this.ChangeTracker.LazyLoadingEnabled = false;

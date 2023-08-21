@@ -43,8 +43,8 @@ namespace TekhneCafe.Business.Concrete
             return appUser;
         }
 
-        public async Task CreateUserAsync(AppUser roleDto)
-            => await _userDal.AddAsync(roleDto);
+        public async Task CreateUserAsync(AppUser userDto)
+            => await _userDal.AddAsync(userDto);
 
         public async Task UpdateUserAsync(AppUser user)
             => await _userDal.UpdateAsync(user);

@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Core.Exceptions.TransactionHistory;
+using TekhneCafe.Business.Helpers.FilterServices;
+using TekhneCafe.Business.Helpers.HeaderServices;
+using TekhneCafe.Core.DTOs.Transaction;
+using TekhneCafe.Core.Filters.Transaction;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 using TekhneCafe.Entity.Enums;
@@ -11,11 +15,13 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly ITransactionHistoryDal _transactionHistoryDal;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public TransactionHistoryManager(ITransactionHistoryDal transactionHistoryDal, IMapper mapper)
+        public TransactionHistoryManager(ITransactionHistoryDal transactionHistoryDal, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _transactionHistoryDal = transactionHistoryDal;
             _mapper = mapper;
+            _httpContext = httpContext;
         }
 
         public TransactionHistory GetNewTransactionHistory(float amount, TransactionType transactionType, string description, Guid userId)
@@ -30,27 +36,25 @@ namespace TekhneCafe.Business.Concrete
         public void SetTransactionHistoryForOrder(Order order, float amount, string description, Guid userId)
             => order.TransactionHistories = new List<TransactionHistory>() { GetNewTransactionHistory(amount, TransactionType.Order, description, userId) };
 
-        public void SetTransactionHistoryForPayment(Order order, float amount, string description, Guid userId)
-            => order.TransactionHistories = new List<TransactionHistory>() { GetNewTransactionHistory(amount, TransactionType.Payment, description, userId) };
-
         public async Task CreateTransactionHistoryAsync(float amount, TransactionType transactionType, string description, Guid userId)
         {
             var transactionHistory = GetNewTransactionHistory(amount, transactionType, description, userId);
             await _transactionHistoryDal.AddAsync(transactionHistory);
         }
 
-        private async Task<TransactionHistory> GetTransactionHistoryById(string id)
+        public List<TransactionHistoryListDto> GetAllTransactionHistories(TransactionHistoryRequestFilter filters)
         {
-            TransactionHistory transactionHistory = await _transactionHistoryDal.GetByIdAsync(Guid.Parse(id));
-            if (transactionHistory is null)
-                throw new TransactionHistoryNotFoundException();
-
-            return transactionHistory;
+            var filteredResult = new TransactionHistoryFilterService().FilterTransactionHistory(_transactionHistoryDal.GetAll(), filters);
+            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            return _mapper.Map<List<TransactionHistoryListDto>>(filteredResult.ResponseValue);
         }
 
-        public void GetAllTransactionHistories()
+        public List<TransactionHistoryListDto> GetOrderTransactionHistory(TransactionHistoryRequestFilter filters)
         {
-
+            var result = _transactionHistoryDal.GetOrderTransactionHistoriesIncludeAll();
+            var filteredResult = new TransactionHistoryFilterService().FilterTransactionHistory(result, filters);
+            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            return _mapper.Map<List<TransactionHistoryListDto>>(filteredResult.ResponseValue);
         }
     }
 }

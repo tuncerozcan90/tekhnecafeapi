@@ -7,5 +7,9 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfNotificationDal : EfEntityRepositoryBase<Notification, EfTekhneCafeContext>, INotificationDal
     {
+        public EfNotificationDal(EfTekhneCafeContext context) : base(context)
+        {
+
+        }
     }
 }

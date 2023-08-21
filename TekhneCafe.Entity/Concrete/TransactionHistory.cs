@@ -10,8 +10,8 @@ namespace TekhneCafe.Entity.Concrete
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public Guid? OrderId { get; set; }
         public Guid AppUserId { get; set; }
-        public virtual AppUser AppUser { get; set; }
-        public virtual Order? Order { get; set; }
-        public virtual TransactionType TransactionType { get; set; }
+        public AppUser AppUser { get; set; }
+        public Order? Order { get; set; }
+        public TransactionType TransactionType { get; set; }
     }
 }

@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.EntityTypeConfigurations
@@ -15,17 +10,18 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         {
 
             builder.ToTable("OrderProductAttribute");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
 
-            builder.Property(x => x.ProductAttributeId).IsRequired();
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.Price).IsRequired();
-            builder.Property(x => x.Quantity).IsRequired();
+            builder.Property(_ => _.ProductAttributeId).IsRequired();
+            builder.Property(_ => _.Name).IsRequired().HasMaxLength(100);
+            builder.Property(_ => _.Price).IsRequired();
+            builder.ToTable(_ => _.HasCheckConstraint("Order_Price_NonNegative", "Price >= 0"));
+            builder.Property(_ => _.Quantity).IsRequired();
 
-            builder.HasOne(x => x.OrderProduct)
-                   .WithMany(x => x.OrderProductAttributes)
-                   .HasForeignKey(x => x.OrderProductId)
-                   .OnDelete(DeleteBehavior.Cascade); 
+            builder.HasOne(_ => _.OrderProduct)
+                   .WithMany(_ => _.OrderProductAttributes)
+                   .HasForeignKey(_ => _.OrderProductId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

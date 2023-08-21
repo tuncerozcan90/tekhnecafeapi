@@ -1,11 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.EntityTypeConfigurations
 {
@@ -14,18 +8,15 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Entity.Concrete.Image> builder)
         {
             builder.ToTable("Image");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
 
-            
-            builder.Property(x => x.Path).HasMaxLength(255).IsRequired();
+            builder.Property(_ => _.Path).HasMaxLength(300).IsRequired();
 
-            
-            builder.Property(x => x.ProductId).IsRequired();
+            builder.Property(_ => _.ProductId).IsRequired();
 
-            
-            builder.HasOne(x => x.Product)
-                   .WithMany(p => p.Images)
-                   .HasForeignKey(x => x.ProductId);
+            builder.HasOne(_ => _.Product)
+                   .WithMany(_ => _.Images)
+                   .HasForeignKey(_ => _.ProductId);
         }
     }
 }

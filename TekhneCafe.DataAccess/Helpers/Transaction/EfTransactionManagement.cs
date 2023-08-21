@@ -1,4 +1,5 @@
-﻿using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 
 namespace TekhneCafe.DataAccess.Helpers.Transaction
 {
@@ -11,13 +12,13 @@ namespace TekhneCafe.DataAccess.Helpers.Transaction
             _context = context;
         }
 
-        public async Task BeginTransactionAsync()
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
             => await _context.Database.BeginTransactionAsync();
 
         public async Task CommitTransactionAsync()
             => await _context.Database.CommitTransactionAsync();
 
-        public void RollbackTransactionAsync()
-            => _context.Database.RollbackTransaction();
+        public async Task RollbackTransactionAsync()
+            => await _context.Database.RollbackTransactionAsync();
     }
 }

@@ -69,8 +69,9 @@ app.UseExceptionHandler(
             {
                 context.Response.StatusCode = exceptionObject.Error switch
                 {
-                    BadRequestException exception => StatusCodes.Status400BadRequest,
-                    NotFoundException exception => StatusCodes.Status404NotFound,
+                    BadRequestException ex => StatusCodes.Status400BadRequest,
+                    NotFoundException ex => StatusCodes.Status404NotFound,
+                    ForbiddenException ex => StatusCodes.Status403Forbidden,
                     InternalServerErrorException exception => StatusCodes.Status500InternalServerError,
                     _ => 999999
                 };
