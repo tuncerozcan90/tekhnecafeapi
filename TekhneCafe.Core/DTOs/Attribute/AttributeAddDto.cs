@@ -6,6 +6,6 @@ namespace TekhneCafe.Core.DTOs.Attribute
     {
         public string Name { get; set; }
         public float Price { get; set; }
-        public virtual ICollection<ProductAttributeAddDto> ProductAttributes { get; set; }
+        //public  ICollection<ProductAttributeAddDto>? ProductAttributes { get; set; }
     }
 }

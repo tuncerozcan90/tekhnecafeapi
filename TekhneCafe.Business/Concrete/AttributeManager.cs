@@ -30,7 +30,7 @@ namespace TekhneCafe.Business.Concrete
         }
         public List<AttributeListDto> GetAllAttributeAsync()
         {
-            var attribute = _attributeDal.GetAll();
+            var attribute = _attributeDal.GetAll(_=>!_.IsDeleted);
             return _mapper.Map<List<AttributeListDto>>(attribute);
         }
 
@@ -42,7 +42,23 @@ namespace TekhneCafe.Business.Concrete
 
             return attribute;
         }
-
+        public async Task DeleteAttributeAsync(string id)
+        {
+            ProductAttributes.Attribute attribute = await _attributeDal.GetByIdAsync(Guid.Parse(id));
+            if (attribute is null)
+                throw new AttributeNotFoundException();
+            attribute.IsDeleted = true;
+            await _attributeDal.SafeDeleteAsync(attribute);
+        }
+        public async Task UpdateAttributeAsync( AttributeUpdateDto attributeUpdateDto)
+        {
+            ProductAttributes.Attribute attribute = await _attributeDal.GetByIdAsync(Guid.Parse(attributeUpdateDto.Id));
+            if (attribute is null)
+                throw new AttributeNotFoundException();
+            attribute.Name = attributeUpdateDto.Name;
+            attribute.Price = attributeUpdateDto.Price;
+            await _attributeDal.UpdateAsync(attribute);
+        }
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.DTOs.Attribute;
+using TekhneCafe.Core.Exceptions.Attribute;
 
 namespace TekhneCafe.Api.Controllers
 {
@@ -59,5 +60,23 @@ namespace TekhneCafe.Api.Controllers
             var attribute = await _attributeService.GetAttributeByIdAsync(id);
             return Ok(attribute);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAttribute(string id)
+        {
+           
+              await _attributeService.DeleteAttributeAsync(id);
+            return(Ok("Attribute deleted successfully."));
+
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateAttribute([FromBody] AttributeUpdateDto attributeUpdateDto)
+        {
+           
+                await _attributeService.UpdateAttributeAsync(attributeUpdateDto);
+                return Ok("Attribute updated successfully.");
+        }
+
+
     }
 }
