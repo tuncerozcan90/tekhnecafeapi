@@ -10,7 +10,7 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
     {
         private readonly IOrderProductAttributeDal _orderProductAttributeDal;
 
-        public EfOrderProductDal(IOrderProductAttributeDal orderProductAttributeDal)
+        public EfOrderProductDal(IOrderProductAttributeDal orderProductAttributeDal, EfTekhneCafeContext context) : base(context)
         {
             _orderProductAttributeDal = orderProductAttributeDal;
         }

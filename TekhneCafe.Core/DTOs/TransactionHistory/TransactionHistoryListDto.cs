@@ -10,7 +10,6 @@ namespace TekhneCafe.Core.DTOs.Transaction
         public DateTime CreatedDate { get; set; }
         public Guid? OrderId { get; set; }
         public Guid AppUserId { get; set; }
-        public string FullName { get; set; }
         public OrderListDto? Order { get; set; }
         public string TransactionType { get; set; }
     }

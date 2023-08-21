@@ -18,23 +18,21 @@ namespace TekhneCafe.Business.Concrete
             return user.Wallet;
         }
 
-        public async Task<bool> AddToWalletAsync(Guid userId, float amount)
+        public async Task AddToWalletAsync(Guid userId, float amount)
         {
             var user = await _userService.GetUserByIdAsync(userId.ToString());
             user.Wallet += amount;
             await UpdateWalletAsync(user);
-            return true;
         }
 
-        public async Task<bool> WithdrawFromWalletAsync(Guid userId, float amount)
+        public async Task WithdrawFromWalletAsync(Guid userId, float amount)
         {
             var user = await _userService.GetUserByIdAsync(userId.ToString());
             user.Wallet -= amount;
             await UpdateWalletAsync(user);
-            return true;
         }
 
-        public async Task<float> GetTotalWalletBalanceAsync()
+        public float GetTotalWalletBalance()
         {
             var users = _userService.GetUserList();
             float totalBalance = users.Sum(user => user.Wallet);

@@ -7,5 +7,9 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfProductDal : EfEntityRepositoryBase<Product, EfTekhneCafeContext>, IProductDal
     {
+        public EfProductDal(EfTekhneCafeContext context) : base(context)
+        {
+
+        }
     }
 }

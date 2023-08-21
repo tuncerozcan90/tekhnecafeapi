@@ -7,5 +7,9 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfOrderHistoryDal : EfEntityRepositoryBase<OrderHistory, EfTekhneCafeContext>, IOrderHistoryDal
     {
+        public EfOrderHistoryDal(EfTekhneCafeContext context) : base(context)
+        {
+
+        }
     }
 }

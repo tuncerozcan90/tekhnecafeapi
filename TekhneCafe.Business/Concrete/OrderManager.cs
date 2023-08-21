@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Extensions;
+using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Order;
 using TekhneCafe.Core.Exceptions;
+using TekhneCafe.Core.Exceptions.Order;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.DataAccess.Helpers.Transaction;
 using TekhneCafe.Entity.Concrete;
@@ -40,19 +42,8 @@ namespace TekhneCafe.Business.Concrete
             Order order = _mapper.Map<Order>(orderAddDto);
             var validOrder = await GetValidOrderAsync(order);
             if (validOrder is null)
-                throw new BadRequestException("Geçersiz sepet!");
-            await _transactionManagement.BeginTransactionAsync();
-            try
-            {
-                await CreateOrderWhenValidAsync(order);
-            }
-            catch (Exception ex)
-            {
-                _transactionManagement.RollbackTransactionAsync();
-                throw new InternalServerErrorException(ex.Message);
-            }
-
-            await _transactionManagement.CommitTransactionAsync();
+                throw new OrderBadRequestException("Unproccessable order!");
+            await CreateOrderWhenValidAsync(order);
         }
 
         public async Task<Order> GetValidOrderAsync(Order order)
@@ -65,30 +56,53 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task CreateOrderWhenValidAsync(Order order)
         {
-            float orderTotalPrice = GetOrderTotalPrice(order);
-            order.AppUserId = Guid.Parse(_httpContext.User.ActiveUserId());
-            order.TotalPrice = orderTotalPrice;
-            _transactionHistoryService.SetTransactionHistoryForOrder(order, orderTotalPrice, $"Sipariş verildi.", order.AppUserId);
-            _orderHistoryService.SetOrderHistoryForOrder(order);
-            await _orderDal.AddAsync(order);
+            using (var result = await _transactionManagement.BeginTransactionAsync())
+            {
+                float orderTotalPrice = GetOrderTotalPrice(order);
+                order.AppUserId = Guid.Parse(_httpContext.User.ActiveUserId());
+                order.TotalPrice = orderTotalPrice;
+                _transactionHistoryService.SetTransactionHistoryForOrder(order, orderTotalPrice, $"Sipariş verildi.", order.AppUserId);
+                _orderHistoryService.SetOrderHistoryForOrder(order);
+                try
+                {
+                    await _orderDal.AddAsync(order);
+                    result.Commit();
+                }
+                catch (Exception ex)
+                {
+                    throw new InternalServerErrorException("Unexpected error occured! Please try again.");
+                }
+            }
         }
 
         public async Task ConfirmOrderAsync(string id)
         {
             var order = await _orderDal.GetByIdAsync(Guid.Parse(id));
-            if (order is null)
-                throw new BadRequestException("Sipariş bulunamadı.");
+            ThrowErrorIfOrderNotFound(order);
             order.OrderStatus = OrderStatus.OrderConfirmed;
             _orderHistoryService.SetOrderHistoryForOrder(order);
-            await _walletService.WithdrawFromWalletAsync(order.AppUserId, order.TotalPrice);
-            await _orderDal.UpdateAsync(order);
+            using (var result = await _transactionManagement.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _walletService.WithdrawFromWalletAsync(order.AppUserId, order.TotalPrice);
+                    await _orderDal.UpdateAsync(order);
+                    result.Commit();
+                }
+                catch (Exception)
+                {
+                    throw new InternalServerErrorException("Unexpected error occured! Please try again.");
+                }
+            }
         }
 
         public async Task<OrderListDto> GetOrderDetailById(string id)
         {
             Order order = await _orderDal.GetOrderIncludeProductsAsync(id);
-            if (order is null)
-                throw new NotFoundException("Order Not Found!");
+            ThrowErrorIfOrderNotFound(order);
+            if (!IsActiveUsersOrder(order) && !_httpContext.User.IsInAnyRoles(RoleConsts.CafeService, RoleConsts.CafeAdmin))
+                throw new ForbiddenException();
+
             return _mapper.Map<OrderListDto>(order);
         }
 
@@ -103,6 +117,15 @@ namespace TekhneCafe.Business.Concrete
             }
 
             return totalPrice;
+        }
+
+        private bool IsActiveUsersOrder(Order order)
+            => order.AppUserId == Guid.Parse(_httpContext.User.ActiveUserId());
+
+        private void ThrowErrorIfOrderNotFound(Order order)
+        {
+            if (order is null)
+                throw new OrderNotFoundException();
         }
     }
 }

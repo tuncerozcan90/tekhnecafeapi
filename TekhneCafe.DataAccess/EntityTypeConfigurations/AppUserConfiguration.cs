@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.EntityTypeConfigurations
@@ -33,7 +28,7 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
 
             builder.Property(_ => _.ImagePath).HasMaxLength(270);
 
-            builder.Property(_ => _.CreatedDate).HasDefaultValue(DateTime.Now);
+            builder.Property(x => x.CreatedDate).HasDefaultValue(DateTime.Now);
 
             builder.Property(_ => _.Wallet).HasDefaultValue(0.0);
 

@@ -6,6 +6,6 @@ namespace TekhneCafe.Core.DTOs.Order
     {
 
         public string? Description { get; set; }
-        public virtual ICollection<OrderProductAddDto> OrderProducts { get; set; }
+        public ICollection<OrderProductAddDto> OrderProducts { get; set; }
     }
 }

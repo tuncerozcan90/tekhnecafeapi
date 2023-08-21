@@ -29,41 +29,57 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2023, 8, 21, 15, 47, 43, 403, DateTimeKind.Local).AddTicks(3057));
 
                     b.Property<string>("Department")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ImagePath")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("InternalPhone")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<Guid>("LdapId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<float>("Wallet")
-                        .HasColumnType("real");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("real")
+                        .HasDefaultValue(0f);
 
                     b.HasKey("Id");
 
-                    b.ToTable("AppUser");
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("AppUser", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Attribute", b =>
@@ -77,14 +93,20 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<float>("Price")
-                        .HasColumnType("real");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("real")
+                        .HasDefaultValue(0f);
 
                     b.HasKey("Id");
 
-                    b.ToTable("Attribute");
+                    b.ToTable("Attribute", null, t =>
+                        {
+                            t.HasCheckConstraint("Attribute_Price_NonNegative", "Price >= 0");
+                        });
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Image", b =>
@@ -95,7 +117,8 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.Property<string>("Path")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -104,7 +127,7 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Image", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Notification", b =>
@@ -114,14 +137,17 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2023, 8, 21, 15, 47, 43, 403, DateTimeKind.Local).AddTicks(5992));
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("From")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -129,11 +155,12 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.Property<string>("To")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notification", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Order", b =>
@@ -149,7 +176,8 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
@@ -159,7 +187,10 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Order");
+                    b.ToTable("Order", null, t =>
+                        {
+                            t.HasCheckConstraint("Order_Price_NonNegative", "TotalPrice >= 0");
+                        });
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.OrderHistory", b =>
@@ -184,7 +215,7 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderHistory");
+                    b.ToTable("OrderHistory", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.OrderProduct", b =>
@@ -194,11 +225,13 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
@@ -216,7 +249,7 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderProduct");
+                    b.ToTable("OrderProduct", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.OrderProductAttribute", b =>
@@ -227,7 +260,8 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("OrderProductId")
                         .HasColumnType("uniqueidentifier");
@@ -245,7 +279,11 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasIndex("OrderProductId");
 
-                    b.ToTable("OrderProductAttribute");
+                    b.ToTable("OrderProductAttribute", null, t =>
+                        {
+                            t.HasCheckConstraint("Order_Price_NonNegative", "Price >= 0")
+                                .HasName("Order_Price_NonNegative1");
+                        });
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Product", b =>
@@ -258,7 +296,8 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -268,14 +307,18 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product");
+                    b.ToTable("Product", null, t =>
+                        {
+                            t.HasCheckConstraint("Product_Price_NonNegative", "Price >= 0");
+                        });
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.ProductAttribute", b =>
@@ -302,7 +345,7 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductAttribute");
+                    b.ToTable("ProductAttribute", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.TransactionHistory", b =>
@@ -335,7 +378,7 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("TransactionHistory");
+                    b.ToTable("TransactionHistory", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Image", b =>
@@ -354,7 +397,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.HasOne("TekhneCafe.Entity.Concrete.Order", "Order")
                         .WithMany("OrderHistories")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -406,12 +449,13 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.HasOne("TekhneCafe.Entity.Concrete.AppUser", "AppUser")
                         .WithMany("TransactionHistories")
                         .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TekhneCafe.Entity.Concrete.Order", "Order")
                         .WithMany("TransactionHistories")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AppUser");
 

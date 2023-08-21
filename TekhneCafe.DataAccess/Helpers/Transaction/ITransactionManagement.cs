@@ -1,9 +1,11 @@
-﻿namespace TekhneCafe.DataAccess.Helpers.Transaction
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace TekhneCafe.DataAccess.Helpers.Transaction
 {
     public interface ITransactionManagement
     {
-        Task BeginTransactionAsync();
+        Task<IDbContextTransaction> BeginTransactionAsync();
         Task CommitTransactionAsync();
-        void RollbackTransactionAsync();
+        Task RollbackTransactionAsync();
     }
 }

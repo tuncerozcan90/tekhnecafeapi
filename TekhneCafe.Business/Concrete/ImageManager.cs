@@ -1,6 +1,4 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Helpers.FilterServices;

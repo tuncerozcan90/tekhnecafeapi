@@ -19,9 +19,9 @@ namespace TekhneCafe.Api.Extensions
             #region Swagger Configuration
             services.AddSwaggerGen(config =>
             {
-                config.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
-                { 
-                    Title = "TekhneCafe API", 
+                config.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "TekhneCafe API",
                     Version = "v1",
                     Description = "An API for TekhneCafe",
                 });

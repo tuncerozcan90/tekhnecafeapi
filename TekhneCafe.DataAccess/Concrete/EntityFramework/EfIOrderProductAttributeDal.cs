@@ -8,7 +8,7 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfIOrderProductAttributeDal : EfEntityRepositoryBase<OrderProductAttribute, EfTekhneCafeContext>, IOrderProductAttributeDal
     {
-        public EfIOrderProductAttributeDal()
+        public EfIOrderProductAttributeDal(EfTekhneCafeContext context) : base(context)
         {
 
         }
