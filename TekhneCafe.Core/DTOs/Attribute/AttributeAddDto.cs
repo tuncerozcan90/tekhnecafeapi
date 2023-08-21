@@ -1,11 +1,10 @@
 ﻿using TekhneCafe.Core.DTOs.ProductAttribute;
 
-namespace TekhneCafe.Core.DTOs.Product
+namespace TekhneCafe.Core.DTOs.Attribute
 {
-    public class ProductAddDto
+    public class AttributeAddDto
     {
         public string Name { get; set; }
-        public string? Description { get; set; }
         public float Price { get; set; }
         public virtual ICollection<ProductAttributeAddDto> ProductAttributes { get; set; }
     }
