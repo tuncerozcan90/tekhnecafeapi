@@ -9,16 +9,13 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         {
             builder.ToTable("Image");
             builder.HasKey(_ => _.Id);
-
             
-            builder.Property(_ => _.Path).HasMaxLength(255).IsRequired();
-
+            builder.Property(_ => _.Path).HasMaxLength(300).IsRequired();
             
             builder.Property(_ => _.ProductId).IsRequired();
 
-            
             builder.HasOne(_ => _.Product)
-                   .WithMany(p => p.Images)
+                   .WithMany(_ => _.Images)
                    .HasForeignKey(_ => _.ProductId);
         }
     }

@@ -12,7 +12,10 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.HasKey(_ => _.Id);
 
             builder.Property(_ => _.Name).IsRequired().HasMaxLength(100);
+
             builder.Property(_ => _.Price).IsRequired();
+            builder.HasCheckConstraint("Product_Price_NonNegative", "Price >= 0");
+
             builder.Property(_ => _.CreatedDate).IsRequired();
             builder.Property(_ => _.Description).HasMaxLength(200); 
 
