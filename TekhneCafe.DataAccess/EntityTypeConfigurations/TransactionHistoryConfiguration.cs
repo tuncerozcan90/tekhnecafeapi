@@ -14,20 +14,21 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<TransactionHistory> builder)
         {
             builder.ToTable("TransactionHistory");
-            builder.HasKey(x => x.Id);
+            builder.HasKey(_ => _.Id);
 
-            builder.Property(x => x.Amount).IsRequired();
-            builder.Property(x => x.CreatedDate).IsRequired();
-            builder.Property(x => x.AppUserId).IsRequired();
+            builder.Property(_ => _.Description).HasMaxLength(200);
+            builder.Property(_ => _.Amount).IsRequired();
+            builder.Property(_ => _.CreatedDate).IsRequired();
+            builder.Property(_ => _.AppUserId).IsRequired();
 
-            builder.HasOne(x => x.AppUser)
-                   .WithMany(x => x.TransactionHistories)
-                   .HasForeignKey(x => x.AppUserId)
+            builder.HasOne(_ => _.AppUser)
+                   .WithMany(_ => _.TransactionHistories)
+                   .HasForeignKey(_ => _.AppUserId)
                    .OnDelete(DeleteBehavior.Restrict); 
 
-            builder.HasOne(x => x.Order)
-                   .WithMany(x => x.TransactionHistories)
-                   .HasForeignKey(x => x.OrderId)
+            builder.HasOne(_ => _.Order)
+                   .WithMany(_ => _.TransactionHistories)
+                   .HasForeignKey(_ => _.OrderId)
                    .OnDelete(DeleteBehavior.Restrict); 
 
         }
