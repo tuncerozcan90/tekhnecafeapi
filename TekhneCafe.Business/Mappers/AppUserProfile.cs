@@ -9,6 +9,7 @@ namespace TekhneCafe.Business.Mappers
         public AppUserProfile()
         {
             CreateMap<AppUser, AppUserListDto>();
+            CreateMap<AppUserAddDto, AppUser>();
         }
     }
 }

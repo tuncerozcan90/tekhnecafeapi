@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.Filters.Transaction;
 
 namespace TekhneCafe.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TransactionsController : ControllerBase
     {
         private readonly ITransactionHistoryService _transactionHistoryService;
@@ -16,26 +19,27 @@ namespace TekhneCafe.Api.Controllers
         }
 
         /// <summary>
-        /// Get all transactions
+        /// Get transactions by userId
         /// </summary>
         /// <param name="filters">filters</param>
-        /// <returns>Returns all the transactions with the given filters</returns>
-        [HttpGet("transactions")]
-        public IActionResult Transactions([FromQuery] TransactionHistoryRequestFilter filters)
+        /// <returns>Returns all the transactions with the given filters and userId</returns>
+        [HttpGet("{userId}")]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        public async Task<IActionResult> GetUserTransactions([FromQuery] TransactionHistoryRequestFilter filters, [FromRoute] string userId)
         {
-            var transactions = _transactionHistoryService.GetAllTransactionHistories(filters);
+            var transactions = await _transactionHistoryService.GetAllTransactionHistoriesByIdAsync(filters, userId);
             return Ok(transactions);
         }
 
         /// <summary>
-        /// Get order transactions
+        /// Get all transactions
         /// </summary>
         /// <param name="filters">filters</param>
-        /// <returns>Returns order transactions with the given filters</returns>
-        [HttpGet("ordertransactions")]
-        public IActionResult OrderTransactions([FromQuery] TransactionHistoryRequestFilter filters)
+        /// <returns>Returns all the transactions with the given filters</returns>
+        [HttpGet]
+        public async Task<IActionResult> Transactions([FromQuery] TransactionHistoryRequestFilter filters)
         {
-            var transactions = _transactionHistoryService.GetOrderTransactionHistory(filters);
+            var transactions = await _transactionHistoryService.GetActiveUsersTransactionHistoriesAsync(filters);
             return Ok(transactions);
         }
     }

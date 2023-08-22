@@ -19,7 +19,7 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.HasOne(_ => _.Product)
                    .WithMany(_ => _.ProductAttributes)
                    .HasForeignKey(_ => _.ProductId)
-                   .OnDelete(DeleteBehavior.Cascade); 
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(_ => _.Attribute)
                    .WithMany(_ => _.ProductAttributes)

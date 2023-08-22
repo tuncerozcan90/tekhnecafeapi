@@ -6,5 +6,8 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 {
     public class EfAttributeDal : EfEntityRepositoryBase<TekhneCafe.Entity.Concrete.Attribute, EfTekhneCafeContext>, IAttributeDal
     {
+        public EfAttributeDal(EfTekhneCafeContext context) : base(context)
+        {
+        }
     }
 }

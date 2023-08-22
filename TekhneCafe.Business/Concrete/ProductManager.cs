@@ -2,7 +2,6 @@
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.Exceptions.Attribute;
 using TekhneCafe.DataAccess.Abstract;
-using TekhneCafe.DataAccess.Concrete.EntityFramework;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Concrete

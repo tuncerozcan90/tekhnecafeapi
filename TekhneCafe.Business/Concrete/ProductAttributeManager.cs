@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.DTOs.ProductAttribute;
 using TekhneCafe.DataAccess.Abstract;
+using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Concrete
 {
@@ -11,6 +12,7 @@ namespace TekhneCafe.Business.Concrete
         private readonly IProductAttributeDal _productAttributeDal;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
+
         public ProductAttributeManager(IProductAttributeDal productAttributeDal, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _productAttributeDal = productAttributeDal;
@@ -21,8 +23,14 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task CreateProductAttributeAsync(ProductAttributeAddDto productAttributeAddDto)
         {
-            Entity.Concrete.Attribute productAttribute = _mapper.Map<Entity.Concrete.Attribute>(productAttributeAddDto);
+            ProductAttribute productAttribute = _mapper.Map<ProductAttribute>(productAttributeAddDto);
             await _productAttributeDal.AddAsync(productAttribute);
+        }
+
+        public async Task<ProductAttributeListDto> GetProductAttributeById(string id)
+        {
+            var productAttribute = await _productAttributeDal.GetByIdAsync(Guid.Parse(id));
+            return _mapper.Map<ProductAttributeListDto>(productAttribute);
         }
     }
 }

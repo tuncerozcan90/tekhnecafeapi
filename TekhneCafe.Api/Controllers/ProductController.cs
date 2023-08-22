@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Core.Exceptions.Attribute;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Api.Controllers
@@ -22,9 +20,9 @@ namespace TekhneCafe.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(string id)
         {
-               Product product = await _productService.GetProductByIdAsync(id);
-                return Ok(product);
-          
+            Product product = await _productService.GetProductByIdAsync(id);
+            return Ok(product);
+
         }
     }
 }

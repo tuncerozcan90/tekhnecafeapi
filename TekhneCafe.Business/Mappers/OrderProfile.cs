@@ -8,7 +8,7 @@ namespace TekhneCafe.Business.Mappers
     {
         public OrderProfile()
         {
-            CreateMap<Order, OrderListDto>();
+            CreateMap<Order, OrderDetailDto>();
             CreateMap<OrderAddDto, Order>();
         }
     }

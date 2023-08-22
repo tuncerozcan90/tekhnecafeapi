@@ -5,6 +5,16 @@ namespace TekhneCafe.Entity.Concrete
 {
     public class OrderHistory : BaseEntity
     {
+        public OrderHistory()
+        {
+
+        }
+
+        public OrderHistory(OrderStatus orderStatus, Guid userId)
+        {
+
+        }
+
         public Guid AppUserId { get; set; }
         public Guid OrderId { get; set; }
         public virtual Order Order { get; set; }

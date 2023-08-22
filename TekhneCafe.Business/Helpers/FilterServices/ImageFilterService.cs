@@ -10,13 +10,7 @@ namespace TekhneCafe.Business.Helpers.FilterServices
         public ImageResponseFilter<List<Image>> FilterImages(IQueryable<Image> images, ImageRequestFilter filters)
         {
             var filteredImages = images.Skip(filters.Page * filters.Size).Take(filters.Size).ToList();
-            Metadata metadata = new()
-            {
-                CurrentPage = filters.Page,
-                PageSize = filters.Size,
-                TotalEntities = images.Count(),
-                TotalPages = images.Count() / filters.Size + 1,
-            };
+            Metadata metadata = new(filters.Page, filters.Size, images.Count(), images.Count() / filters.Size + 1);
             var header = new CustomHeaders().AddPaginationHeader(metadata);
 
             return new()

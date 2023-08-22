@@ -4,6 +4,6 @@ namespace TekhneCafe.Business.Abstract
 {
     public interface IOrderProductAttributeService
     {
-        Task ValidateOrderProductAttributeAsync(OrderProduct orderProduct);
+        Task ValidateOrderProductAttributesAsync(OrderProduct orderProduct);
     }
 }

@@ -10,13 +10,7 @@ namespace TekhneCafe.Business.Helpers.FilterServices
         public NotificationResponseFilter<List<Notification>> FilterNotifications(IQueryable<Notification> notifications, NotificationRequestFilter filters)
         {
             var filteredNotifications = notifications.Skip(filters.Page * filters.Size).Take(filters.Size).ToList();
-            Metadata metadata = new()
-            {
-                CurrentPage = filters.Page,
-                PageSize = filters.Size,
-                TotalEntities = notifications.Count(),
-                TotalPages = notifications.Count() / filters.Size + 1,
-            };
+            Metadata metadata = new(filters.Page, filters.Size, notifications.Count(), notifications.Count() / filters.Size + 1);
             var header = new CustomHeaders().AddPaginationHeader(metadata);
 
             return new()

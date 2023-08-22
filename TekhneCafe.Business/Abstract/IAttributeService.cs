@@ -8,6 +8,6 @@ namespace TekhneCafe.Business.Abstract
         Task DeleteAttributeAsync(string id);
         List<AttributeListDto> GetAllAttributeAsync();
         Task<TekhneCafe.Entity.Concrete.Attribute> GetAttributeByIdAsync(string id);
-        Task UpdateAttributeAsync( AttributeUpdateDto attributeUpdateDto);
+        Task UpdateAttributeAsync(AttributeUpdateDto attributeUpdateDto);
     }
 }

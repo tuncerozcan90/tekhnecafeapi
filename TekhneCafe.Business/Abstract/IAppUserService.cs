@@ -1,14 +1,16 @@
 ﻿using TekhneCafe.Core.DTOs.AppUser;
+using TekhneCafe.Core.Filters.AppUser;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Abstract
 {
     public interface IAppUserService
     {
-        List<AppUserListDto> GetUserList();
+        List<AppUserListDto> GetUserList(AppUserRequestFilter filters = null);
         Task<AppUser> GetUserByLdapIdAsync(string id);
-        Task CreateUserAsync(AppUser userDto);
-        Task<AppUser> GetUserByIdAsync(string id);
+        Task<AppUser> CreateUserAsync(AppUserAddDto userDto);
+        Task<AppUserListDto> GetUserByIdAsync(string id);
+        Task<AppUser> GetRawUserByIdAsync(string id);
         Task UpdateUserAsync(AppUser user);
     }
 }

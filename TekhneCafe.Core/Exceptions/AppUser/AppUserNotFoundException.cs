@@ -2,7 +2,7 @@
 {
     public class AppUserNotFoundException : NotFoundException
     {
-        public AppUserNotFoundException() : base("AppUser not found exception!")
+        public AppUserNotFoundException() : base("Kullanıcı bulunamadı!")
         {
 
         }
