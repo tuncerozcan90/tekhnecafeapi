@@ -2,7 +2,7 @@
 {
     public class AttributeAlreadyExistsException : BadRequestException
     {
-        public AttributeAlreadyExistsException() : base("Attribute already exists!")
+        public AttributeAlreadyExistsException() : base("Attribute mevcutta var!")
         {
 
         }

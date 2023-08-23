@@ -28,7 +28,7 @@ namespace TekhneCafe.Business.Concrete
             await _attributeDal.AddAsync(attribute);
 
         }
-        public List<AttributeListDto> GetAllAttributeAsync()
+        public List<AttributeListDto> GetAllAttribute()
         {
             var attribute = _attributeDal.GetAll(_ => !_.IsDeleted);
             return _mapper.Map<List<AttributeListDto>>(attribute);
@@ -37,27 +37,29 @@ namespace TekhneCafe.Business.Concrete
         public async Task<ProductAttributes.Attribute> GetAttributeByIdAsync(string id)
         {
             ProductAttributes.Attribute attribute = await _attributeDal.GetByIdAsync(Guid.Parse(id));
-            if (attribute is null)
-                throw new AttributeNotFoundException();
-
+            ThrowErrorIfAttributeNotFound(attribute);
             return attribute;
         }
         public async Task DeleteAttributeAsync(string id)
         {
             ProductAttributes.Attribute attribute = await _attributeDal.GetByIdAsync(Guid.Parse(id));
-            if (attribute is null)
-                throw new AttributeNotFoundException();
+            ThrowErrorIfAttributeNotFound(attribute);
             attribute.IsDeleted = true;
             await _attributeDal.SafeDeleteAsync(attribute);
         }
+
+        private static void ThrowErrorIfAttributeNotFound(ProductAttributes.Attribute attribute)
+        {
+            if (attribute is null)
+                throw new AttributeNotFoundException();
+        }
+
         public async Task UpdateAttributeAsync(AttributeUpdateDto attributeUpdateDto)
         {
             ProductAttributes.Attribute attribute = await _attributeDal.GetByIdAsync(Guid.Parse(attributeUpdateDto.Id));
-            if (attribute is null)
-                throw new AttributeNotFoundException();
-            attribute.Name = attributeUpdateDto.Name;
-            attribute.Price = attributeUpdateDto.Price;
-            await _attributeDal.UpdateAsync(attribute);
+            ThrowErrorIfAttributeNotFound(attribute);
+            _mapper.Map(attributeUpdateDto, attribute);
+            _attributeDal.UpdateAsync(attribute);
         }
 
     }
