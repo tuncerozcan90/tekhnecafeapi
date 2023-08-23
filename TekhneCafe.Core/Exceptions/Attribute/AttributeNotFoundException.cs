@@ -2,7 +2,7 @@
 {
     public class AttributeNotFoundException : NotFoundException
     {
-        public AttributeNotFoundException() : base("Attribute not found exception!")
+        public AttributeNotFoundException() : base("Attribute bulunamadı!")
         {
 
         }

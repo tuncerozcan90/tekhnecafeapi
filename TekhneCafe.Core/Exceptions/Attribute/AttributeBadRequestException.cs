@@ -2,7 +2,7 @@
 {
     public class AttributeBadRequestException : BadRequestException
     {
-        public AttributeBadRequestException() : base("Attribute bad request!")
+        public AttributeBadRequestException() : base("Geçersiz attribute bilgisi!")
         {
 
         }

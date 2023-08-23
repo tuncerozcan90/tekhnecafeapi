@@ -2,7 +2,7 @@
 {
     public class AttributeInternalServerError : InternalServerErrorException
     {
-        public AttributeInternalServerError() : base("A server side error occured with Attribute transaction!")
+        public AttributeInternalServerError() : base("Beklenmeyen bir hata oluştu!")
         {
 
         }
