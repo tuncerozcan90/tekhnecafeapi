@@ -2,6 +2,19 @@
 {
     public class Metadata
     {
+        public Metadata()
+        {
+
+        }
+
+        public Metadata(int currentPage, int pageSize, int totalEntities, int totalPages)
+        {
+            CurrentPage = currentPage;
+            PageSize = pageSize;
+            TotalEntities = totalEntities;
+            TotalPages = totalPages;
+        }
+
         private int _currentPage;
         private int _pageSize;
         private int _totalPages;

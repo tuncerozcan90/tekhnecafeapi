@@ -1,4 +1,5 @@
-﻿using TekhneCafe.Business.Abstract;
+﻿using Microsoft.AspNetCore.Http;
+using TekhneCafe.Business.Abstract;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Concrete
@@ -6,10 +7,12 @@ namespace TekhneCafe.Business.Concrete
     public class WalletManager : IWalletService
     {
         private readonly IAppUserService _userService;
+        private readonly HttpContext _httpContext;
 
-        public WalletManager(IAppUserService userService)
+        public WalletManager(IAppUserService userService, IHttpContextAccessor httpContext)
         {
             _userService = userService;
+            _httpContext = httpContext.HttpContext;
         }
 
         public async Task<float> GetWalletBalanceAsync(Guid userId)
@@ -20,14 +23,14 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task AddToWalletAsync(Guid userId, float amount)
         {
-            var user = await _userService.GetUserByIdAsync(userId.ToString());
+            var user = await _userService.GetRawUserByIdAsync(userId.ToString());
             user.Wallet += amount;
             await UpdateWalletAsync(user);
         }
 
         public async Task WithdrawFromWalletAsync(Guid userId, float amount)
         {
-            var user = await _userService.GetUserByIdAsync(userId.ToString());
+            var user = await _userService.GetRawUserByIdAsync(userId.ToString());
             user.Wallet -= amount;
             await UpdateWalletAsync(user);
         }

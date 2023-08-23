@@ -2,7 +2,7 @@
 {
     public class OrderNotFoundException : NotFoundException
     {
-        public OrderNotFoundException() : base("Order not found exception!")
+        public OrderNotFoundException() : base("Sipariş bulunamadı!")
         {
 
         }

@@ -1,6 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.Extensions;
 using TekhneCafe.Business.Helpers.FilterServices;
 using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.Transaction;
@@ -14,47 +15,72 @@ namespace TekhneCafe.Business.Concrete
     public class TransactionHistoryManager : ITransactionHistoryService
     {
         private readonly ITransactionHistoryDal _transactionHistoryDal;
-        private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IAppUserService _userService;
 
-        public TransactionHistoryManager(ITransactionHistoryDal transactionHistoryDal, IMapper mapper, IHttpContextAccessor httpContext)
+        public TransactionHistoryManager(ITransactionHistoryDal transactionHistoryDal, IHttpContextAccessor httpContext, IAppUserService userService)
         {
             _transactionHistoryDal = transactionHistoryDal;
-            _mapper = mapper;
             _httpContext = httpContext;
+            _userService = userService;
         }
 
-        public TransactionHistory GetNewTransactionHistory(float amount, TransactionType transactionType, string description, Guid userId)
-            => new TransactionHistory()
-            {
-                Amount = amount,
-                TransactionType = transactionType,
-                Description = description,
-                AppUserId = userId
-            };
-
         public void SetTransactionHistoryForOrder(Order order, float amount, string description, Guid userId)
-            => order.TransactionHistories = new List<TransactionHistory>() { GetNewTransactionHistory(amount, TransactionType.Order, description, userId) };
+            => order.TransactionHistories = new List<TransactionHistory>() { new TransactionHistory(amount, TransactionType.Order, description, userId) };
 
         public async Task CreateTransactionHistoryAsync(float amount, TransactionType transactionType, string description, Guid userId)
         {
-            var transactionHistory = GetNewTransactionHistory(amount, transactionType, description, userId);
+            var transactionHistory = new TransactionHistory(amount, transactionType, description, userId);
             await _transactionHistoryDal.AddAsync(transactionHistory);
         }
 
-        public List<TransactionHistoryListDto> GetAllTransactionHistories(TransactionHistoryRequestFilter filters)
+        public async Task<List<TransactionHistoryListDto>> GetAllTransactionHistoriesByIdAsync(TransactionHistoryRequestFilter filters, string userId)
         {
-            var filteredResult = new TransactionHistoryFilterService().FilterTransactionHistory(_transactionHistoryDal.GetAll(), filters);
-            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
-            return _mapper.Map<List<TransactionHistoryListDto>>(filteredResult.ResponseValue);
+            var filteredResult = FilterTransactionHistories(filters, userId);
+            return await TransactionHistoryMappings(filteredResult.ResponseValue);
         }
 
-        public List<TransactionHistoryListDto> GetOrderTransactionHistory(TransactionHistoryRequestFilter filters)
+        public async Task<List<TransactionHistoryListDto>> GetActiveUsersTransactionHistoriesAsync(TransactionHistoryRequestFilter filters)
         {
-            var result = _transactionHistoryDal.GetOrderTransactionHistoriesIncludeAll();
-            var filteredResult = new TransactionHistoryFilterService().FilterTransactionHistory(result, filters);
+            string activeUserId = _httpContext.HttpContext.User.ActiveUserId();
+            var filteredResult = FilterTransactionHistories(filters, activeUserId);
+            return await TransactionHistoryMappings(filteredResult.ResponseValue);
+        }
+
+        private TransactionHistoryResponseFilter<List<TransactionHistory>> FilterTransactionHistories(TransactionHistoryRequestFilter filters, string userId)
+        {
+            var query = GetTransactionHistoriesIncludeAll(userId);
+            var filteredResult = new TransactionHistoryFilterService().FilterTransactionHistory(query, filters);
             new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
-            return _mapper.Map<List<TransactionHistoryListDto>>(filteredResult.ResponseValue);
+            return filteredResult;
+        }
+
+        private IQueryable<TransactionHistory> GetTransactionHistoriesIncludeAll(string userId)
+            => _transactionHistoryDal.GetAll(_ => _.AppUserId == Guid.Parse(userId))
+                .Include(_ => _.Order)
+                    .ThenInclude(_ => _.OrderProducts)
+                .Include(_ => _.Order)
+                    .ThenInclude(_ => _.OrderHistories);
+
+        private async Task<List<TransactionHistoryListDto>> TransactionHistoryMappings(List<TransactionHistory> filteredResult)
+        {
+            List<TransactionHistoryListDto> transactionHistories = new();
+            foreach (var transactionHistory in filteredResult)
+            {
+                var authorizedId = transactionHistory.Order.OrderHistories.FirstOrDefault(_ => _.OrderStatus == OrderStatus.OrderConfirmed)?.AppUserId.ToString();
+                var authorizedName = authorizedId != null ? (await _userService.GetUserByIdAsync(authorizedId)).FullName : null;
+                transactionHistories.Add(new()
+                {
+                    CreatedDate = transactionHistory.CreatedDate,
+                    Products = transactionHistory.Order.OrderProducts.Select(_ => _.Name).ToList(),
+                    TransactionType = transactionHistory.TransactionType == TransactionType.Order ? "Sipariş" : "Ödeme",
+                    Amount = transactionHistory.Amount,
+                    Personel = authorizedName,
+                    Description = transactionHistory.Description
+                });
+            }
+
+            return transactionHistories;
         }
     }
 }

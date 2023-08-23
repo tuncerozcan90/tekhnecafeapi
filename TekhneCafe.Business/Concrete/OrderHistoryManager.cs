@@ -19,34 +19,12 @@ namespace TekhneCafe.Business.Concrete
             _httpContext = httpContext;
         }
 
-        public async Task CreateOrderHistoryAsync(OrderStatus orderStatus)
-        {
-            var orderHistory = new OrderHistory()
-            {
-                AppUserId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId()),
-                OrderStatus = orderStatus,
-            };
-            await _orderHistoryDal.AddAsync(orderHistory);
-        }
-
         public async Task<List<OrderHistory>> GetAllOrderHistoryAsync()
         {
             return await _orderHistoryDal.GetAll().ToListAsync();
         }
 
-        public async Task<OrderHistory> GetOrderHistoryByIdAsync(Guid orderHistoryId)
-        {
-            return await GetOrderHistoryByIdAsync(orderHistoryId);
-        }
-
-        public OrderHistory GetNewOrderHistory(OrderStatus orderStatus)
-            => new()
-            {
-                AppUserId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId()),
-                OrderStatus = orderStatus,
-            };
-
-        public void SetOrderHistoryForOrder(Order order)
-            => order.OrderHistories = new List<OrderHistory>() { GetNewOrderHistory(OrderStatus.Ordered) };
+        public void SetOrderHistoryForOrder(Order order, OrderStatus orderStatus)
+            => order.OrderHistories = new List<OrderHistory>() { new OrderHistory(orderStatus, Guid.Parse(_httpContext.HttpContext.User.ActiveUserId())) };
     }
 }

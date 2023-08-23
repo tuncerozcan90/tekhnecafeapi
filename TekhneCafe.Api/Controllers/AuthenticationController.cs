@@ -26,7 +26,7 @@ namespace TekhneCafe.Api.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {
-            var token = await _authService.Login(user.Email, user.Password);
+            var token = await _authService.Login(user);
             return Ok(token);
         }
     }

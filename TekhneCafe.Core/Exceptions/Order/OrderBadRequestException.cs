@@ -2,7 +2,7 @@
 {
     public class OrderBadRequestException : BadRequestException
     {
-        public OrderBadRequestException() : base("Order bad request!")
+        public OrderBadRequestException() : base("Geçersiz sipariş bilgisi!")
         {
 
         }

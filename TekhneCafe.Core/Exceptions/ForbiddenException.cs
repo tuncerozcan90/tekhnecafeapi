@@ -2,7 +2,7 @@
 {
     public class ForbiddenException : Exception
     {
-        public ForbiddenException(string message = "Forbidden Access!") : base(message)
+        public ForbiddenException(string message = "Yetkisiz erişim!") : base(message)
         {
 
         }

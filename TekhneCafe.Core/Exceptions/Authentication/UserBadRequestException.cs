@@ -2,7 +2,7 @@
 {
     public class UserBadRequestException : BadRequestException
     {
-        public UserBadRequestException() : base("User bad request!")
+        public UserBadRequestException() : base("Geçersiz kullanıcı bilgileri!")
         {
 
         }

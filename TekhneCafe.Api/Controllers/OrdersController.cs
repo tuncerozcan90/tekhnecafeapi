@@ -46,6 +46,7 @@ namespace TekhneCafe.Api.Controllers
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
         public async Task<IActionResult> ConfirmOrder([FromQuery] string id)
         {
+            bool result = ModelState.IsValid;
             await _orderService.ConfirmOrderAsync(id);
             return Ok();
         }
@@ -58,11 +59,27 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="200">Success</response>
         /// <response code="404">Order not found</response>
         /// <response code="500">Server error</response>
-        [HttpGet]
-        public async Task<IActionResult> Orders([FromQuery] string id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Orders([FromRoute] string id)
         {
+            bool result = ModelState.IsValid;
             var order = await _orderService.GetOrderDetailById(id);
             return Ok(order);
+        }
+
+        /// <summary>
+        /// Get All Orders
+        /// </summary>
+        /// <returns>Order with given id</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">Order not found</response>
+        /// <response code="500">Server error</response>
+        [HttpGet]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        public async Task<IActionResult> Orders()
+        {
+            var orders = await _orderService.GetOrdersAsync();
+            return Ok(orders);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace TekhneCafe.Business.Abstract
 {
     public interface IAuthenticationService
     {
-        Task<JwtResponse> Login(string email, string password);
+        Task<JwtResponse> Login(UserLoginDto user);
     }
 }

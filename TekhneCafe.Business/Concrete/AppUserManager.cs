@@ -1,9 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.Helpers.FilterServices;
+using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.AppUser;
+using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.AppUser;
+using TekhneCafe.Core.Filters.AppUser;
 using TekhneCafe.DataAccess.Abstract;
+using TekhneCafe.DataAccess.Helpers.Transaction;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Concrete
@@ -12,41 +18,73 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly IAppUserDal _userDal;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly ITransactionManagement _transactionManagement;
 
-        public AppUserManager(IAppUserDal userDal, IMapper mapper)
+        public AppUserManager(IAppUserDal userDal, IMapper mapper, IHttpContextAccessor httpContextAccessor, ITransactionManagement transactionManagement)
         {
             _userDal = userDal;
             _mapper = mapper;
+            _httpContext = httpContextAccessor;
+            _transactionManagement = transactionManagement;
         }
 
-        public List<AppUserListDto> GetUserList()
+        public List<AppUserListDto> GetUserList(AppUserRequestFilter filters = null)
         {
             var users = _userDal.GetAll();
-            return _mapper.Map<List<AppUserListDto>>(users);
-        }
-
-        public async Task GetUserByIdAsnyc(string id)
-        {
-            AppUser user = await _userDal.GetByIdAsync(Guid.Parse(id));
+            var filteredResult = new AppUserFilterService().FilterTransactionHistory(users, filters);
+            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            return _mapper.Map<List<AppUserListDto>>(filteredResult.ResponseValue);
         }
 
         public async Task<AppUser> GetUserByLdapIdAsync(string id)
             => await _userDal.GetAll(_ => _.LdapId == Guid.Parse(id)).FirstOrDefaultAsync();
 
-        public async Task<AppUser> GetUserByIdAsync(string id)
+        public async Task<AppUser> GetRawUserByIdAsync(string id)
         {
-            AppUser appUser = await _userDal.GetAll(_ => _.Id == Guid.Parse(id)).FirstOrDefaultAsync();
-
-            if (appUser is null)
-                throw new AppUserNotFoundException();
+            AppUser appUser = await _userDal.GetByIdAsync(Guid.Parse(id));
+            ThrowExceptionUserNotExists(appUser);
 
             return appUser;
         }
 
-        public async Task CreateUserAsync(AppUser userDto)
-            => await _userDal.AddAsync(userDto);
+        public async Task<AppUserListDto> GetUserByIdAsync(string id)
+        {
+            AppUser appUser = await _userDal.GetByIdAsync(Guid.Parse(id));
+            ThrowExceptionUserNotExists(appUser);
+
+            return _mapper.Map<AppUserListDto>(appUser);
+        }
+
+        public async Task<AppUser> CreateUserAsync(AppUserAddDto userDto)
+        {
+            //todo: user validation required
+            AppUser user = _mapper.Map<AppUser>(userDto);
+            using (var transaction = await _transactionManagement.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _userDal.AddAsync(user);
+                    await _transactionManagement.CommitTransactionAsync();
+                }
+                catch (Exception ex)
+                {
+                    throw new InternalServerErrorException();
+                }
+            }
+
+            return user;
+        }
 
         public async Task UpdateUserAsync(AppUser user)
             => await _userDal.UpdateAsync(user);
+
+        public void ThrowExceptionUserNotExists(AppUser user)
+        {
+            if (user is null)
+                throw new AppUserNotFoundException();
+        }
+
+
     }
 }

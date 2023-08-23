@@ -5,10 +5,7 @@ namespace TekhneCafe.Business.Abstract
 {
     public interface IOrderHistoryService
     {
-        void SetOrderHistoryForOrder(Order order);
-        Task<OrderHistory> GetOrderHistoryByIdAsync(Guid orderHistoryId);
+        void SetOrderHistoryForOrder(Order order, OrderStatus orderStatus);
         Task<List<OrderHistory>> GetAllOrderHistoryAsync();
-        Task CreateOrderHistoryAsync(OrderStatus orderStatus);
-        OrderHistory GetNewOrderHistory(OrderStatus orderStatus);
     }
 }

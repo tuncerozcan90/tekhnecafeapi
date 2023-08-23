@@ -2,7 +2,7 @@
 {
     public class OrderInternalServerError : InternalServerErrorException
     {
-        public OrderInternalServerError() : base("A server side error occured with Order transaction!")
+        public OrderInternalServerError() : base("Beklenmeyen bir hata oluştu!")
         {
 
         }

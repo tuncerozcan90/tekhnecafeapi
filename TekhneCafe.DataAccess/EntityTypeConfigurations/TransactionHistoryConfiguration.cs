@@ -19,12 +19,12 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.HasOne(_ => _.AppUser)
                    .WithMany(_ => _.TransactionHistories)
                    .HasForeignKey(_ => _.AppUserId)
-                   .OnDelete(DeleteBehavior.Restrict); 
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(_ => _.Order)
                    .WithMany(_ => _.TransactionHistories)
                    .HasForeignKey(_ => _.OrderId)
-                   .OnDelete(DeleteBehavior.Restrict); 
+                   .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
