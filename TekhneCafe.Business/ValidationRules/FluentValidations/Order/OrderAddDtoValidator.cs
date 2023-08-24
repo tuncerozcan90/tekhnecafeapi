@@ -8,8 +8,6 @@ namespace TekhneCafe.Business.ValidationRules.FluentValidations.Order
         public OrderAddDtoValidator()
         {
             RuleFor(_ => _.Description)
-                .NotNull()
-                .MinimumLength(0)
                 .MaximumLength(200)
                 .WithMessage("Açıklama en fazla 200 karakter içerebilir!");
 

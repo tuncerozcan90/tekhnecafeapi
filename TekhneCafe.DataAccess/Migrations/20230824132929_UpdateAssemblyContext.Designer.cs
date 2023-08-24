@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 
@@ -11,9 +12,11 @@ using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 namespace TekhneCafe.DataAccess.Migrations
 {
     [DbContext(typeof(EfTekhneCafeContext))]
-    partial class EfTekhneCafeContextModelSnapshot : ModelSnapshot
+    [Migration("20230824132929_UpdateAssemblyContext")]
+    partial class UpdateAssemblyContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +34,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 8, 24, 17, 9, 50, 609, DateTimeKind.Local).AddTicks(18));
+                        .HasDefaultValue(new DateTime(2023, 8, 24, 16, 29, 29, 736, DateTimeKind.Local).AddTicks(1627));
 
                     b.Property<string>("Department")
                         .HasMaxLength(100)
@@ -89,8 +92,8 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(110)
-                        .HasColumnType("nvarchar(110)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -130,7 +133,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 8, 24, 17, 9, 50, 609, DateTimeKind.Local).AddTicks(3365));
+                        .HasDefaultValue(new DateTime(2023, 8, 24, 16, 29, 29, 736, DateTimeKind.Local).AddTicks(4477));
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");

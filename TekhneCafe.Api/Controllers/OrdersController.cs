@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Api.ActionFilters;
-using TekhneCafe.Api.Consts;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.ValidationRules.FluentValidations.Order;
 using TekhneCafe.Core.Consts;
@@ -30,10 +29,10 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="400">Invalid order</response>
         /// <response code="500">Server error</response>
         [HttpPost("create")]
-        [TypeFilter(typeof(ValidationFilterAttribute<OrderAddDtoValidator, OrderAddDto>), Arguments = new object[] { ValidationType.FluentValidation })]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderAddDto orderDto)
+        [TypeFilter(typeof(FluentValidationFilterAttribute<OrderAddDtoValidator, OrderAddDto>), Arguments = new object[] { "order" })]
+        public async Task<IActionResult> CreateOrder([FromBody] OrderAddDto order)
         {
-            await _orderService.CreateOrderAsync(orderDto);
+            await _orderService.CreateOrderAsync(order);
             return StatusCode(StatusCodes.Status201Created);
         }
 
@@ -48,7 +47,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpPost("confirm")]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
-        [TypeFilter(typeof(ValidationFilterAttribute<OrderAddDtoValidator, OrderAddDto>), Arguments = new object[] { ValidationType.ModelValidation })]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> ConfirmOrder([FromQuery] string id)
         {
             await _orderService.ConfirmOrderAsync(id);
@@ -64,14 +63,13 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="404">Order not found</response>
         /// <response code="500">Server error</response>
         [HttpGet("{id}")]
-        [TypeFilter(typeof(ValidationFilterAttribute<OrderAddDtoValidator, OrderAddDto>), Arguments = new object[] { ValidationType.ModelValidation })]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> Orders([FromRoute] string id)
         {
             var order = await _orderService.GetOrderDetailById(id);
             return Ok(order);
         }
 
-        //todo: filter eksik
         /// <summary>
         /// Get All Orders
         /// </summary>

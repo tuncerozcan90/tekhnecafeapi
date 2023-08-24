@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Api.ActionFilters;
-using TekhneCafe.Api.Consts;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.ValidationRules.FluentValidations.Payment;
 using TekhneCafe.Core.Consts;
@@ -23,7 +22,7 @@ namespace TekhneCafe.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = $"{RoleConsts.CafeAdmin}, {RoleConsts.CafeService}")]
-        [TypeFilter(typeof(ValidationFilterAttribute<PaymentDtoValidator, PaymentDto>), Arguments = new object[] { ValidationType.FluentValidation })]
+        [TypeFilter(typeof(FluentValidationFilterAttribute<PaymentDtoValidator, PaymentDto>), Arguments = new object[] { "payment" })]
         public async Task<IActionResult> Pay([FromBody] PaymentDto payment)
         {
             await _paymentService.Pay(payment);

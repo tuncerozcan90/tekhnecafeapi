@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.Filters.Transaction;
@@ -26,7 +27,7 @@ namespace TekhneCafe.Api.Controllers
         /// <returns>Returns all the transactions with the given filters and userId</returns>
         [HttpGet("{userId}")]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
-        //[TypeFilter(typeof(ValidationFilterAttribute<PaymentDtoValidator, PaymentDto>), Arguments = new object[] { ValidationType.FluentValidation })]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "userId" })]
         public async Task<IActionResult> GetUserTransactions([FromQuery] TransactionHistoryRequestFilter filters, [FromRoute] string userId)
         {
             var transactions = await _transactionHistoryService.GetAllTransactionHistoriesByIdAsync(filters, userId);

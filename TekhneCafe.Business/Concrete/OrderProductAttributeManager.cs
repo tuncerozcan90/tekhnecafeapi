@@ -26,7 +26,7 @@ namespace TekhneCafe.Business.Concrete
                 {
                     orderProductAttribute.Quantity = orderProductAttribute.Quantity > 0 ? orderProductAttribute.Quantity : 1;
                     orderProductAttribute.Name = produdctAttribute.Attribute.Name;
-                    orderProductAttribute.Price = produdctAttribute.Attribute.Price;
+                    orderProductAttribute.Price = produdctAttribute.Price;
                 }
                 else
                     orderProduct.OrderProductAttributes.Remove(orderProductAttribute);

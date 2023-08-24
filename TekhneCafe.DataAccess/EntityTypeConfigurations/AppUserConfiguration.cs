@@ -19,7 +19,6 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.HasIndex(_ => _.Username).IsUnique();
 
             builder.Property(_ => _.Email).IsRequired().HasMaxLength(100);
-            builder.HasIndex(_ => _.Email).IsUnique();
 
             builder.Property(_ => _.Department).HasMaxLength(100);
 

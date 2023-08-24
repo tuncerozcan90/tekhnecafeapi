@@ -13,8 +13,6 @@ namespace TekhneCafe.Business.ValidationRules.FluentValidations.Payment
         public PaymentDtoValidator()
         {
             RuleFor(_ => _.Description)
-                .NotNull()
-                .MinimumLength(0)
                 .MaximumLength(200)
                 .WithMessage("Açıklama en fazla 200 karakter içerebilir!");
 
@@ -24,6 +22,7 @@ namespace TekhneCafe.Business.ValidationRules.FluentValidations.Payment
 
             RuleFor(_ => _.UserId)
                 .NotNull()
+                .WithMessage("Geçersiz kullanıcı bilgisi!")
                 .NotEmpty()
                 .WithMessage("Geçersiz kullanıcı bilgisi!");
         }

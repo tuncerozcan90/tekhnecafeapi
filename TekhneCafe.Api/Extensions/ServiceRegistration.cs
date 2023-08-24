@@ -18,7 +18,8 @@ namespace TekhneCafe.Api.Extensions
             services.AddEndpointsApiExplorer();
 
             #region IOC Scoped Services
-            services.AddScoped(typeof(ValidationFilterAttribute<,>));
+            services.AddScoped(typeof(FluentValidationFilterAttribute<,>));
+            //services.AddScoped(typeof(ModelValidationFilterAttribute));
             #endregion
 
             #region Swagger Configuration
