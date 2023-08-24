@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using TekhneCafe.Api.ActionFilters;
 
 namespace TekhneCafe.Api.Extensions
 {
@@ -15,6 +16,10 @@ namespace TekhneCafe.Api.Extensions
                 options.SuppressModelStateInvalidFilter = true;
             });
             services.AddEndpointsApiExplorer();
+
+            #region IOC Scoped Services
+            services.AddScoped(typeof(ValidationFilterAttribute<,>));
+            #endregion
 
             #region Swagger Configuration
             services.AddSwaggerGen(config =>

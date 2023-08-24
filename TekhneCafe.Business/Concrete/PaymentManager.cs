@@ -40,7 +40,6 @@ namespace TekhneCafe.Business.Concrete
                     throw new InternalServerErrorException();
                 }
             }
-
         }
     }
 }

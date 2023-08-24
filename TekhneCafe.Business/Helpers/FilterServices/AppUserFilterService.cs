@@ -7,7 +7,7 @@ namespace TekhneCafe.Business.Helpers.FilterServices
 {
     public class AppUserFilterService
     {
-        public AppUserResponseFilter<List<AppUser>> FilterTransactionHistory(IQueryable<AppUser> appUsers, AppUserRequestFilter filters)
+        public AppUserResponseFilter<List<AppUser>> FilterAppUsers(IQueryable<AppUser> appUsers, AppUserRequestFilter filters)
         {
             if (filters.Name != null)
                 appUsers = appUsers.Where(_ => _.FullName.ToUpper().Contains(filters.Name.ToUpper()));
