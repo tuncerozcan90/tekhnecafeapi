@@ -3,6 +3,6 @@
     public class JwtResponse
     {
         public string Token { get; set; }
-        public DateTime ValidTo { get; set; }
+        public UserResponse User { get; set; }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Api.ActionFilters;
+using TekhneCafe.Api.Consts;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.ValidationRules.FluentValidations.Order;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Order;
 
@@ -27,6 +30,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="400">Invalid order</response>
         /// <response code="500">Server error</response>
         [HttpPost("create")]
+        [TypeFilter(typeof(ValidationFilterAttribute<OrderAddDtoValidator, OrderAddDto>), Arguments = new object[] { ValidationType.FluentValidation })]
         public async Task<IActionResult> CreateOrder([FromBody] OrderAddDto orderDto)
         {
             await _orderService.CreateOrderAsync(orderDto);
@@ -44,9 +48,9 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpPost("confirm")]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        [TypeFilter(typeof(ValidationFilterAttribute<OrderAddDtoValidator, OrderAddDto>), Arguments = new object[] { ValidationType.ModelValidation })]
         public async Task<IActionResult> ConfirmOrder([FromQuery] string id)
         {
-            bool result = ModelState.IsValid;
             await _orderService.ConfirmOrderAsync(id);
             return Ok();
         }
@@ -60,13 +64,14 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="404">Order not found</response>
         /// <response code="500">Server error</response>
         [HttpGet("{id}")]
+        [TypeFilter(typeof(ValidationFilterAttribute<OrderAddDtoValidator, OrderAddDto>), Arguments = new object[] { ValidationType.ModelValidation })]
         public async Task<IActionResult> Orders([FromRoute] string id)
         {
-            bool result = ModelState.IsValid;
             var order = await _orderService.GetOrderDetailById(id);
             return Ok(order);
         }
 
+        //todo: filter eksik
         /// <summary>
         /// Get All Orders
         /// </summary>

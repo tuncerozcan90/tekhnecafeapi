@@ -33,5 +33,12 @@ namespace TekhneCafe.Api.Controllers
             var users = await _userService.GetUserByIdAsync(id);
             return Ok(users);
         }
+
+        [HttpPost("updatephone")]
+        public async Task<IActionResult> UpdatePhone([FromBody] string phone)
+        {
+            await _userService.UpdateUserPhoneAsync(phone);
+            return Ok();
+        }
     }
 }

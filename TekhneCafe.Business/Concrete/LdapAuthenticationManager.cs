@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using System.DirectoryServices;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.Consts;
@@ -97,7 +99,17 @@ namespace TekhneCafe.Business.Concrete
                 return new JwtResponse
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    ValidTo = token.ValidTo
+                    User = new()
+                    {
+                        Id = user.Id.ToString(),
+                        Department = user.Department,
+                        Email = user.Email,
+                        FullName = user.FullName,
+                        Username = user.Username,
+                        Wallet = user.Wallet,
+                        Role = claims.First(claim => claim.Type == ClaimTypes.Role).Value
+                    }
+
                 };
             }
         }

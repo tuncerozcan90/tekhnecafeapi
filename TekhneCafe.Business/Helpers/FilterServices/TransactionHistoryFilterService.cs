@@ -9,7 +9,7 @@ namespace TekhneCafe.Business.Helpers.FilterServices
     {
         public TransactionHistoryResponseFilter<List<TransactionHistory>> FilterTransactionHistory(IQueryable<TransactionHistory> transactionHistory, TransactionHistoryRequestFilter filters)
         {
-            var filteredTransactionHistory = transactionHistory.Skip(filters.Page * filters.Size).Take(filters.Size).ToList();
+            var filteredTransactionHistory = transactionHistory.OrderByDescending(_ => _.CreatedDate).Skip(filters.Page * filters.Size).Take(filters.Size).ToList();
             Metadata metadata = new(filters.Page, filters.Size, transactionHistory.Count(), transactionHistory.Count() / filters.Size + 1);
             var header = new CustomHeaders().AddPaginationHeader(metadata);
 

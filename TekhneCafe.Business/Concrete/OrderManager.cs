@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Extensions;
+using TekhneCafe.Business.ValidationRules.FluentValidations.Order;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Order;
 using TekhneCafe.Core.Exceptions;
@@ -25,11 +27,9 @@ namespace TekhneCafe.Business.Concrete
         private readonly IOrderProductService _orderProductService;
         private readonly ITransactionHistoryService _transactionHistoryService;
         private readonly ITransactionManagement _transactionManagement;
-        private readonly IValidator<OrderAddDto> _orderValidator;
 
         public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, IOrderHistoryService orderHistoryService, IWalletService walletService,
-            IOrderProductService orderProductService, ITransactionHistoryService transactionHistoryService, ITransactionManagement transactionManagement,
-            IValidator<OrderAddDto> orderValidator)
+            IOrderProductService orderProductService, ITransactionHistoryService transactionHistoryService, ITransactionManagement transactionManagement)
         {
             _orderDal = orderDal;
             _mapper = mapper;
@@ -39,12 +39,10 @@ namespace TekhneCafe.Business.Concrete
             _orderProductService = orderProductService;
             _transactionHistoryService = transactionHistoryService;
             _transactionManagement = transactionManagement;
-            _orderValidator = orderValidator;
         }
 
         public async Task CreateOrderAsync(OrderAddDto orderAddDto)
         {
-            await ValidateOrderAsync(orderAddDto);
             Order order = _mapper.Map<Order>(orderAddDto);
             var validOrder = await GetValidOrderAsync(order);
             if (validOrder is null)
@@ -168,13 +166,6 @@ namespace TekhneCafe.Business.Concrete
         {
             if (order is null)
                 throw new OrderNotFoundException();
-        }
-
-        private async Task ValidateOrderAsync(OrderAddDto order)
-        {
-            var result = await _orderValidator.ValidateAsync(order);
-            if (!result.IsValid)
-                throw new OrderBadRequestException();
         }
     }
 }

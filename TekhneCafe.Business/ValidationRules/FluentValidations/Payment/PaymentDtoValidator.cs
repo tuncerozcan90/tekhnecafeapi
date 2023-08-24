@@ -1,0 +1,31 @@
+﻿using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TekhneCafe.Core.DTOs.Payment;
+
+namespace TekhneCafe.Business.ValidationRules.FluentValidations.Payment
+{
+    public class PaymentDtoValidator : AbstractValidator<PaymentDto>
+    {
+        public PaymentDtoValidator()
+        {
+            RuleFor(_ => _.Description)
+                .NotNull()
+                .MinimumLength(0)
+                .MaximumLength(200)
+                .WithMessage("Açıklama en fazla 200 karakter içerebilir!");
+
+            RuleFor(_ => _.Amount)
+                .GreaterThan(0)
+                .WithMessage("Girilen miktar 0'dan büyük olmalıdır!");
+
+            RuleFor(_ => _.UserId)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage("Geçersiz kullanıcı bilgisi!");
+        }
+    }
+}

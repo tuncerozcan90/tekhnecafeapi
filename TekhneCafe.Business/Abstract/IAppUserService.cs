@@ -11,6 +11,7 @@ namespace TekhneCafe.Business.Abstract
         Task<AppUser> CreateUserAsync(AppUserAddDto userDto);
         Task<AppUserListDto> GetUserByIdAsync(string id);
         Task<AppUser> GetRawUserByIdAsync(string id);
+        Task UpdateUserPhoneAsync(string phone);
         Task UpdateUserAsync(AppUser user);
     }
 }

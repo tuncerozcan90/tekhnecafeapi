@@ -67,15 +67,14 @@ namespace TekhneCafe.Business.Concrete
             List<TransactionHistoryListDto> transactionHistories = new();
             foreach (var transactionHistory in filteredResult)
             {
-                var authorizedId = transactionHistory.Order.OrderHistories.FirstOrDefault(_ => _.OrderStatus == OrderStatus.OrderConfirmed)?.AppUserId.ToString();
-                var authorizedName = authorizedId != null ? (await _userService.GetUserByIdAsync(authorizedId)).FullName : null;
+                var user = await _userService.GetRawUserByIdAsync(transactionHistory.AppUserId.ToString());
                 transactionHistories.Add(new()
                 {
                     CreatedDate = transactionHistory.CreatedDate,
-                    Products = transactionHistory.Order.OrderProducts.Select(_ => _.Name).ToList(),
+                    Products = transactionHistory.Order?.OrderProducts.Select(_ => _.Name).ToList(),
                     TransactionType = transactionHistory.TransactionType == TransactionType.Order ? "Sipariş" : "Ödeme",
                     Amount = transactionHistory.Amount,
-                    Personel = authorizedName,
+                    Personel = user.FullName,
                     Description = transactionHistory.Description
                 });
             }
