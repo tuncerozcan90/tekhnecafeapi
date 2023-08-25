@@ -7,7 +7,5 @@ namespace TekhneCafe.Entity.Concrete
         public string Name { get; set; }
         public bool IsDeleted { get; set; }
         public virtual ICollection<ProductAttribute>? ProductAttributes { get; set; }
-
     }
-
 }

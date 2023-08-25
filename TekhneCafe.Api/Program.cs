@@ -46,7 +46,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -95,14 +94,13 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
 app.UseRouting();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapHub<OrderNoficationHub>("/myhub");
+    endpoints.MapHub<OrderNoficationHub>("/orderNotificationHub");
 });
 
 app.Run();
