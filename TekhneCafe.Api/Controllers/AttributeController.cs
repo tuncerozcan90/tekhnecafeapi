@@ -42,7 +42,7 @@ namespace TekhneCafe.Api.Controllers
         [ProducesResponseType(typeof(string), 500)]
         public IActionResult GetAllAttributes()
         {
-            var attributes = _attributeService.GetAllAttributeAsync();
+            var attributes = _attributeService.GetAllAttribute();
             return Ok(attributes);
         }
 
@@ -71,7 +71,6 @@ namespace TekhneCafe.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateAttribute([FromBody] AttributeUpdateDto attributeUpdateDto)
         {
-
             await _attributeService.UpdateAttributeAsync(attributeUpdateDto);
             return Ok("Attribute updated successfully.");
         }

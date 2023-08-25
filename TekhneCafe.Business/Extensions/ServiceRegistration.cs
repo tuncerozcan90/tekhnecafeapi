@@ -1,5 +1,4 @@
-﻿
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,6 +59,7 @@ namespace TekhneCafe.Business.Extensions
             services.AddScoped<IOrderHistoryService, OrderHistoryManager>();
             services.AddScoped<ITransactionHistoryService, TransactionHistoryManager>();
             services.AddScoped<IWalletService, WalletManager>();
+            services.AddScoped<IPaymentService, PaymentManager>();
             #endregion
 
             #region FluentValidation

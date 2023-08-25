@@ -6,6 +6,7 @@ namespace TekhneCafe.Entity.Concrete
     {
         public Guid ProductId { get; set; }
         public Guid AttributeId { get; set; }
+        public float Price { get; set; }
         public bool IsRequired { get; set; }
         public bool IsDeleted { get; set; } = true;
         public virtual Product Product { get; set; } = null!;

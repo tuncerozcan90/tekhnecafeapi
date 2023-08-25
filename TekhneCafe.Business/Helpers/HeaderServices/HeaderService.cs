@@ -14,7 +14,7 @@ namespace TekhneCafe.Business.Helpers.HeaderServices
         public void AddToHeaders(Dictionary<string, string> headers)
         {
             foreach (var header in headers)
-                _httpContext.HttpContext.Response.Headers.Add(header.Key, header.Value);
+                _httpContext.HttpContext?.Response.Headers.Add(header.Key, header.Value);
         }
     }
 }

@@ -14,7 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TekhneCafe.Core\TekhneCafe.Core.csproj" />
     <ProjectReference Include="..\TekhneCafe.DataAccess\TekhneCafe.DataAccess.csproj" />
+    <ProjectReference Include="..\TekneCafe.SignalR\TekneCafe.SignalR.csproj" />
   </ItemGroup>
 
   <ItemGroup>

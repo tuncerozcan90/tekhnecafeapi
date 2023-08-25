@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.Filters.AppUser;
@@ -28,10 +29,19 @@ namespace TekhneCafe.Api.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Roles = $"{RoleConsts.CafeAdmin}, {RoleConsts.CafeService}")]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> GetUsers([FromRoute] string id)
         {
             var users = await _userService.GetUserByIdAsync(id);
             return Ok(users);
+        }
+
+        [HttpPost("updatephone")]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "phone" })]
+        public async Task<IActionResult> UpdatePhone([FromBody] string phone)
+        {
+            await _userService.UpdateUserPhoneAsync(phone);
+            return Ok();
         }
     }
 }

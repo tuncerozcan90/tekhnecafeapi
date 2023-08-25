@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TekhneCafe.Business\TekhneCafe.Business.csproj" />
+    <ProjectReference Include="..\TekneCafe.SignalR\TekneCafe.SignalR.csproj" />
   </ItemGroup>
 
 </Project>

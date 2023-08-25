@@ -31,7 +31,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 8, 21, 15, 47, 43, 403, DateTimeKind.Local).AddTicks(3057));
+                        .HasDefaultValue(new DateTime(2023, 8, 24, 17, 51, 15, 783, DateTimeKind.Local).AddTicks(8278));
 
                     b.Property<string>("Department")
                         .HasMaxLength(100)
@@ -39,7 +39,8 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -58,8 +59,8 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Phone")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -67,14 +68,9 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<float>("Wallet")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("Username")
                         .IsUnique();
@@ -96,17 +92,9 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<float>("Price")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
-
                     b.HasKey("Id");
 
-                    b.ToTable("Attribute", null, t =>
-                        {
-                            t.HasCheckConstraint("Attribute_Price_NonNegative", "Price >= 0");
-                        });
+                    b.ToTable("Attribute", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Image", b =>
@@ -139,7 +127,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 8, 21, 15, 47, 43, 403, DateTimeKind.Local).AddTicks(5992));
+                        .HasDefaultValue(new DateTime(2023, 8, 24, 17, 51, 15, 784, DateTimeKind.Local).AddTicks(1325));
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
@@ -151,7 +139,8 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("To")
                         .IsRequired()
@@ -225,6 +214,7 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -279,11 +269,7 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasIndex("OrderProductId");
 
-                    b.ToTable("OrderProductAttribute", null, t =>
-                        {
-                            t.HasCheckConstraint("Order_Price_NonNegative", "Price >= 0")
-                                .HasName("Order_Price_NonNegative1");
-                        });
+                    b.ToTable("OrderProductAttribute", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Product", b =>
@@ -336,6 +322,9 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<bool>("IsRequired")
                         .HasColumnType("bit");
 
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
@@ -364,7 +353,8 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid?>("OrderId")
                         .HasColumnType("uniqueidentifier");

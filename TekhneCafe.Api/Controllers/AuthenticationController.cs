@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.ValidationRules.FluentValidations.Authentication;
 using TekhneCafe.Core.DTOs.Authentication;
 
 namespace TekhneCafe.Api.Controllers
@@ -24,6 +26,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="400">Invalid credentials</response>
         /// <response code="404">User not found</response>
         [HttpPost("[action]")]
+        [TypeFilter(typeof(FluentValidationFilterAttribute<UserLoginDtoValidator, UserLoginDto>), Arguments = new object[] { "user" })]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {
             var token = await _authService.Login(user);

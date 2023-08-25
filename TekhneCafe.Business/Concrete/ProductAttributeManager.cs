@@ -19,8 +19,6 @@ namespace TekhneCafe.Business.Concrete
             _mapper = mapper;
             _httpContext = httpContext;
         }
-
-
         public async Task CreateProductAttributeAsync(ProductAttributeAddDto productAttributeAddDto)
         {
             ProductAttribute productAttribute = _mapper.Map<ProductAttribute>(productAttributeAddDto);

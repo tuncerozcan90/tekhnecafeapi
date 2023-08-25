@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
@@ -10,7 +9,7 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly IProductAttributeDal _productAttributeDal;
 
-        public OrderProductAttributeManager(IProductAttributeDal productAttributeDal, IMapper mapper)
+        public OrderProductAttributeManager(IProductAttributeDal productAttributeDal)
         {
             _productAttributeDal = productAttributeDal;
         }
@@ -26,7 +25,7 @@ namespace TekhneCafe.Business.Concrete
                 {
                     orderProductAttribute.Quantity = orderProductAttribute.Quantity > 0 ? orderProductAttribute.Quantity : 1;
                     orderProductAttribute.Name = produdctAttribute.Attribute.Name;
-                    orderProductAttribute.Price = produdctAttribute.Attribute.Price;
+                    orderProductAttribute.Price = produdctAttribute.Price;
                 }
                 else
                     orderProduct.OrderProductAttributes.Remove(orderProductAttribute);

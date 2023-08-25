@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
@@ -25,7 +24,7 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(EfTekhneCafeContext).Assembly);
             base.OnModelCreating(modelBuilder);
         }
 

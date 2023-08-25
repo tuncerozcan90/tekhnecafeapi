@@ -97,7 +97,17 @@ namespace TekhneCafe.Business.Concrete
                 return new JwtResponse
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    ValidTo = token.ValidTo
+                    User = new()
+                    {
+                        Id = user.Id.ToString(),
+                        Department = user.Department,
+                        Email = user.Email,
+                        FullName = user.FullName,
+                        Username = user.Username,
+                        Wallet = user.Wallet,
+                        Role = claims.First(claim => claim.Type == ClaimTypes.Role).Value
+                    }
+
                 };
             }
         }
@@ -121,7 +131,7 @@ namespace TekhneCafe.Business.Concrete
                 Username = userEntry.Properties["sAMAccountName"]?.Value?.ToString(),
                 Email = userEntry.Properties["mail"]?.Value?.ToString(),
                 Department = userEntry.Properties["department"]?.Value?.ToString(),
-                //Phone = userEntry.Properties["telephoneNumber"].Value.ToString()
+                InternalPhone = userEntry.Properties["telephoneNumber"].Value.ToString()
             };
 
             return await _userService.CreateUserAsync(userDto); ;

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using TekhneCafe.Business.Abstract;
+﻿using TekhneCafe.Business.Abstract;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 
@@ -10,7 +9,7 @@ namespace TekhneCafe.Business.Concrete
         private readonly IOrderProductAttributeService _orderProductAttributeService;
         private readonly IProductDal _productDal;
 
-        public OrderProductManager(IOrderProductAttributeService orderProductAttributeService, IProductDal productDal, IMapper mapper)
+        public OrderProductManager(IOrderProductAttributeService orderProductAttributeService, IProductDal productDal)
         {
             _orderProductAttributeService = orderProductAttributeService;
             _productDal = productDal;

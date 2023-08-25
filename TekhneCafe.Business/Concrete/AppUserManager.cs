@@ -7,6 +7,7 @@ using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.AppUser;
 using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.AppUser;
+using TekhneCafe.Core.Extensions;
 using TekhneCafe.Core.Filters.AppUser;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.DataAccess.Helpers.Transaction;
@@ -32,7 +33,7 @@ namespace TekhneCafe.Business.Concrete
         public List<AppUserListDto> GetUserList(AppUserRequestFilter filters = null)
         {
             var users = _userDal.GetAll();
-            var filteredResult = new AppUserFilterService().FilterTransactionHistory(users, filters);
+            var filteredResult = new AppUserFilterService().FilterAppUsers(users, filters);
             new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
             return _mapper.Map<List<AppUserListDto>>(filteredResult.ResponseValue);
         }
@@ -44,7 +45,6 @@ namespace TekhneCafe.Business.Concrete
         {
             AppUser appUser = await _userDal.GetByIdAsync(Guid.Parse(id));
             ThrowExceptionUserNotExists(appUser);
-
             return appUser;
         }
 
@@ -52,7 +52,6 @@ namespace TekhneCafe.Business.Concrete
         {
             AppUser appUser = await _userDal.GetByIdAsync(Guid.Parse(id));
             ThrowExceptionUserNotExists(appUser);
-
             return _mapper.Map<AppUserListDto>(appUser);
         }
 
@@ -76,6 +75,14 @@ namespace TekhneCafe.Business.Concrete
             return user;
         }
 
+        public async Task UpdateUserPhoneAsync(string phone)
+        {
+            Guid userId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId());
+            AppUser user = await _userDal.GetByIdAsync(userId);
+            user.Phone = phone;
+            await _userDal.UpdateAsync(user);
+        }
+
         public async Task UpdateUserAsync(AppUser user)
             => await _userDal.UpdateAsync(user);
 
@@ -84,7 +91,5 @@ namespace TekhneCafe.Business.Concrete
             if (user is null)
                 throw new AppUserNotFoundException();
         }
-
-
     }
 }

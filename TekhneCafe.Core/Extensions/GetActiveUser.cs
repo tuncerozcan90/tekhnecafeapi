@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace TekhneCafe.Business.Extensions
+namespace TekhneCafe.Core.Extensions
 {
     public static class GetActiveUser
     {

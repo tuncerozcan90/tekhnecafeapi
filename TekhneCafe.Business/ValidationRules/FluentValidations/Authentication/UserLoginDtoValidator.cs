@@ -8,17 +8,18 @@ namespace TekhneCafe.Business.ValidationRules.FluentValidations.Authentication
         public UserLoginDtoValidator()
         {
             RuleFor(_ => _.Username)
-                .NotEmpty()
                 .NotNull()
+                .WithMessage("Kullanıcı adı boş olamaz!")
                 .MinimumLength(5)
+                .WithMessage("Kullanıcı adı en az 5 karakter içermelidir!")
                 .MaximumLength(100)
-                .WithMessage("Must containe at least 5 at most 100 charachters!");
+                .WithMessage("Kullanıcı adı en az 5 en fazla 100 karakter içerebilir!");
 
             RuleFor(_ => _.Password)
-                .NotEmpty()
                 .NotNull()
-                .MinimumLength(2)
-                .WithMessage("Password is required!");
+                .WithMessage("Şifre boş olamaz")
+                .MinimumLength(3)
+                .WithMessage("Şifre en az 2 karakter içermelidir!");
         }
     }
 }

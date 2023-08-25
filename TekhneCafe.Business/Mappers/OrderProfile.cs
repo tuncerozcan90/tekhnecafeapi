@@ -10,6 +10,7 @@ namespace TekhneCafe.Business.Mappers
         {
             CreateMap<Order, OrderDetailDto>();
             CreateMap<OrderAddDto, Order>();
+            CreateMap<Order, OrderListDto>();
         }
     }
 }

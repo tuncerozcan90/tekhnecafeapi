@@ -3,7 +3,8 @@
     public class Pagination
     {
         int _page = 0;
-        int _size = 5;
+        int _size = 10;
+
         public int Page
         {
             get
@@ -24,7 +25,7 @@
             }
             set
             {
-                _size = value <= 0 ? 5 : (value > 100 ? 100 : value);
+                _size = value <= 0 ? 10 : (value > 100 ? 100 : value);
             }
         }
     }
