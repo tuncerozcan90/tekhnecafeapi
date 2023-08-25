@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Business.Extensions;
 using TekhneCafe.Business.Helpers.FilterServices;
 using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.AppUser;
 using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.AppUser;
+using TekhneCafe.Core.Extensions;
 using TekhneCafe.Core.Filters.AppUser;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.DataAccess.Helpers.Transaction;
@@ -91,7 +91,5 @@ namespace TekhneCafe.Business.Concrete
             if (user is null)
                 throw new AppUserNotFoundException();
         }
-
-
     }
 }

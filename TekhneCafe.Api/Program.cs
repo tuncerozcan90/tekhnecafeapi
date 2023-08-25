@@ -6,6 +6,8 @@ using TekhneCafe.Api.Extensions;
 using TekhneCafe.Business.Extensions;
 using TekhneCafe.Core.Exceptions;
 using TekhneCafe.DataAccess.Extensions;
+using TekneCafe.SignalR.Extensions;
+using TekneCafe.SignalR.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +28,7 @@ builder.Host.UseSerilog(log);
 builder.Services.AddApiServices();
 builder.Services.AddDataAccessServices(builder.Configuration);
 builder.Services.AddBusinessServices(builder.Configuration);
-
+builder.Services.AddSignalRServices();
 
 var allowedHosts = builder.Configuration.GetValue<string>("AllowedHosts");
 builder.Services.AddCors(options =>
@@ -93,8 +95,14 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+app.UseRouting();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapHub<OrderNoficationHub>("/myhub");
+});
 
 app.Run();

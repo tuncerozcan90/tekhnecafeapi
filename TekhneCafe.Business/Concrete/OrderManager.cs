@@ -9,11 +9,13 @@ using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Order;
 using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.Order;
+using TekhneCafe.Core.Extensions;
 using TekhneCafe.Core.Filters.Order;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.DataAccess.Helpers.Transaction;
 using TekhneCafe.Entity.Concrete;
 using TekhneCafe.Entity.Enums;
+using TekneCafe.SignalR.Abstract;
 
 namespace TekhneCafe.Business.Concrete
 {
@@ -27,9 +29,11 @@ namespace TekhneCafe.Business.Concrete
         private readonly IOrderProductService _orderProductService;
         private readonly ITransactionHistoryService _transactionHistoryService;
         private readonly ITransactionManagement _transactionManagement;
+        private readonly IOrderNotificationService _orderNotificationService;
 
-        public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, IOrderHistoryService orderHistoryService, IWalletService walletService,
-            IOrderProductService orderProductService, ITransactionHistoryService transactionHistoryService, ITransactionManagement transactionManagement)
+        public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, IOrderHistoryService orderHistoryService,
+            IWalletService walletService, IOrderProductService orderProductService, ITransactionHistoryService transactionHistoryService,
+            ITransactionManagement transactionManagement, IOrderNotificationService orderNotificationService)
         {
             _orderDal = orderDal;
             _mapper = mapper;
@@ -39,6 +43,7 @@ namespace TekhneCafe.Business.Concrete
             _orderProductService = orderProductService;
             _transactionHistoryService = transactionHistoryService;
             _transactionManagement = transactionManagement;
+            _orderNotificationService = orderNotificationService;
         }
 
         public async Task CreateOrderAsync(OrderAddDto orderAddDto)
@@ -48,6 +53,7 @@ namespace TekhneCafe.Business.Concrete
             if (validOrder is null)
                 throw new OrderBadRequestException();
             await CreateOrderWhenValidAsync(order);
+            await SendOrderNotificationAsync(order.Id);
         }
 
         public async Task<Order> GetValidOrderAsync(Order order)
@@ -167,6 +173,15 @@ namespace TekhneCafe.Business.Concrete
         {
             if (order is null)
                 throw new OrderNotFoundException();
+        }
+
+        private async Task SendOrderNotificationAsync(Guid orderId)
+        {
+            Order order = _orderDal.GetAll(_ => _.Id == orderId)
+                .Include(_ => _.TransactionHistories)
+                .ThenInclude(_ => _.AppUser)
+                .Include(_ => _.OrderProducts).First();
+            await _orderNotificationService.SendOrderNotificationAsync(OrderListMapper(new List<Order>() { order }).First());
         }
     }
 }

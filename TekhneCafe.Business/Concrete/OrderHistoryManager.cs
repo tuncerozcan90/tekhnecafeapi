@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Business.Extensions;
+using TekhneCafe.Core.Extensions;
 using TekhneCafe.Entity.Concrete;
 using TekhneCafe.Entity.Enums;
 
