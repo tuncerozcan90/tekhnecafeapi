@@ -9,5 +9,6 @@
         public string InternalPhone { get; set; }
         public string Email { get; set; }
         public float Wallet { get; set; }
+        public string Username { get; set; }
     }
 }
