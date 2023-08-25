@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
@@ -10,7 +9,7 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly IProductAttributeDal _productAttributeDal;
 
-        public OrderProductAttributeManager(IProductAttributeDal productAttributeDal, IMapper mapper)
+        public OrderProductAttributeManager(IProductAttributeDal productAttributeDal)
         {
             _productAttributeDal = productAttributeDal;
         }

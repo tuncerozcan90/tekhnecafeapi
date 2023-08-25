@@ -5,6 +5,7 @@ using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.ValidationRules.FluentValidations.Order;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Order;
+using TekhneCafe.Core.Filters.Order;
 
 namespace TekhneCafe.Api.Controllers
 {
@@ -79,9 +80,9 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpGet]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
-        public async Task<IActionResult> Orders()
+        public async Task<IActionResult> Orders([FromQuery] OrderRequestFilter filters)
         {
-            var orders = await _orderService.GetOrdersAsync();
+            var orders = await _orderService.GetOrdersAsync(filters);
             return Ok(orders);
         }
     }

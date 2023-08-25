@@ -71,7 +71,7 @@ namespace TekhneCafe.Business.Concrete
                 transactionHistories.Add(new()
                 {
                     CreatedDate = transactionHistory.CreatedDate,
-                    Products = transactionHistory.Order?.OrderProducts.Select(_ => _.Name).ToList(),
+                    Products = transactionHistory.Order?.OrderProducts?.Select(_ => _.Name)?.ToList(),
                     TransactionType = transactionHistory.TransactionType == TransactionType.Order ? "Sipariş" : "Ödeme",
                     Amount = transactionHistory.Amount,
                     Personel = user.FullName,

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context

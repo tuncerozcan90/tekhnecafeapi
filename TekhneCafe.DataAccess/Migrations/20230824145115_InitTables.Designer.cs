@@ -12,8 +12,8 @@ using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 namespace TekhneCafe.DataAccess.Migrations
 {
     [DbContext(typeof(EfTekhneCafeContext))]
-    [Migration("20230824132929_UpdateAssemblyContext")]
-    partial class UpdateAssemblyContext
+    [Migration("20230824145115_InitTables")]
+    partial class InitTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 8, 24, 16, 29, 29, 736, DateTimeKind.Local).AddTicks(1627));
+                        .HasDefaultValue(new DateTime(2023, 8, 24, 17, 51, 15, 783, DateTimeKind.Local).AddTicks(8278));
 
                     b.Property<string>("Department")
                         .HasMaxLength(100)
@@ -97,10 +97,7 @@ namespace TekhneCafe.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Attribute", null, t =>
-                        {
-                            t.HasCheckConstraint("Attribute_Price_NonNegative", "Price >= 0");
-                        });
+                    b.ToTable("Attribute", (string)null);
                 });
 
             modelBuilder.Entity("TekhneCafe.Entity.Concrete.Image", b =>
@@ -133,7 +130,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 8, 24, 16, 29, 29, 736, DateTimeKind.Local).AddTicks(4477));
+                        .HasDefaultValue(new DateTime(2023, 8, 24, 17, 51, 15, 784, DateTimeKind.Local).AddTicks(1325));
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");

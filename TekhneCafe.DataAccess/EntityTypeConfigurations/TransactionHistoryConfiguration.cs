@@ -25,7 +25,6 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
                    .WithMany(_ => _.TransactionHistories)
                    .HasForeignKey(_ => _.OrderId)
                    .OnDelete(DeleteBehavior.Restrict);
-
         }
     }
 }

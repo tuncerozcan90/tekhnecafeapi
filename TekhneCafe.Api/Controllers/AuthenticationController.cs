@@ -2,7 +2,6 @@
 using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.ValidationRules.FluentValidations.Authentication;
-using TekhneCafe.Core.DTOs.AppUser;
 using TekhneCafe.Core.DTOs.Authentication;
 
 namespace TekhneCafe.Api.Controllers

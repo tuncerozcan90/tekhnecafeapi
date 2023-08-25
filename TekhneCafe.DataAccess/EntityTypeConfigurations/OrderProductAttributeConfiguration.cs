@@ -8,7 +8,6 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<OrderProductAttribute> builder)
         {
-
             builder.ToTable("OrderProductAttribute");
             builder.HasKey(_ => _.Id);
 

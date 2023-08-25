@@ -8,16 +8,13 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Entity.Concrete.Attribute> builder)
         {
             builder.ToTable("Attribute");
-            builder.ToTable(_ => _.HasCheckConstraint("Attribute_Price_NonNegative", "Price >= 0"));
             builder.HasKey(_ => _.Id);
 
-            builder.Property(_ => _.Name).HasMaxLength(110).IsRequired();
+            builder.Property(_ => _.Name).HasMaxLength(100).IsRequired();
 
             builder.HasMany(_ => _.ProductAttributes)
                    .WithOne(_ => _.Attribute)
                    .HasForeignKey(_ => _.AttributeId);
-
-
         }
     }
 }

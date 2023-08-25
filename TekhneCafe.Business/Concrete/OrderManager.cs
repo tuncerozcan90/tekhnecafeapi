@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Extensions;
-using TekhneCafe.Business.ValidationRules.FluentValidations.Order;
+using TekhneCafe.Business.Helpers.FilterServices;
+using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Order;
 using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.Order;
+using TekhneCafe.Core.Filters.Order;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.DataAccess.Helpers.Transaction;
 using TekhneCafe.Entity.Concrete;
@@ -21,7 +21,7 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly IOrderDal _orderDal;
         private readonly IMapper _mapper;
-        private readonly HttpContext _httpContext;
+        private readonly IHttpContextAccessor _httpContext;
         private readonly IOrderHistoryService _orderHistoryService;
         private readonly IWalletService _walletService;
         private readonly IOrderProductService _orderProductService;
@@ -33,7 +33,7 @@ namespace TekhneCafe.Business.Concrete
         {
             _orderDal = orderDal;
             _mapper = mapper;
-            _httpContext = httpContext.HttpContext;
+            _httpContext = httpContext;
             _orderHistoryService = orderHistoryService;
             _walletService = walletService;
             _orderProductService = orderProductService;
@@ -85,20 +85,21 @@ namespace TekhneCafe.Business.Concrete
         {
             Order order = await _orderDal.GetOrderIncludeProductsAsync(id);
             ThrowErrorIfOrderNotFound(order);
-            if (!IsActiveUsersOrder(order) && !_httpContext.User.IsInAnyRoles(RoleConsts.CafeService, RoleConsts.CafeAdmin))
+            if (!IsActiveUsersOrder(order) && !_httpContext.HttpContext.User.IsInAnyRoles(RoleConsts.CafeService, RoleConsts.CafeAdmin))
                 throw new ForbiddenException();
 
             return _mapper.Map<OrderDetailDto>(order);
         }
 
-        public async Task<List<OrderListDto>> GetOrdersAsync()
+        public async Task<List<OrderListDto>> GetOrdersAsync(OrderRequestFilter filters)
         {
             var query = _orderDal.GetAll()
                 .Include(_ => _.TransactionHistories)
                 .ThenInclude(_ => _.AppUser)
                 .Include(_ => _.OrderProducts);
-            var orders = await query.ToListAsync();
-            return OrderListMapper(orders);
+            var filteredResult = new OrderFilterService().FilterOrders(query, filters);
+            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            return OrderListMapper(filteredResult.ResponseValue);
         }
 
         private List<OrderListDto> OrderListMapper(List<Order> orders)
@@ -130,7 +131,7 @@ namespace TekhneCafe.Business.Concrete
             using (var result = await _transactionManagement.BeginTransactionAsync())
             {
                 float orderTotalPrice = GetOrderTotalPrice(order);
-                order.AppUserId = Guid.Parse(_httpContext.User.ActiveUserId());
+                order.AppUserId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId());
                 order.TotalPrice = orderTotalPrice;
                 _transactionHistoryService.SetTransactionHistoryForOrder(order, orderTotalPrice, $"Sipariş verildi.", order.AppUserId);
                 _orderHistoryService.SetOrderHistoryForOrder(order, OrderStatus.Ordered);
@@ -160,7 +161,7 @@ namespace TekhneCafe.Business.Concrete
         }
 
         private bool IsActiveUsersOrder(Order order)
-            => order.AppUserId == Guid.Parse(_httpContext.User.ActiveUserId());
+            => order.AppUserId == Guid.Parse(_httpContext.HttpContext.User.ActiveUserId());
 
         private void ThrowErrorIfOrderNotFound(Order order)
         {

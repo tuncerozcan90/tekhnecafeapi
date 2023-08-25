@@ -2,9 +2,13 @@
 {
     public class Metadata
     {
+        private int _currentPage;
+        private int _pageSize;
+        private int _totalPages;
+        private int _totalEntities;
+
         public Metadata()
         {
-
         }
 
         public Metadata(int currentPage, int pageSize, int totalEntities, int totalPages)
@@ -14,11 +18,6 @@
             TotalEntities = totalEntities;
             TotalPages = totalPages;
         }
-
-        private int _currentPage;
-        private int _pageSize;
-        private int _totalPages;
-        private int _totalEntities;
 
         public int CurrentPage
         {

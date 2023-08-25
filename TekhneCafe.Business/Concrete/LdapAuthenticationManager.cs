@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using System.DirectoryServices;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.Consts;
@@ -133,7 +131,7 @@ namespace TekhneCafe.Business.Concrete
                 Username = userEntry.Properties["sAMAccountName"]?.Value?.ToString(),
                 Email = userEntry.Properties["mail"]?.Value?.ToString(),
                 Department = userEntry.Properties["department"]?.Value?.ToString(),
-                //Phone = userEntry.Properties["telephoneNumber"].Value.ToString()
+                InternalPhone = userEntry.Properties["telephoneNumber"].Value.ToString()
             };
 
             return await _userService.CreateUserAsync(userDto); ;

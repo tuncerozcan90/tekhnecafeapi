@@ -4,7 +4,6 @@ using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.Filters.Transaction;
-using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Api.Controllers
 {
