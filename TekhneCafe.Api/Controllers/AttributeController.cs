@@ -23,23 +23,24 @@ namespace TekhneCafe.Api.Controllers
         /// </summary>
         /// <param name="attributeAddDto">The data for the new attribute.</param>
         /// <returns>A response indicating the result of the attribute creation.</returns>
+        ///  <response code="201">Attribute created</response>
+        /// <response code="400">Invalid attribute</response>
+        /// <response code="500">Server error</response>
         [HttpPost]
-        [ProducesResponseType(typeof(string), 200)]
-        [ProducesResponseType(typeof(string), 400)]
-        [ProducesResponseType(typeof(string), 500)]
         public async Task<IActionResult> CreateAttribute(AttributeAddDto attributeAddDto)
         {
             await _attributeService.CreateAttributeAsync(attributeAddDto);
-            return Ok("Attribute created successfully.");
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         /// <summary>
         /// Retrieves a list of all attributes.
         /// </summary>
         /// <returns>A list of attributes.</returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="500">Server error</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<AttributeListDto>), 200)]
-        [ProducesResponseType(typeof(string), 500)]
         public IActionResult GetAllAttributes()
         {
             var attributes = _attributeService.GetAllAttribute();
@@ -50,16 +51,22 @@ namespace TekhneCafe.Api.Controllers
         /// Retrieves an attribute by its ID.
         /// </summary>
         /// <param name="id">The ID of the attribute.</param>
-        /// <returns>The attribute with the specified ID.</returns>
+        /// <returns>The attribute with the specified ID.</returns>  
+        /// <response code="200">Success</response>
+        /// <response code="404">Attribute not found</response>
+        /// <response code="500">Server error</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(string), 404)]
-        [ProducesResponseType(typeof(string), 500)]
         public async Task<IActionResult> GetAttributeById(string id)
         {
             var attribute = await _attributeService.GetAttributeByIdAsync(id);
             return Ok(attribute);
         }
 
+        /// <summary>
+        /// Deletes an attribute by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the attribute to delete.</param>
+        /// <returns>A message indicating the success of the deletion.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAttribute(string id)
         {
@@ -68,6 +75,12 @@ namespace TekhneCafe.Api.Controllers
             return (Ok("Attribute deleted successfully."));
 
         }
+
+        /// <summary>
+        /// Updates an attribute.
+        /// </summary>
+        /// <param name="attributeUpdateDto">The DTO containing the updated attribute data.</param>
+        /// <returns>A message indicating the success of the update.</returns>
         [HttpPut]
         public async Task<IActionResult> UpdateAttribute([FromBody] AttributeUpdateDto attributeUpdateDto)
         {
