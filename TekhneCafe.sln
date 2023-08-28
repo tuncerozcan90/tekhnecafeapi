@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TekhneCafe.Core", "TekhneCa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TekhneCafe.Entity", "TekhneCafe.Entity\TekhneCafe.Entity.csproj", "{A9765708-CF84-4340-B3A6-ED80EA580E0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TekneCafe.SignalR", "TekneCafe.SignalR\TekneCafe.SignalR.csproj", "{21EF1C85-2A49-4C50-91E1-F325CB0CE156}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TekneCafe.SignalR", "TekneCafe.SignalR\TekneCafe.SignalR.csproj", "{21EF1C85-2A49-4C50-91E1-F325CB0CE156}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TekhneCafe.Test", "TekhneCafe.Test\TekhneCafe.Test.csproj", "{0CA1A6DD-AE54-4EFD-92F6-08D2286A0BF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{21EF1C85-2A49-4C50-91E1-F325CB0CE156}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21EF1C85-2A49-4C50-91E1-F325CB0CE156}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21EF1C85-2A49-4C50-91E1-F325CB0CE156}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CA1A6DD-AE54-4EFD-92F6-08D2286A0BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CA1A6DD-AE54-4EFD-92F6-08D2286A0BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CA1A6DD-AE54-4EFD-92F6-08D2286A0BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CA1A6DD-AE54-4EFD-92F6-08D2286A0BF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
