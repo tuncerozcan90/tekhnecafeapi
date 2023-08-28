@@ -22,7 +22,6 @@ namespace TekhneCafe.Api.ActionFilters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-
         }
 
         private void FluentValidation(ActionExecutingContext context)

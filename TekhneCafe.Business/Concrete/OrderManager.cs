@@ -30,10 +30,11 @@ namespace TekhneCafe.Business.Concrete
         private readonly ITransactionHistoryService _transactionHistoryService;
         private readonly ITransactionManagement _transactionManagement;
         private readonly IOrderNotificationService _orderNotificationService;
+        private readonly INotificationService _notificationService;
 
         public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, IOrderHistoryService orderHistoryService,
             IWalletService walletService, IOrderProductService orderProductService, ITransactionHistoryService transactionHistoryService,
-            ITransactionManagement transactionManagement, IOrderNotificationService orderNotificationService)
+            ITransactionManagement transactionManagement, IOrderNotificationService orderNotificationService, INotificationService notificationService)
         {
             _orderDal = orderDal;
             _mapper = mapper;
@@ -44,6 +45,7 @@ namespace TekhneCafe.Business.Concrete
             _transactionHistoryService = transactionHistoryService;
             _transactionManagement = transactionManagement;
             _orderNotificationService = orderNotificationService;
+            _notificationService = notificationService;
         }
 
         public async Task CreateOrderAsync(OrderAddDto orderAddDto)
@@ -52,8 +54,20 @@ namespace TekhneCafe.Business.Concrete
             var validOrder = await GetValidOrderAsync(order);
             if (validOrder is null)
                 throw new OrderBadRequestException();
-            await CreateOrderWhenValidAsync(order);
-            await SendOrderNotificationAsync(order.Id);
+            using (var result = await _transactionManagement.BeginTransactionAsync())
+            {
+                try
+                {
+                    await CreateOrderWhenValidAsync(order);
+                    await SendOrderNotificationAsync(order.Id);
+                    await _notificationService.CreateNotificationAsync("Siparişiniz alınmıştır. Afiyet olsun :)", _httpContext.HttpContext.User.ActiveUserId(), true);
+                    result.Commit();
+                }
+                catch
+                {
+                    throw new InternalServerErrorException();
+                }
+            }
         }
 
         public async Task<Order> GetValidOrderAsync(Order order)
@@ -80,7 +94,7 @@ namespace TekhneCafe.Business.Concrete
                     await _orderDal.UpdateAsync(order);
                     result.Commit();
                 }
-                catch (Exception)
+                catch
                 {
                     throw new InternalServerErrorException();
                 }
@@ -118,11 +132,11 @@ namespace TekhneCafe.Business.Concrete
                     products.Add(orderProduct.Name, orderProduct.Quantity);
                 var orderDto = new OrderListDto()
                 {
-                    OrderId = order.Id.ToString(),
-                    FullName = order.TransactionHistories.First().AppUser.FullName,
+                    Id = order.Id.ToString(),
+                    FullName = order.TransactionHistories.Count > 0 ? order.TransactionHistories.First().AppUser.FullName : null,
                     Amount = order.TotalPrice,
                     Description = order.Description,
-                    CreatedDate = order.TransactionHistories.First().CreatedDate,
+                    CreatedDate = order.TransactionHistories.Count > 0 ? order.TransactionHistories.First().CreatedDate : null,
                     Products = products,
                     OrderStatus = order.OrderStatus.ToString(),
                 };
@@ -134,23 +148,12 @@ namespace TekhneCafe.Business.Concrete
 
         private async Task CreateOrderWhenValidAsync(Order order)
         {
-            using (var result = await _transactionManagement.BeginTransactionAsync())
-            {
-                float orderTotalPrice = GetOrderTotalPrice(order);
-                order.AppUserId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId());
-                order.TotalPrice = orderTotalPrice;
-                _transactionHistoryService.SetTransactionHistoryForOrder(order, orderTotalPrice, $"Sipariş verildi.", order.AppUserId);
-                _orderHistoryService.SetOrderHistoryForOrder(order, OrderStatus.Ordered);
-                try
-                {
-                    await _orderDal.AddAsync(order);
-                    result.Commit();
-                }
-                catch (Exception ex)
-                {
-                    throw new InternalServerErrorException();
-                }
-            }
+            float orderTotalPrice = GetOrderTotalPrice(order);
+            order.AppUserId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId());
+            order.TotalPrice = orderTotalPrice;
+            _transactionHistoryService.SetTransactionHistoryForOrder(order, orderTotalPrice, $"Sipariş verildi.", order.AppUserId);
+            _orderHistoryService.SetOrderHistoryForOrder(order, OrderStatus.Ordered);
+            await _orderDal.AddAsync(order);
         }
 
         private float GetOrderTotalPrice(Order order)

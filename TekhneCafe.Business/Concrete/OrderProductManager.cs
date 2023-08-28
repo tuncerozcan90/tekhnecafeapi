@@ -19,18 +19,15 @@ namespace TekhneCafe.Business.Concrete
             foreach (var orderProduct in order.OrderProducts.ToList())
             {
                 var product = await _productDal.GetByIdAsync(orderProduct.ProductId);
-                if (product != null)
-                {
-                    orderProduct.Quantity = orderProduct.Quantity > 0 ? orderProduct.Quantity : 1;
-                    orderProduct.Name = product.Name;
-                    orderProduct.Price = product.Price;
-                    orderProduct.Description = product.Description;
-                }
-                else
+                if (product is null)
                 {
                     order.OrderProducts.Remove(orderProduct);
                     continue;
                 }
+                orderProduct.Quantity = orderProduct.Quantity > 0 ? orderProduct.Quantity : 1;
+                orderProduct.Name = product.Name;
+                orderProduct.Price = product.Price;
+                orderProduct.Description = product.Description;
                 await _orderProductAttributeService.ValidateOrderProductAttributesAsync(orderProduct);
             }
         }

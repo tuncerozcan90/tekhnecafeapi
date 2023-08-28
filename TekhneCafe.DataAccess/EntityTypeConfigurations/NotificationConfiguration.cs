@@ -11,13 +11,11 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.ToTable("Notification");
             builder.HasKey(_ => _.Id);
 
-            builder.Property(_ => _.To).HasMaxLength(100).IsRequired();
-            builder.Property(_ => _.From).HasMaxLength(100).IsRequired();
+            builder.Property(_ => _.AppUserId).IsRequired();
+
             builder.Property(_ => _.Message).IsRequired().HasMaxLength(150);
 
             builder.Property(_ => _.CreatedDate).HasDefaultValue(DateTime.Now).IsRequired();
-
-            builder.Property(_ => _.DeletedDate).IsRequired(false);
         }
     }
 }

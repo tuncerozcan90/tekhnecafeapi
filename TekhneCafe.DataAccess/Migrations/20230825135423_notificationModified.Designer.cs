@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 
@@ -11,9 +12,11 @@ using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 namespace TekhneCafe.DataAccess.Migrations
 {
     [DbContext(typeof(EfTekhneCafeContext))]
-    partial class EfTekhneCafeContextModelSnapshot : ModelSnapshot
+    [Migration("20230825135423_notificationModified")]
+    partial class notificationModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +34,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 8, 28, 8, 58, 45, 470, DateTimeKind.Local).AddTicks(6117));
+                        .HasDefaultValue(new DateTime(2023, 8, 25, 16, 54, 23, 895, DateTimeKind.Local).AddTicks(3106));
 
                     b.Property<string>("Department")
                         .HasMaxLength(100)
@@ -130,9 +133,9 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 8, 28, 8, 58, 45, 470, DateTimeKind.Local).AddTicks(9650));
+                        .HasDefaultValue(new DateTime(2023, 8, 25, 16, 54, 23, 895, DateTimeKind.Local).AddTicks(5778));
 
-                    b.Property<bool>("IsConfirmed")
+                    b.Property<bool>("IsValid")
                         .HasColumnType("bit");
 
                     b.Property<string>("Message")

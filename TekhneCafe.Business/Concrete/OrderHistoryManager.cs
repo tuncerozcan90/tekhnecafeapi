@@ -8,14 +8,14 @@ namespace TekhneCafe.Business.Concrete
 {
     public class OrderHistoryManager : IOrderHistoryService
     {
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly HttpContext _httpContext;
 
-        public OrderHistoryManager(IHttpContextAccessor httpContext)
+        public OrderHistoryManager(IHttpContextAccessor httpContextAccessor)
         {
-            _httpContext = httpContext;
+            _httpContext = httpContextAccessor.HttpContext;
         }
 
         public void SetOrderHistoryForOrder(Order order, OrderStatus orderStatus)
-            => order.OrderHistories = new List<OrderHistory>() { new OrderHistory(orderStatus, Guid.Parse(_httpContext.HttpContext.User.ActiveUserId())) };
+            => order.OrderHistories = new List<OrderHistory>() { new OrderHistory(orderStatus, Guid.Parse(_httpContext.User.ActiveUserId())) };
     }
 }

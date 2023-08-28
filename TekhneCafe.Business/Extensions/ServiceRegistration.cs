@@ -30,8 +30,8 @@ namespace TekhneCafe.Business.Extensions
                 {
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
-                        ValidateAudience = true,//olusturulacak token degerini kimlerin/hangi originlerin erisebilecegi
-                        ValidateIssuer = true,  //tokeni olusturan
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
 
@@ -60,6 +60,7 @@ namespace TekhneCafe.Business.Extensions
             services.AddScoped<ITransactionHistoryService, TransactionHistoryManager>();
             services.AddScoped<IWalletService, WalletManager>();
             services.AddScoped<IPaymentService, PaymentManager>();
+            services.AddScoped<INotificationService, NotificationManager>();
             #endregion
 
             #region FluentValidation

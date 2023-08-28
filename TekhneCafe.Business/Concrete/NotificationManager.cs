@@ -5,6 +5,7 @@ using TekhneCafe.Business.Helpers.FilterServices;
 using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.Notification;
 using TekhneCafe.Core.Exceptions.Notification;
+using TekhneCafe.Core.Extensions;
 using TekhneCafe.Core.Filters.Notification;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
@@ -17,7 +18,6 @@ namespace TekhneCafe.Business.Concrete
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
 
-
         public NotificationManager(INotificationDal notificationDal, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _notificationDal = notificationDal;
@@ -25,43 +25,40 @@ namespace TekhneCafe.Business.Concrete
             _httpContext = httpContext;
         }
 
-        public async Task CreateNotificationAsync(NotificationAddDto notificationAddDto)
+        public async Task CreateNotificationAsync(string message, string userId, bool isConfirmed)
         {
-            Notification notification = _mapper.Map<Notification>(notificationAddDto);
+            var notification = new Notification()
+            {
+                AppUserId = Guid.Parse(userId),
+                Message = message,
+                IsConfirmed = isConfirmed
+            };
             await _notificationDal.AddAsync(notification);
         }
 
-        public async Task<NotificationListDto> GetNotificationByIdAsync(string id)
+        public async Task<bool> ConfirmNotificationAsync(string id)
         {
-            var notification = await GetNotificationById(id);
-            return _mapper.Map<NotificationListDto>(notification);
+            var notification = await GetNotificationByIdAsync(id);
+            if (notification.IsConfirmed)
+                return false;
+            notification.IsConfirmed = true;
+            await _notificationDal.UpdateAsync(notification);
+            return true;
         }
 
         public List<NotificationListDto> GetNotifications(NotificationRequestFilter filters = null)
         {
-            var filteredResult = new NotificationFilterService().FilterNotifications(_notificationDal.GetAll(), filters);
+            Guid userId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId());
+            var filteredResult = new NotificationFilterService().FilterNotifications(_notificationDal.GetAll(_ => _.AppUserId == userId), filters);
             new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
             return _mapper.Map<List<NotificationListDto>>(filteredResult.ResponseValue);
         }
 
-        public async Task RemoveNotificationAsync(string id)
-        {
-            Notification notification = await GetNotificationById(id);
-            await _notificationDal.SafeDeleteAsync(notification);
-        }
-
-        public async Task UpdateNotificationAsync(NotificationUpdateDto notificationUpdateDto)
-        {
-            Notification notification = await GetNotificationById(notificationUpdateDto.Id);
-            _mapper.Map(notificationUpdateDto, notification);
-            await _notificationDal.UpdateAsync(notification);
-        }
-        private async Task<Notification> GetNotificationById(string id)
+        public async Task<Notification> GetNotificationByIdAsync(string id)
         {
             Notification notification = await _notificationDal.GetByIdAsync(Guid.Parse(id));
             if (notification is null)
                 throw new NotificationNotFoundException();
-
             return notification;
         }
     }

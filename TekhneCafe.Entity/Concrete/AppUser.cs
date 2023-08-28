@@ -15,6 +15,7 @@ namespace TekhneCafe.Entity.Concrete
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public float Wallet { get; set; }
         public virtual ICollection<TransactionHistory>? TransactionHistories { get; set; }
+        public virtual ICollection<Notification>? Notifications { get; set; }
     }
 }
 
