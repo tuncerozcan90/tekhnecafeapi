@@ -8,7 +8,7 @@ namespace TekhneCafe.Entity.Concrete
         public Guid AttributeId { get; set; }
         public float Price { get; set; }
         public bool IsRequired { get; set; }
-        public bool IsDeleted { get; set; } = true;
+        public bool IsDeleted { get; set; }
         public virtual Product Product { get; set; } = null!;
         public virtual Attribute Attribute { get; set; } = null!;
     }
