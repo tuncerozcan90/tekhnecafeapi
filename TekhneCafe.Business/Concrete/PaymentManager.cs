@@ -26,7 +26,7 @@ namespace TekhneCafe.Business.Concrete
             _httpContext = httpContextAccessor.HttpContext;
         }
 
-        public async Task Pay(PaymentDto paymentDto)
+        public async Task PayAsync(PaymentDto paymentDto)
         {
             using (var transaction = await _transactionManagement.BeginTransactionAsync())
             {
@@ -42,6 +42,28 @@ namespace TekhneCafe.Business.Concrete
                 {
                     throw new InternalServerErrorException();
                 }
+            }
+        }
+
+        public async Task ConfirmPaymentAsync(string id)
+        {
+            try
+            {
+                using (var transaction = await _transactionManagement.BeginTransactionAsync())
+                {
+                    bool result = await _notificationService.ConfirmNotificationAsync(id);
+                    if (!result)
+                    {
+                        transaction.Rollback();
+                        return;
+                    }
+                    await _notificationService.CreateNotificationAsync("Ödemenizi onayladınız. Keyifli günler :)", _httpContext.User.ActiveUserId(), true);
+                    await _transactionManagement.CommitTransactionAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerErrorException(ex.Message);
             }
         }
     }

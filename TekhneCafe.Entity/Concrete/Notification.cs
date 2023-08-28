@@ -6,7 +6,7 @@ namespace TekhneCafe.Entity.Concrete
     {
         public string Message { get; set; }
         public Guid AppUserId { get; set; }
-        public bool IsValid { get; set; }
+        public bool IsConfirmed { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

@@ -4,12 +4,10 @@ using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Helpers.FilterServices;
 using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.Notification;
-using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.Notification;
 using TekhneCafe.Core.Extensions;
 using TekhneCafe.Core.Filters.Notification;
 using TekhneCafe.DataAccess.Abstract;
-using TekhneCafe.DataAccess.Helpers.Transaction;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Concrete
@@ -19,46 +17,33 @@ namespace TekhneCafe.Business.Concrete
         private readonly INotificationDal _notificationDal;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
-        private readonly ITransactionManagement _transactionManagement;
 
-        public NotificationManager(INotificationDal notificationDal, IMapper mapper, IHttpContextAccessor httpContext, ITransactionManagement transactionManagement)
+        public NotificationManager(INotificationDal notificationDal, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _notificationDal = notificationDal;
             _mapper = mapper;
             _httpContext = httpContext;
-            _transactionManagement = transactionManagement;
         }
 
-        public async Task CreateNotificationAsync(string message, string userId, bool isValid)
+        public async Task CreateNotificationAsync(string message, string userId, bool isConfirmed)
         {
             var notification = new Notification()
             {
                 AppUserId = Guid.Parse(userId),
                 Message = message,
-                IsValid = isValid
+                IsConfirmed = isConfirmed
             };
             await _notificationDal.AddAsync(notification);
         }
 
-        public async Task ConfirmNotification(string id)
+        public async Task<bool> ConfirmNotificationAsync(string id)
         {
-            var notification = await GetNotificationById(id);
-            if (notification.IsValid)
-                return;
-            notification.IsValid = true;
-            try
-            {
-                using (var transaction = await _transactionManagement.BeginTransactionAsync())
-                {
-                    await _notificationDal.UpdateAsync(notification);
-                    await CreateNotificationAsync("Ödemenizi onayladınız. Keyifli günler :)", _httpContext.HttpContext.User.ActiveUserId(), true);
-                    await _transactionManagement.CommitTransactionAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new InternalServerErrorException();
-            }
+            var notification = await GetNotificationByIdAsync(id);
+            if (notification.IsConfirmed)
+                return false;
+            notification.IsConfirmed = true;
+            await _notificationDal.UpdateAsync(notification);
+            return true;
         }
 
         public List<NotificationListDto> GetNotifications(NotificationRequestFilter filters = null)
@@ -69,7 +54,7 @@ namespace TekhneCafe.Business.Concrete
             return _mapper.Map<List<NotificationListDto>>(filteredResult.ResponseValue);
         }
 
-        public async Task<Notification> GetNotificationById(string id)
+        public async Task<Notification> GetNotificationByIdAsync(string id)
         {
             Notification notification = await _notificationDal.GetByIdAsync(Guid.Parse(id));
             if (notification is null)

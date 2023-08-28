@@ -6,9 +6,9 @@ namespace TekhneCafe.Business.Abstract
 {
     public interface INotificationService
     {
-        Task CreateNotificationAsync(string message, string userId, bool isValid);
-        Task ConfirmNotification(string id);
+        Task CreateNotificationAsync(string message, string userId, bool isConfirmed);
+        Task<bool> ConfirmNotificationAsync(string id);
         List<NotificationListDto> GetNotifications(NotificationRequestFilter filters = null);
-        Task<Notification> GetNotificationById(string id);
+        Task<Notification> GetNotificationByIdAsync(string id);
     }
 }

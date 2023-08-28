@@ -10,7 +10,7 @@ namespace TekhneCafe.Business.Helpers.FilterServices
         public AppUserResponseFilter<List<AppUser>> FilterAppUsers(IQueryable<AppUser> appUsers, AppUserRequestFilter filters)
         {
             if (filters.Name != null)
-                appUsers = appUsers.Where(_ => _.FullName.ToUpper().Contains(filters.Name.ToUpper()));
+                appUsers = appUsers.Where(_ => _.FullName.ToLower().Contains(filters.Name.ToLower()));
             var filteredUserHistory = appUsers.Skip(filters.Page * filters.Size).Take(filters.Size).ToList();
             Metadata metadata = new(filters.Page, filters.Size, appUsers.Count(), appUsers.Count() / filters.Size + 1);
             var header = new CustomHeaders().AddPaginationHeader(metadata);

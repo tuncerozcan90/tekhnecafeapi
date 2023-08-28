@@ -23,12 +23,5 @@ namespace TekhneCafe.Api.Controllers
             var notifications = _notificationService.GetNotifications(filters);
             return Ok(notifications);
         }
-
-        [HttpPost("confirm")]
-        public async Task<IActionResult> ConfirmNotification([FromBody] string id)
-        {
-            await _notificationService.ConfirmNotification(id);
-            return Ok();
-        }
     }
 }

@@ -63,7 +63,7 @@ namespace TekhneCafe.Business.Concrete
                     await _notificationService.CreateNotificationAsync("Siparişiniz alınmıştır. Afiyet olsun :)", _httpContext.HttpContext.User.ActiveUserId(), true);
                     result.Commit();
                 }
-                catch (Exception ex)
+                catch
                 {
                     throw new InternalServerErrorException();
                 }
@@ -94,7 +94,7 @@ namespace TekhneCafe.Business.Concrete
                     await _orderDal.UpdateAsync(order);
                     result.Commit();
                 }
-                catch (Exception)
+                catch
                 {
                     throw new InternalServerErrorException();
                 }
@@ -132,11 +132,11 @@ namespace TekhneCafe.Business.Concrete
                     products.Add(orderProduct.Name, orderProduct.Quantity);
                 var orderDto = new OrderListDto()
                 {
-                    OrderId = order.Id.ToString(),
-                    FullName = order.TransactionHistories.First().AppUser.FullName,
+                    Id = order.Id.ToString(),
+                    FullName = order.TransactionHistories.Count > 0 ? order.TransactionHistories.First().AppUser.FullName : null,
                     Amount = order.TotalPrice,
                     Description = order.Description,
-                    CreatedDate = order.TransactionHistories.First().CreatedDate,
+                    CreatedDate = order.TransactionHistories.Count > 0 ? order.TransactionHistories.First().CreatedDate : null,
                     Products = products,
                     OrderStatus = order.OrderStatus.ToString(),
                 };
