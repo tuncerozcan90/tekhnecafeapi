@@ -58,8 +58,29 @@ namespace TekhneCafe.Business.Concrete
         {
             Product product = await _productDal.GetByIdAsync(Guid.Parse(productUpdateDto.Id));
             ThrowErrorIfProductNotFound(product);
+
+            // Update product properties from the DTO
             _mapper.Map(productUpdateDto, product);
-            _productDal.UpdateAsync(product);
+
+            // Update product attributes
+            var newProductAttributeIds = productUpdateDto.ProductAttributes.Select(attr => attr.AttributeId).ToList();
+            var existingAttributeIds = product.ProductAttributes.Select(attr => attr.AttributeId.ToString()).ToList();
+
+            // Remove attributes that are no longer associated
+            var attributesToRemove = product.ProductAttributes.Where(attr => !newProductAttributeIds.Contains(attr.AttributeId.ToString())).ToList();
+            foreach (var attribute in attributesToRemove)
+                product.ProductAttributes.Remove(attribute);
+
+            // Add new attributes
+            var attributesToAdd = newProductAttributeIds.Except(existingAttributeIds);
+            foreach (var attributeId in attributesToAdd)
+            {
+                var newAttr = productUpdateDto.ProductAttributes.First(_ => _.AttributeId == attributeId);
+                product.ProductAttributes.Add(new ProductAttribute { IsRequired = newAttr.IsRequired, Price = 32 });
+            }
+
+            // Save changes to the product and attributes
+            await _productDal.UpdateAsync(product);
         }
     }
 }

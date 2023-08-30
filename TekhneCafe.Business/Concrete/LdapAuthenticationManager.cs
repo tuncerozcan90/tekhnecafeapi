@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.DirectoryServices;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -19,22 +18,19 @@ namespace TekhneCafe.Business.Concrete
         private readonly string ldapPassword;
         private readonly ITokenService _tokenService;
         private readonly IAppUserService _userService;
-        private readonly IValidator<UserLoginDto> _userLoginValidator;
         private DirectoryEntry? ldapConnection;
 
-        public LdapAuthenticationManager(IConfiguration configuration, ITokenService tokenService, IAppUserService userService, IValidator<UserLoginDto> userLoginValidator)
+        public LdapAuthenticationManager(IConfiguration configuration, ITokenService tokenService, IAppUserService userService)
         {
             ldapPath = configuration.GetSection("LdapSettings:Path").Value;
             ldapUser = configuration.GetSection("LdapSettings:Username").Value;
             ldapPassword = configuration.GetSection("LdapSettings:Password").Value;
             _tokenService = tokenService;
             _userService = userService;
-            _userLoginValidator = userLoginValidator;
         }
 
         public async Task<JwtResponse> Login(UserLoginDto user)
         {
-            await ValidateUserAsync(user);
             using (ldapConnection = new DirectoryEntry(ldapPath, ldapUser, ldapPassword))
             {
                 // Connect to the LDAP server using admin credentials
@@ -107,7 +103,6 @@ namespace TekhneCafe.Business.Concrete
                         Wallet = user.Wallet,
                         Role = claims.First(claim => claim.Type == ClaimTypes.Role).Value
                     }
-
                 };
             }
         }
@@ -144,12 +139,5 @@ namespace TekhneCafe.Business.Concrete
                 new Claim(ClaimTypes.Name, user.FullName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
-
-        private async Task ValidateUserAsync(UserLoginDto userDto)
-        {
-            var result = await _userLoginValidator.ValidateAsync(userDto);
-            if (!result.IsValid)
-                throw new UserBadRequestException();
-        }
     }
 }

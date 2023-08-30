@@ -23,7 +23,7 @@ namespace TekhneCafe.Business.Concrete
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWTAuth:ValidIssuerURL"],
                 audience: _configuration["JWTAuth:ValidAudienceURL"],
-                expires: DateTime.Now.AddDays(7),
+                expires: DateTime.Now.AddDays(int.Parse(_configuration["JWTAuth:Expire"])),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey,
                 SecurityAlgorithms.HmacSha256)
