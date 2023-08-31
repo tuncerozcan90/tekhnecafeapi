@@ -1,24 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Api.Controllers;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Business.Concrete;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Transaction;
 using TekhneCafe.Core.Filters.Transaction;
-using TekhneCafe.Entity.Concrete;
-using TekhneCafe.Entity.Enums;
 
 namespace TekhneCafe.Test
 {
@@ -104,7 +92,7 @@ namespace TekhneCafe.Test
             var mockTransactionHistoryService = new Mock<ITransactionHistoryService>();
             mockTransactionHistoryService
                 .Setup(repo => repo.GetAllTransactionHistoriesByIdAsync(It.IsAny<TransactionHistoryRequestFilter>(), It.IsAny<string>()))
-                .ReturnsAsync(new List<TransactionHistoryListDto>()); 
+                .ReturnsAsync(new List<TransactionHistoryListDto>());
             var controller = new TransactionsController(mockTransactionHistoryService.Object);
             var filters = new TransactionHistoryRequestFilter();
             var userId = "nonExistentUserId";

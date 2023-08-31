@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.ValidationRules.FluentValidations.Product;
+using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Product;
 using TekhneCafe.Entity.Concrete;
 
@@ -7,6 +11,7 @@ namespace TekhneCafe.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -26,6 +31,8 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="404">Product not found</response>
         /// <response code="500">Server error</response>
         [HttpGet("{id}")]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
+        [Authorize]
         public async Task<IActionResult> GetProductById(string id)
         {
             Product product = await _productService.GetProductByIdAsync(id);
@@ -42,6 +49,8 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpPost]
         [Route("create")]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        [TypeFilter(typeof(FluentValidationFilterAttribute<ProductAddDtoValidator, ProductAddDto>), Arguments = new object[] { "productAddDto" })]
         public async Task<IActionResult> CreateProduct(ProductAddDto productAddDto)
         {
             await _productService.CreateProductAsync(productAddDto);
@@ -53,6 +62,7 @@ namespace TekhneCafe.Api.Controllers
         /// </summary>
         /// <returns>The list of all products.</returns>
         [HttpGet]
+        [Authorize]
         public IActionResult GetAllProducts()
         {
             var products = _productService.GetAllProducts();
@@ -65,6 +75,8 @@ namespace TekhneCafe.Api.Controllers
         /// <param name="id">The ID of the product to delete.</param>
         /// <returns>A message indicating the success of the deletion.</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> DeleteProduct(string id)
         {
 
@@ -79,6 +91,8 @@ namespace TekhneCafe.Api.Controllers
         /// <param name="productUpdateDto">The DTO containing the updated product data.</param>
         /// <returns>A message indicating the success of the update.</returns>
         [HttpPut]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        [TypeFilter(typeof(FluentValidationFilterAttribute<ProductUpdateDtoValidator, ProductUpdateDto>), Arguments = new object[] { "productUpdateDto" })]
         public async Task<IActionResult> UpdateProduct([FromBody] ProductUpdateDto productUpdateDto)
         {
             await _productService.UpdateProductAsync(productUpdateDto);
