@@ -5,7 +5,6 @@ using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Helpers.FilterServices;
 using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.AppUser;
-using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.AppUser;
 using TekhneCafe.Core.Extensions;
 using TekhneCafe.Core.Filters.AppUser;

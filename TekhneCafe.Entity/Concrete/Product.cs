@@ -12,6 +12,7 @@ namespace TekhneCafe.Entity.Concrete
         public bool IsDeleted { get; set; }
         public virtual ICollection<Image>? Images { get; set; }
         public virtual ICollection<ProductAttribute>? ProductAttributes { get; set; }
+        public virtual ICollection<Category>? Categories { get; set; }
     }
 
 }

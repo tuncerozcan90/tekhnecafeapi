@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using TekhneCafe.Api.LoggerEnrichers;
 
 namespace TekhneCafe.Api.Extensions
