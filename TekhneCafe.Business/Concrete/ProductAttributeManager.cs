@@ -25,10 +25,24 @@ namespace TekhneCafe.Business.Concrete
             await _productAttributeDal.AddAsync(productAttribute);
         }
 
-        public async Task<ProductAttributeListDto> GetProductAttributeById(string id)
+        public Task<List<ProductAttributeListDto>> GetProductAttributesByProductId(string ProductId)
         {
-            var productAttribute = await _productAttributeDal.GetByIdAsync(Guid.Parse(id));
-            return _mapper.Map<ProductAttributeListDto>(productAttribute);
+            throw new NotImplementedException();
         }
+
+        //public async Task<List<ProductAttributeListDto>> GetProductAttributeByProductId(string ProductId)
+        //{
+        //    var productAttribute = await _productAttributeDal.GetByIdAsync(Guid.Parse(ProductId));
+        //    return _mapper.Map<ProductAttributeListDto>(productAttribute);
+        //}
+
+        //public async Task<List<ProductAttributeListDto>> GetProductAttributesByProductId(string ProductId)
+        //{
+        //    // ProductId'yi Guid'e çevirin ve bu ID'ye sahip ürünün attributelerini alın
+        //    var productIdGuid = Guid.Parse(ProductId);
+
+        //    // ProductAttributeListDto'ya dönüştürün ve listeyi döndürün
+        //    return _mapper.Map<List<ProductAttributeListDto>>(productAttributes);
+        //}
     }
 }

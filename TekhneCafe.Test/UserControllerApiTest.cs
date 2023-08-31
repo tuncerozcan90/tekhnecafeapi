@@ -1,23 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Api.Controllers;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Business.Extensions;
-using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.AppUser;
 using TekhneCafe.Core.DTOs.Authentication;
 using TekhneCafe.Core.Exceptions.AppUser;
 using TekhneCafe.Core.Exceptions.Authentication;
 using TekhneCafe.Core.Filters.AppUser;
-using TekhneCafe.Entity.Concrete;
 
 
 namespace TekhneCafe.Test
@@ -165,7 +154,7 @@ namespace TekhneCafe.Test
             var mockAuthenticationService = new Mock<IAuthenticationService>();
             var validUserDto = new UserLoginDto { Username = "valid-username", Password = "valid-password" };
 
-            var jwtResponse = new JwtResponse { Token = "valid-token", ValidTo = DateTime.Now.AddDays(1) };
+            var jwtResponse = new JwtResponse { Token = "valid-token", User = new UserResponse() };
             mockAuthenticationService.Setup(service => service.Login(validUserDto)).ReturnsAsync(jwtResponse);
 
             var controller = new AuthenticationController(mockAuthenticationService.Object);

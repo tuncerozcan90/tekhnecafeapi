@@ -9,7 +9,10 @@ namespace TekhneCafe.Api.Extensions
     {
         public static void AddApiServices(this IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
             services.AddHttpContextAccessor();
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -62,3 +65,4 @@ namespace TekhneCafe.Api.Extensions
         }
     }
 }
+//options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore()

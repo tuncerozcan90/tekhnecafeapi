@@ -5,6 +5,6 @@ namespace TekhneCafe.Business.Abstract
     public interface IProductAttributeService
     {
         Task CreateProductAttributeAsync(ProductAttributeAddDto productAttributeAddDto);
-        Task<ProductAttributeListDto> GetProductAttributeById(string id);
+        Task<List<ProductAttributeListDto>> GetProductAttributesByProductId(string ProductId);
     }
 }

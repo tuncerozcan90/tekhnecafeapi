@@ -1,4 +1,5 @@
-﻿using TekhneCafe.Core.DataAccess.Concrete.EntityFramework;
+﻿using Microsoft.EntityFrameworkCore;
+using TekhneCafe.Core.DataAccess.Concrete.EntityFramework;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 using TekhneCafe.Entity.Concrete;
@@ -11,5 +12,9 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
         {
 
         }
+
+        public async Task<Product> GetProductIncludeAttributeAsync(string id)
+            => await _dbContext.Product.Include(_ => _.ProductAttributes).FirstOrDefaultAsync(_ => _.Id == Guid.Parse(id));
+
     }
 }

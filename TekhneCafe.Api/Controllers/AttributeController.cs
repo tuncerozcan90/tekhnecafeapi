@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Attribute;
 
 namespace TekhneCafe.Api.Controllers
@@ -9,6 +11,7 @@ namespace TekhneCafe.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AttributeController : ControllerBase
     {
         private readonly IAttributeService _attributeService;
@@ -27,6 +30,8 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="400">Invalid attribute</response>
         /// <response code="500">Server error</response>
         [HttpPost]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+
         public async Task<IActionResult> CreateAttribute(AttributeAddDto attributeAddDto)
         {
             await _attributeService.CreateAttributeAsync(attributeAddDto);
@@ -41,6 +46,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="400">Bad request</response>
         /// <response code="500">Server error</response>
         [HttpGet]
+        [Authorize]
         public IActionResult GetAllAttributes()
         {
             var attributes = _attributeService.GetAllAttribute();
@@ -56,6 +62,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="404">Attribute not found</response>
         /// <response code="500">Server error</response>
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetAttributeById(string id)
         {
             var attribute = await _attributeService.GetAttributeByIdAsync(id);
@@ -68,6 +75,8 @@ namespace TekhneCafe.Api.Controllers
         /// <param name="id">The ID of the attribute to delete.</param>
         /// <returns>A message indicating the success of the deletion.</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+
         public async Task<IActionResult> DeleteAttribute(string id)
         {
 
@@ -82,6 +91,8 @@ namespace TekhneCafe.Api.Controllers
         /// <param name="attributeUpdateDto">The DTO containing the updated attribute data.</param>
         /// <returns>A message indicating the success of the update.</returns>
         [HttpPut]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+
         public async Task<IActionResult> UpdateAttribute([FromBody] AttributeUpdateDto attributeUpdateDto)
         {
             await _attributeService.UpdateAttributeAsync(attributeUpdateDto);
