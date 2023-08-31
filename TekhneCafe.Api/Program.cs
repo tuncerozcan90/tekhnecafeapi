@@ -12,7 +12,6 @@ using TekhneCafe.Core.Extensions;
 using TekhneCafe.DataAccess.Extensions;
 using TekneCafe.SignalR.Extensions;
 using TekneCafe.SignalR.Hubs;
-
 var builder = WebApplication.CreateBuilder(args);
 
 #region Serilog Configuration
@@ -90,7 +89,7 @@ app.UseExceptionHandler(
                     NotFoundException ex => StatusCodes.Status404NotFound,
                     ForbiddenException ex => StatusCodes.Status403Forbidden,
                     InternalServerErrorException exception => StatusCodes.Status500InternalServerError,
-                    _ => 999999
+                    _ => StatusCodes.Status500InternalServerError
                 };
                 var errorMessage = $"{exceptionObject.Error.Message}";
                 await context.Response
@@ -106,7 +105,7 @@ app.UseExceptionHandler(
 );
 #endregion
 
-app.UseSerilogRequestLogging();
+//app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

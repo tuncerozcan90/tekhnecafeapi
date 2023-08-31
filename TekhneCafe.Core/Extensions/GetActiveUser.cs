@@ -6,7 +6,7 @@ namespace TekhneCafe.Core.Extensions
     {
         public static string ActiveUserId(this ClaimsPrincipal claims)
         {
-            var userClaims = claims.Identities.First(_ => _.IsAuthenticated);
+            var userClaims = claims.Identities.FirstOrDefault(_ => _.IsAuthenticated);
             return userClaims?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
 

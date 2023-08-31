@@ -65,11 +65,12 @@ namespace TekhneCafe.Business.Concrete
         private async Task<List<TransactionHistoryListDto>> TransactionHistoryMappings(List<TransactionHistory> filteredResult)
         {
             List<TransactionHistoryListDto> transactionHistories = new();
+            var user = await _userService.GetRawUserByIdAsync(filteredResult.FirstOrDefault().AppUserId.ToString());
             foreach (var transactionHistory in filteredResult)
             {
-                var user = await _userService.GetRawUserByIdAsync(transactionHistory.AppUserId.ToString());
                 transactionHistories.Add(new()
                 {
+                    OrderId = transactionHistory.OrderId,
                     CreatedDate = transactionHistory.CreatedDate,
                     Products = transactionHistory.Order?.OrderProducts?.Select(_ => _.Name)?.ToList(),
                     TransactionType = transactionHistory.TransactionType == TransactionType.Order ? "Sipariş" : "Ödeme",

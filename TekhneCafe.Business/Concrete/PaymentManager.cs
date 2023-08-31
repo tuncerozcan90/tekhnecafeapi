@@ -31,11 +31,13 @@ namespace TekhneCafe.Business.Concrete
             using (var transaction = await _transactionManagement.BeginTransactionAsync())
             {
                 paymentDto.Description = paymentDto.Description == null ? "Ödeme yapıldı" : paymentDto.Description;
+                string notificationMessage = "Ödemeniz başarıyla alınmıştır. Bu yazıya tıklayarak ödeme yaptığınız tutarı onaylayınız.";
                 try
                 {
                     await _walletService.AddToWalletAsync(Guid.Parse(paymentDto.UserId), paymentDto.Amount);
                     await _transactionHistoryService.CreateTransactionHistoryAsync(paymentDto.Amount, TransactionType.Payment, paymentDto.Description, Guid.Parse(_httpContext.User.ActiveUserId()));
-                    await _notificationService.CreateNotificationAsync("Ödemeniz başarıyla alınmıştır. Bu yazıya tıklayarak ödeme yaptığınız tutarı onaylayınız.", _httpContext.User.ActiveUserId(), false);
+                    await _transactionHistoryService.CreateTransactionHistoryAsync(paymentDto.Amount, TransactionType.Payment, paymentDto.Description, Guid.Parse(paymentDto.UserId));
+                    await _notificationService.CreateNotificationAsync(notificationMessage, paymentDto.UserId, false);
                     await transaction.CommitAsync();
                 }
                 catch
@@ -53,17 +55,14 @@ namespace TekhneCafe.Business.Concrete
                 {
                     bool result = await _notificationService.ConfirmNotificationAsync(id);
                     if (!result)
-                    {
-                        transaction.Rollback();
                         return;
-                    }
                     await _notificationService.CreateNotificationAsync("Ödemenizi onayladınız. Keyifli günler :)", _httpContext.User.ActiveUserId(), true);
                     await _transactionManagement.CommitTransactionAsync();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw new InternalServerErrorException(ex.Message);
+                throw new InternalServerErrorException();
             }
         }
     }

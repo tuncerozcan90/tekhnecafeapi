@@ -60,7 +60,6 @@ namespace TekhneCafe.Business.Concrete
                 {
                     await CreateOrderWhenValidAsync(order);
                     await SendOrderNotificationAsync(order.Id);
-                    await _notificationService.CreateNotificationAsync("Siparişiniz alınmıştır. Afiyet olsun :)", _httpContext.HttpContext.User.ActiveUserId(), true);
                     result.Commit();
                 }
                 catch
@@ -92,6 +91,7 @@ namespace TekhneCafe.Business.Concrete
                 {
                     await _walletService.WithdrawFromWalletAsync(order.AppUserId, order.TotalPrice);
                     await _orderDal.UpdateAsync(order);
+                    await _notificationService.CreateNotificationAsync("Siparişiniz alınmıştır. Afiyet olsun :)", _httpContext.HttpContext.User.ActiveUserId(), true);
                     result.Commit();
                 }
                 catch
