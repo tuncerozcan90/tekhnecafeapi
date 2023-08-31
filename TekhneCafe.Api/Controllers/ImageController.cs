@@ -24,9 +24,9 @@ namespace TekhneCafe.Api.Controllers
         public async Task<IActionResult> UploadImage([FromForm] UploadImageRequest request)
         {
             MiniIORequestModel requestModel = new MiniIORequestModel
-                (request.BucketName, request.Image.Name, request.Image.OpenReadStream(), request.Image.ContentType, (int)request.Image.Length);
-            await fileUpload(_minioClient, requestModel);
-            return StatusCode(200, "Başarılı");
+                (request.BucketName, request.Image.FileName, request.Image.OpenReadStream(), request.Image.ContentType, (int)request.Image.Length);
+            var filePath = await fileUpload(_minioClient, requestModel);
+            return StatusCode(200, filePath);
 
         }
 
@@ -53,29 +53,47 @@ namespace TekhneCafe.Api.Controllers
             }
         }
 
-        public class UploadImageRequest
+        [HttpGet("GetImage")]
+        public async Task<IActionResult> GetImage([FromQuery] GetImageRequest request)
         {
-            public IFormFile Image { get; set; }
-            public string BucketName { get; set; }
+            try
+            {
+                var bucketName = request.BucketName;
+                var objectName = request.ObjectName;
+
+                GetObjectArgs getObjectArgs = new GetObjectArgs()
+                                     .WithBucket(bucketName)
+                                     .WithObject(objectName)
+                                     .WithCallbackStream((stream) =>
+                                     {
+                                         stream.CopyTo(Console.OpenStandardOutput());
+                                     });
+
+                var presignedUrl = await _minioClient.GetObjectAsync(getObjectArgs);
+
+                return Ok(presignedUrl);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Image Get Error: {0}", e.Message);
+                return StatusCode(500, "Bir hata oluştu");
+            }
         }
 
-        public class RemoveImageRequest
-        {
-            public string BucketName { get; set; }
-            public string ObjectName { get; set; }
-        }
-
-        private async Task fileUpload(MinioClient minio, MiniIORequestModel request)
+        private async Task<string> fileUpload(MinioClient minio, MiniIORequestModel request)
         {
 
             var bucketName = request.BucketName;
-            var objectName = request.ObjectName;
+            // var objectName = request.ObjectName;
             var stream = request.Stream;
             var contentType = request.ContentType;
             var length = request.Length;
 
             try
             {
+                string randomImageName = Path.GetRandomFileName().Replace(".", "");
+                var objectName = randomImageName + Path.GetExtension(request.ObjectName);
+
                 // Make a bucket on the server, if not already present.
                 var beArgs = new BucketExistsArgs()
                     .WithBucket(bucketName);
@@ -86,7 +104,7 @@ namespace TekhneCafe.Api.Controllers
                         .WithBucket(bucketName);
                     await minio.MakeBucketAsync(mbArgs);
                 }
-                // Upload a file to bucket.
+
                 var putObjectArgs = new PutObjectArgs()
                     .WithBucket(bucketName)
                     .WithObject(objectName)
@@ -95,15 +113,35 @@ namespace TekhneCafe.Api.Controllers
                     .WithObjectSize(length);
                 await minio.PutObjectAsync(putObjectArgs);
                 Console.WriteLine("Successfully uploaded " + objectName);
+                return bucketName + "/" + objectName;
+
             }
             catch (Exception e)
             {
-
                 Console.WriteLine("File Upload Error: {0}", e.Message);
                 throw;
             }
         }
 
+    }
+
+    public class GetImageRequest
+    {
+        public string BucketName { get; set; }
+        public string ObjectName { get; set; }
+    }
+
+
+    public class UploadImageRequest
+    {
+        public IFormFile Image { get; set; }
+        public string BucketName { get; set; }
+    }
+
+    public class RemoveImageRequest
+    {
+        public string BucketName { get; set; }
+        public string ObjectName { get; set; }
     }
     public class MiniIORequestModel
     {
