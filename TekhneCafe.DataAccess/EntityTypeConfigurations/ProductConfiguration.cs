@@ -27,6 +27,10 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.HasMany(_ => _.ProductAttributes)
                    .WithOne(_ => _.Product)
                    .HasForeignKey(_ => _.ProductId);
+
+            builder.HasOne(_ => _.Category)
+                .WithMany(_ => _.Products)
+                .HasForeignKey(_ => _.CategoryId);
         }
     }
 }

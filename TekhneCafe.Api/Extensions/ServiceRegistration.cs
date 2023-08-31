@@ -66,4 +66,3 @@ namespace TekhneCafe.Api.Extensions
         }
     }
 }
-//options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore()

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 
@@ -11,9 +12,11 @@ using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 namespace TekhneCafe.DataAccess.Migrations
 {
     [DbContext(typeof(EfTekhneCafeContext))]
-    partial class EfTekhneCafeContextModelSnapshot : ModelSnapshot
+    [Migration("20230831130924_updateCategory2")]
+    partial class updateCategory2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

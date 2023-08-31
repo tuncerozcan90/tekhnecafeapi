@@ -1,4 +1,5 @@
-﻿using TekhneCafe.Core.Entities.Concrete;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using TekhneCafe.Core.Entities.Concrete;
 
 namespace TekhneCafe.Entity.Concrete
 {
@@ -10,9 +11,9 @@ namespace TekhneCafe.Entity.Concrete
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? ModifiedDate { get; set; }
         public bool IsDeleted { get; set; }
+        public Guid CategoryId { get; set; }
+        public Category? Category { get; set; }
         public virtual ICollection<Image>? Images { get; set; }
         public virtual ICollection<ProductAttribute>? ProductAttributes { get; set; }
-        public virtual ICollection<Category>? Categories { get; set; }
     }
-
 }

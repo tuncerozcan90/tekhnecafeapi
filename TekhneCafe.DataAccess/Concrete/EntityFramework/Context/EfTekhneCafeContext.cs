@@ -29,6 +29,7 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
 
         public DbSet<AppUser> AppUser { get; set; }
         public DbSet<Order> Order { get; set; }
+        public DbSet<Category> Category { get; set; }
         public DbSet<OrderProduct> OrderProduct { get; set; }
         public DbSet<OrderProductAttribute> OrderProductAttribute { get; set; }
         public DbSet<Image> Image { get; set; }
