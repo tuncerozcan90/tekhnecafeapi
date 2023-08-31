@@ -19,8 +19,4 @@
     <ProjectReference Include="..\TekneCafe.SignalR\TekneCafe.SignalR.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ValidationRules\FluentValidations\AppUser\" />
-  </ItemGroup>
-
 </Project>

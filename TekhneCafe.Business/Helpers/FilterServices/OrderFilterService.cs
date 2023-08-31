@@ -21,8 +21,6 @@ namespace TekhneCafe.Business.Helpers.FilterServices
                    transaction.CreatedDate.Month == truncatedOrderDate.Month &&
                    transaction.CreatedDate.Day == truncatedOrderDate.Day))
                .OrderByDescending(order => order.TransactionHistories.Max(transaction => transaction.CreatedDate))
-               .Skip(filters.Page * filters.Size)
-               .Take(filters.Size)
                .ToList();
             Metadata metadata = new(filters.Page, filters.Size, orders.Count(), orders.Count() / filters.Size + 1);
             var header = new CustomHeaders().AddPaginationHeader(metadata);

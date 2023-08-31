@@ -2,6 +2,7 @@
 {
     public class TransactionHistoryListDto
     {
+        public Guid? OrderId { get; set; }
         public List<string> Products { get; set; } = new List<string>();
         public string TransactionType { get; set; }
         public float Amount { get; set; }

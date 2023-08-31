@@ -58,19 +58,7 @@ namespace TekhneCafe.Business.Concrete
         public async Task<AppUser> CreateUserAsync(AppUserAddDto userDto)
         {
             AppUser user = _mapper.Map<AppUser>(userDto);
-            using (var transaction = await _transactionManagement.BeginTransactionAsync())
-            {
-                try
-                {
-                    await _userDal.AddAsync(user);
-                    await _transactionManagement.CommitTransactionAsync();
-                }
-                catch (Exception ex)
-                {
-                    throw new InternalServerErrorException();
-                }
-            }
-
+            await _userDal.AddAsync(user);
             return user;
         }
 
