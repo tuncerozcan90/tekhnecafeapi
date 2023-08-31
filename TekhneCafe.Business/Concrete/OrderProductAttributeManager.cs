@@ -21,14 +21,14 @@ namespace TekhneCafe.Business.Concrete
                 var produdctAttribute = await _productAttributeDal.GetAll(_ => _.Id == orderProductAttribute.ProductAttributeId)
                     .Include(_ => _.Attribute)
                     .FirstOrDefaultAsync();
-                if (produdctAttribute != null)
+                if (produdctAttribute is null)
                 {
-                    orderProductAttribute.Quantity = orderProductAttribute.Quantity > 0 ? orderProductAttribute.Quantity : 1;
-                    orderProductAttribute.Name = produdctAttribute.Attribute.Name;
-                    orderProductAttribute.Price = produdctAttribute.Price;
-                }
-                else
                     orderProduct.OrderProductAttributes.Remove(orderProductAttribute);
+                    continue;
+                }
+                orderProductAttribute.Quantity = orderProductAttribute.Quantity > 0 ? orderProductAttribute.Quantity : 1;
+                orderProductAttribute.Name = produdctAttribute.Attribute.Name;
+                orderProductAttribute.Price = produdctAttribute.Price;
             }
         }
     }

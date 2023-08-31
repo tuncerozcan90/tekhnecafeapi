@@ -10,10 +10,5 @@ namespace TekneCafe.SignalR.Hubs
         public OrderNoficationHub()
         {
         }
-
-        public override async Task OnConnectedAsync()
-        {
-            await base.OnConnectedAsync();
-        }
     }
 }

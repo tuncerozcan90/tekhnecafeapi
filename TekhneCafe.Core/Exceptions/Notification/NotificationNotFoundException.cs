@@ -2,7 +2,7 @@
 {
     public class NotificationNotFoundException : NotFoundException
     {
-        public NotificationNotFoundException() : base("Notification not found exception!")
+        public NotificationNotFoundException() : base("Bildirim bulunamadı!")
         {
 
         }

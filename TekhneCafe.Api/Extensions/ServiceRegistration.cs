@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using System.Text.Json.Serialization;
+using TekhneCafe.Api.LoggerEnrichers;
 
 namespace TekhneCafe.Api.Extensions
 {
@@ -19,6 +19,7 @@ namespace TekhneCafe.Api.Extensions
                 options.SuppressModelStateInvalidFilter = true;
             });
             services.AddEndpointsApiExplorer();
+            services.AddSingleton<UserEnricher>();
 
             #region Swagger Configuration
             services.AddSwaggerGen(config =>

@@ -25,7 +25,15 @@ namespace TekhneCafe.Api.Controllers
         [TypeFilter(typeof(FluentValidationFilterAttribute<PaymentDtoValidator, PaymentDto>), Arguments = new object[] { "payment" })]
         public async Task<IActionResult> Pay([FromBody] PaymentDto payment)
         {
-            await _paymentService.Pay(payment);
+            await _paymentService.PayAsync(payment);
+            return Ok();
+        }
+
+        [HttpGet("confirm")]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
+        public async Task<IActionResult> ConfirmPayment([FromQuery] string id)
+        {
+            await _paymentService.ConfirmPaymentAsync(id);
             return Ok();
         }
     }

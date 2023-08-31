@@ -57,7 +57,6 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task<AppUser> CreateUserAsync(AppUserAddDto userDto)
         {
-            //todo: user validation required
             AppUser user = _mapper.Map<AppUser>(userDto);
             using (var transaction = await _transactionManagement.BeginTransactionAsync())
             {
