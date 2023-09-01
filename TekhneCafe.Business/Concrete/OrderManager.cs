@@ -23,7 +23,8 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly IOrderDal _orderDal;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpContext _httpContext;
         private readonly IOrderHistoryService _orderHistoryService;
         private readonly IWalletService _walletService;
         private readonly IOrderProductService _orderProductService;
@@ -32,13 +33,14 @@ namespace TekhneCafe.Business.Concrete
         private readonly IOrderNotificationService _orderNotificationService;
         private readonly INotificationService _notificationService;
 
-        public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContext, IOrderHistoryService orderHistoryService,
+        public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContextAccessor, IOrderHistoryService orderHistoryService,
             IWalletService walletService, IOrderProductService orderProductService, ITransactionHistoryService transactionHistoryService,
             ITransactionManagement transactionManagement, IOrderNotificationService orderNotificationService, INotificationService notificationService)
         {
             _orderDal = orderDal;
             _mapper = mapper;
-            _httpContext = httpContext;
+            _httpContextAccessor = httpContextAccessor;
+            _httpContext = httpContextAccessor.HttpContext;
             _orderHistoryService = orderHistoryService;
             _walletService = walletService;
             _orderProductService = orderProductService;
@@ -91,7 +93,7 @@ namespace TekhneCafe.Business.Concrete
                 {
                     await _walletService.WithdrawFromWalletAsync(order.AppUserId, order.TotalPrice);
                     await _orderDal.UpdateAsync(order);
-                    await _notificationService.CreateNotificationAsync("Siparişiniz alınmıştır. Afiyet olsun :)", _httpContext.HttpContext.User.ActiveUserId(), true);
+                    await _notificationService.CreateNotificationAsync("Siparişiniz alınmıştır. Afiyet olsun :)", _httpContext.User.ActiveUserId(), true);
                     result.Commit();
                 }
                 catch
@@ -105,7 +107,7 @@ namespace TekhneCafe.Business.Concrete
         {
             Order order = await _orderDal.GetOrderIncludeProductsAsync(id);
             ThrowErrorIfOrderNotFound(order);
-            if (!IsActiveUsersOrder(order) && !_httpContext.HttpContext.User.IsInAnyRoles(RoleConsts.CafeService, RoleConsts.CafeAdmin))
+            if (!IsActiveUsersOrder(order) && !_httpContext.User.IsInAnyRoles(RoleConsts.CafeService, RoleConsts.CafeAdmin))
                 throw new ForbiddenException();
 
             return _mapper.Map<OrderDetailDto>(order);
@@ -118,7 +120,7 @@ namespace TekhneCafe.Business.Concrete
                 .ThenInclude(_ => _.AppUser)
                 .Include(_ => _.OrderProducts);
             var filteredResult = new OrderFilterService().FilterOrders(query, filters);
-            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            new HeaderService(_httpContextAccessor).AddToHeaders(filteredResult.Headers);
             return OrderListMapper(filteredResult.ResponseValue);
         }
 
@@ -149,7 +151,7 @@ namespace TekhneCafe.Business.Concrete
         private async Task CreateOrderWhenValidAsync(Order order)
         {
             float orderTotalPrice = GetOrderTotalPrice(order);
-            order.AppUserId = Guid.Parse(_httpContext.HttpContext.User.ActiveUserId());
+            order.AppUserId = Guid.Parse(_httpContext.User.ActiveUserId());
             order.TotalPrice = orderTotalPrice;
             _transactionHistoryService.SetTransactionHistoryForOrder(order, orderTotalPrice, $"Sipariş verildi.", order.AppUserId);
             _orderHistoryService.SetOrderHistoryForOrder(order, OrderStatus.Ordered);
@@ -170,7 +172,7 @@ namespace TekhneCafe.Business.Concrete
         }
 
         private bool IsActiveUsersOrder(Order order)
-            => order.AppUserId == Guid.Parse(_httpContext.HttpContext.User.ActiveUserId());
+            => order.AppUserId == Guid.Parse(_httpContext.User.ActiveUserId());
 
         private void ThrowErrorIfOrderNotFound(Order order)
         {

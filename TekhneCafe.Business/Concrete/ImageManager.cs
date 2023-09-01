@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Minio;
-using Minio.DataModel;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Models;
+using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.Image;
 
 namespace TekhneCafe.Business.Concrete
@@ -19,30 +19,7 @@ namespace TekhneCafe.Business.Concrete
                 .Build();
         }
 
-        public async Task<ObjectStat> GetImage(GetImageRequest request)
-        {
-            try
-            {
-                var bucketName = request.BucketName;
-                var objectName = request.ObjectName;
-                GetObjectArgs getObjectArgs = new GetObjectArgs()
-                                     .WithBucket(bucketName)
-                                     .WithObject(objectName)
-                                     .WithCallbackStream((stream) =>
-                                     {
-                                         stream.CopyTo(Console.OpenStandardOutput());
-                                     });
-
-                var presignedUrl = await _minioClient.GetObjectAsync(getObjectArgs);
-                return presignedUrl;
-            }
-            catch (Exception e)
-            {
-                throw new ImageInternalServerError();
-            }
-        }
-
-        public async Task RemoveImage(RemoveImageRequest request)
+        public async Task RemoveImageAsync(RemoveImageRequest request)
         {
             try
             {
@@ -59,15 +36,18 @@ namespace TekhneCafe.Business.Concrete
             }
         }
 
-        public async Task<string> UploadImage(UploadImageRequest request)
+        public async Task<string> UploadImageAsync(UploadImageRequest request)
         {
-            MiniIORequestModel requestModel = new MiniIORequestModel
-                (request.BucketName, request.Image.FileName, request.Image.OpenReadStream(), request.Image.ContentType, (int)request.Image.Length);
-            var filePath = await fileUpload(_minioClient, requestModel);
+            if (request.Image == null || request.Image.Length == 0)
+                throw new BadRequestException("No file uploaded");
+            if (!IsImageFile(request.Image.FileName))
+                throw new BadRequestException("Invalid file format. Only image files are allowed.");
+            MiniIORequestModel requestModel = new MiniIORequestModel(request.BucketName, request.Image.FileName, request.Image.OpenReadStream(), request.Image.ContentType, (int)request.Image.Length);
+            var filePath = await FileUploadAsync(_minioClient, requestModel);
             return filePath;
         }
 
-        private async Task<string> fileUpload(MinioClient minio, MiniIORequestModel request)
+        private async Task<string> FileUploadAsync(MinioClient minio, MiniIORequestModel request)
         {
             var bucketName = request.BucketName;
             var stream = request.Stream;
@@ -100,6 +80,13 @@ namespace TekhneCafe.Business.Concrete
             {
                 throw new ImageInternalServerError();
             }
+        }
+
+        private bool IsImageFile(string fileName)
+        {
+            string[] allowedExtensions = { ".jpg", ".jpeg", ".png" };
+            string fileExtension = Path.GetExtension(fileName).ToLower();
+            return allowedExtensions.Contains(fileExtension);
         }
     }
 }

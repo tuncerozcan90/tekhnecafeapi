@@ -13,5 +13,6 @@ namespace TekhneCafe.Business.Abstract
         Task<AppUser> GetRawUserByIdAsync(string id);
         Task UpdateUserPhoneAsync(string phone);
         Task UpdateUserAsync(AppUser user);
+        Task<string> UpdateUserImageAsync(string bucketName);
     }
 }

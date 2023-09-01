@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.Consts;
 using TekhneCafe.Business.Models;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.Filters.AppUser;
@@ -14,10 +15,14 @@ namespace TekhneCafe.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IAppUserService _userService;
+        private readonly IImageService _imageService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UsersController(IAppUserService userService)
+        public UsersController(IAppUserService userService, IImageService imageService, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
+            _imageService = imageService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -46,11 +51,10 @@ namespace TekhneCafe.Api.Controllers
         }
 
         [HttpPost("updateimage")]
-        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "request" })]
-        public async Task<IActionResult> UpdateImage([FromForm] UploadImageRequest request)
+        public async Task<IActionResult> UpdateImage()
         {
-
-            return Ok();
+            string imagePath = await _userService.UpdateUserImageAsync(MinioBuckets.UserImage);
+            return Ok(imagePath);
         }
     }
 }

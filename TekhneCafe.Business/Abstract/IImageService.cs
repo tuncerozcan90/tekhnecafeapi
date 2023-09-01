@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Minio.DataModel;
-using TekhneCafe.Business.Models;
+﻿using TekhneCafe.Business.Models;
 
 namespace TekhneCafe.Business.Abstract
 {
     public interface IImageService
     {
-        Task<string> UploadImage([FromForm] UploadImageRequest request);
-        Task RemoveImage([FromBody] RemoveImageRequest request);
-        Task<ObjectStat> GetImage([FromQuery] GetImageRequest request);
+        Task<string> UploadImageAsync(UploadImageRequest request);
+        Task RemoveImageAsync(RemoveImageRequest request);
     }
 }

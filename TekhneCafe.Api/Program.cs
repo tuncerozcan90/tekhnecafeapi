@@ -12,6 +12,7 @@ using TekhneCafe.Core.Extensions;
 using TekhneCafe.DataAccess.Extensions;
 using TekneCafe.SignalR.Extensions;
 using TekneCafe.SignalR.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 #region Serilog Configuration
@@ -27,7 +28,7 @@ columnOpt.AdditionalColumns = new Collection<SqlColumn> { sqlColumn };
 using var log = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .Enrich.With(new UserEnricher())
-            .MinimumLevel.Warning()
+            .MinimumLevel.Information()
             .WriteTo.Console()
             .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
             .WriteTo.MSSqlServer(

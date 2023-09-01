@@ -101,7 +101,8 @@ namespace TekhneCafe.Business.Concrete
                         FullName = user.FullName,
                         Username = user.Username,
                         Wallet = user.Wallet,
-                        Role = claims.First(claim => claim.Type == ClaimTypes.Role).Value
+                        Role = claims.First(claim => claim.Type == ClaimTypes.Role).Value,
+                        ImagePath = user.ImagePath
                     }
                 };
             }

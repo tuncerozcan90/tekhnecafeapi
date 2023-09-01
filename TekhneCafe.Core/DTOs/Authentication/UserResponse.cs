@@ -9,5 +9,6 @@
         public string Department { get; set; }
         public float Wallet { get; set; }
         public string Role { get; set; }
+        public string ImagePath { get; set; }
     }
 }
