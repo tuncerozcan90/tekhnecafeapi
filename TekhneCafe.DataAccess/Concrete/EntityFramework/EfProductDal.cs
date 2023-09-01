@@ -12,9 +12,8 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
         {
 
         }
-
         public async Task<Product> GetProductIncludeAttributeAsync(string id)
-            => await _dbContext.Product.Include(_ => _.ProductAttributes).FirstOrDefaultAsync(_ => _.Id == Guid.Parse(id));
+            => await _dbContext.Product.Include(_ => _.ProductAttributes).ThenInclude(pa => pa.Attribute).FirstAsync(_ => _.Id == Guid.Parse(id));
 
     }
 }

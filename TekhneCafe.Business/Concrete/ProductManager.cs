@@ -45,15 +45,15 @@ namespace TekhneCafe.Business.Concrete
         public List<ProductListDto> GetAllProducts()
         {
 
-            var product = _productDal.GetAll(_ => !_.IsDeleted).Include(_ => _.ProductAttributes);
+            var product = _productDal.GetAll(_ => !_.IsDeleted).Include(_ => _.ProductAttributes).ThenInclude(_ => _.Attribute);
             return _mapper.Map<List<ProductListDto>>(product);
         }
 
-        public async Task<Product> GetProductByIdAsync(string id)
+        public async Task<ProductListDto> GetProductByIdAsync(string id)
         {
             Product product = await _productDal.GetProductIncludeAttributeAsync(id);
             ThrowErrorIfProductNotFound(product);
-            return product;
+            return _mapper.Map<ProductListDto>(product);
         }
 
         private static void ThrowErrorIfProductNotFound(Product product)
@@ -84,7 +84,7 @@ namespace TekhneCafe.Business.Concrete
 
         private void UpdateProductAttribute(ProductUpdateDto productUpdateDto, Product product)
         {
-            var newProductAttributeIds = productUpdateDto.ProductAttributes.Select(attr => attr.AttributeId.ToLower()).ToList();
+            var newProductAttributeIds = productUpdateDto.ProductAttributes.Select(attr => attr.Attribute.Id.ToLower()).ToList();
             var existingAttributeIds = product.ProductAttributes.Select(attr => attr.AttributeId.ToString()).ToList();
 
             // Remove attributes that are no longer associated
@@ -96,7 +96,7 @@ namespace TekhneCafe.Business.Concrete
             var attributesToUpdate = newProductAttributeIds.Where(attr => existingAttributeIds.Contains(attr));
             foreach (var attributeId in attributesToUpdate)
             {
-                var updatedAttr = productUpdateDto.ProductAttributes.First(_ => _.AttributeId.ToLower() == attributeId.ToLower());
+                var updatedAttr = productUpdateDto.ProductAttributes.First(_ => _.Attribute.Id.ToLower() == attributeId.ToLower());
                 var existingAttr = product.ProductAttributes.First(_ => _.AttributeId == Guid.Parse(attributeId));
                 _mapper.Map(updatedAttr, existingAttr);
             }
@@ -105,8 +105,8 @@ namespace TekhneCafe.Business.Concrete
             var attributesToAdd = newProductAttributeIds.Except(existingAttributeIds).ToList();
             foreach (var attributeId in attributesToAdd)
             {
-                var newAttr = productUpdateDto.ProductAttributes.First(_ => _.AttributeId.ToLower() == attributeId.ToLower());
-                product.ProductAttributes.Add(new ProductAttribute { IsRequired = newAttr.IsRequired, Price = newAttr.Price, AttributeId = Guid.Parse(newAttr.AttributeId) });
+                var newAttr = productUpdateDto.ProductAttributes.First(_ => _.Attribute.Id.ToLower() == attributeId.ToLower());
+                product.ProductAttributes.Add(new ProductAttribute { IsRequired = newAttr.IsRequired, Price = newAttr.Price, AttributeId = Guid.Parse(newAttr.Attribute.Id) });
             }
         }
     }

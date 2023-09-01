@@ -10,7 +10,7 @@ namespace TekhneCafe.Business.Mappers
         {
             CreateMap<ProductAddDto, Product>();
             CreateMap<ProductUpdateDto, Product>();
-            CreateMap<Product, ProductListDto>();
+            CreateMap<Product, ProductListDto>().ReverseMap();
         }
     }
 }
