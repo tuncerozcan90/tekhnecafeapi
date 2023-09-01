@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.Models;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.Filters.AppUser;
 
@@ -41,6 +42,14 @@ namespace TekhneCafe.Api.Controllers
         public async Task<IActionResult> UpdatePhone([FromBody] string phone)
         {
             await _userService.UpdateUserPhoneAsync(phone);
+            return Ok();
+        }
+
+        [HttpPost("updateimage")]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "request" })]
+        public async Task<IActionResult> UpdateImage([FromForm] UploadImageRequest request)
+        {
+
             return Ok();
         }
     }

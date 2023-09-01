@@ -1,67 +1,105 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.Extensions.Configuration;
+using Minio;
+using Minio.DataModel;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Business.Helpers.FilterServices;
-using TekhneCafe.Business.Helpers.HeaderServices;
-using TekhneCafe.Core.DTOs.Image;
+using TekhneCafe.Business.Models;
 using TekhneCafe.Core.Exceptions.Image;
-using TekhneCafe.Core.Filters.Image;
-using TekhneCafe.DataAccess.Abstract;
-using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Concrete
 {
     public class ImageManager : IImageService
     {
-        private readonly IImageDal _imageDal;
-        private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly MinioClient _minioClient;
 
-        public ImageManager(IImageDal imageDal, IMapper mapper, IHttpContextAccessor httpContext)
+        public ImageManager(IConfiguration configuration)
         {
-            _imageDal = imageDal;
-            _mapper = mapper;
-            _httpContext = httpContext;
-        }
-        public async Task CreateImageAsync(ImageAddDto imageAddDto)
-        {
-            Image image = _mapper.Map<Image>(imageAddDto);
-            await _imageDal.AddAsync(image);
+            _minioClient = new MinioClient()
+                .WithEndpoint(configuration.GetValue<string>("Minio:Endpoint"))
+                .WithCredentials(configuration.GetValue<string>("Minio:AccessKey"), configuration.GetValue<string>("Minio:SecretKey"))
+                .Build();
         }
 
-        public async Task DeleteImageAsync(string id)
+        public async Task<ObjectStat> GetImage(GetImageRequest request)
         {
-            Image image = await GetImageById(id);
-            await _imageDal.SafeDeleteAsync(image);
+            try
+            {
+                var bucketName = request.BucketName;
+                var objectName = request.ObjectName;
+                GetObjectArgs getObjectArgs = new GetObjectArgs()
+                                     .WithBucket(bucketName)
+                                     .WithObject(objectName)
+                                     .WithCallbackStream((stream) =>
+                                     {
+                                         stream.CopyTo(Console.OpenStandardOutput());
+                                     });
+
+                var presignedUrl = await _minioClient.GetObjectAsync(getObjectArgs);
+                return presignedUrl;
+            }
+            catch (Exception e)
+            {
+                throw new ImageInternalServerError();
+            }
         }
 
-        public List<ImageListDto> GetAllImages(ImageRequestFilter filters = null)
+        public async Task RemoveImage(RemoveImageRequest request)
         {
-            var filteredResult = new ImageFilterService().FilterImages(_imageDal.GetAll(), filters);
-            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
-            return _mapper.Map<List<ImageListDto>>(filteredResult.ResponseValue);
+            try
+            {
+                var bucketName = request.BucketName;
+                var objectName = request.ObjectName;
+                var removeObjectArgs = new RemoveObjectArgs()
+                    .WithBucket(bucketName)
+                    .WithObject(objectName);
+                await _minioClient.RemoveObjectAsync(removeObjectArgs);
+            }
+            catch
+            {
+                throw new ImageInternalServerError();
+            }
         }
 
-        public async Task<ImageListDto> GetImageByIdAsync(string id)
+        public async Task<string> UploadImage(UploadImageRequest request)
         {
-            var image = await GetImageById(id);
-            return _mapper.Map<ImageListDto>(image);
+            MiniIORequestModel requestModel = new MiniIORequestModel
+                (request.BucketName, request.Image.FileName, request.Image.OpenReadStream(), request.Image.ContentType, (int)request.Image.Length);
+            var filePath = await fileUpload(_minioClient, requestModel);
+            return filePath;
         }
 
-        public async Task UpdateImageAsync(ImageUpdateDto imageUpdateDto)
+        private async Task<string> fileUpload(MinioClient minio, MiniIORequestModel request)
         {
-            Image image = await GetImageById(imageUpdateDto.Id);
-            _mapper.Map(imageUpdateDto, image);
-            await _imageDal.UpdateAsync(image);
-        }
-
-        private async Task<Image> GetImageById(string id)
-        {
-            Image image = await _imageDal.GetByIdAsync(Guid.Parse(id));
-            if (image is null)
-                throw new ImageNotFoundException();
-
-            return image;
+            var bucketName = request.BucketName;
+            var stream = request.Stream;
+            var contentType = request.ContentType;
+            var length = request.Length;
+            try
+            {
+                string randomImageName = Path.GetRandomFileName().Replace(".", "");
+                var objectName = randomImageName + Path.GetExtension(request.ObjectName);
+                // Make a bucket on the server, if not already present.
+                var beArgs = new BucketExistsArgs()
+                    .WithBucket(bucketName);
+                bool found = await minio.BucketExistsAsync(beArgs);
+                if (!found)
+                {
+                    var mbArgs = new MakeBucketArgs()
+                        .WithBucket(bucketName);
+                    await minio.MakeBucketAsync(mbArgs);
+                }
+                var putObjectArgs = new PutObjectArgs()
+                    .WithBucket(bucketName)
+                    .WithObject(objectName)
+                    .WithStreamData(stream)
+                    .WithContentType(contentType)
+                    .WithObjectSize(length);
+                await minio.PutObjectAsync(putObjectArgs);
+                return bucketName + "/" + objectName;
+            }
+            catch
+            {
+                throw new ImageInternalServerError();
+            }
         }
     }
 }

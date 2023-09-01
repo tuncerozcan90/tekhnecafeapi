@@ -1,14 +1,13 @@
-﻿using TekhneCafe.Core.DTOs.Image;
-using TekhneCafe.Core.Filters.Image;
+﻿using Microsoft.AspNetCore.Mvc;
+using Minio.DataModel;
+using TekhneCafe.Business.Models;
 
 namespace TekhneCafe.Business.Abstract
 {
     public interface IImageService
     {
-        Task<ImageListDto> GetImageByIdAsync(string id);
-        List<ImageListDto> GetAllImages(ImageRequestFilter filters = null);
-        Task CreateImageAsync(ImageAddDto ımageAddDto);
-        Task UpdateImageAsync(ImageUpdateDto ımageUpdateDto);
-        Task DeleteImageAsync(string id);
+        Task<string> UploadImage([FromForm] UploadImageRequest request);
+        Task RemoveImage([FromBody] RemoveImageRequest request);
+        Task<ObjectStat> GetImage([FromQuery] GetImageRequest request);
     }
 }

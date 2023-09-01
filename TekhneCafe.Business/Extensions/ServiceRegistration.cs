@@ -61,6 +61,7 @@ namespace TekhneCafe.Business.Extensions
             services.AddScoped<IWalletService, WalletManager>();
             services.AddScoped<IPaymentService, PaymentManager>();
             services.AddScoped<INotificationService, NotificationManager>();
+            services.AddScoped<IImageService, ImageManager>();
             #endregion
 
             #region FluentValidation

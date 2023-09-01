@@ -69,6 +69,12 @@ namespace TekhneCafe.Business.Concrete
             await _userDal.UpdateAsync(user);
         }
 
+        public async Task UpdateUserImage()
+        {
+
+        }
+
+
         public async Task UpdateUserAsync(AppUser user)
             => await _userDal.UpdateAsync(user);
 

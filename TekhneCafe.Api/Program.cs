@@ -27,7 +27,7 @@ columnOpt.AdditionalColumns = new Collection<SqlColumn> { sqlColumn };
 using var log = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .Enrich.With(new UserEnricher())
-            .MinimumLevel.Information()
+            .MinimumLevel.Warning()
             .WriteTo.Console()
             .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
             .WriteTo.MSSqlServer(
@@ -105,7 +105,7 @@ app.UseExceptionHandler(
 );
 #endregion
 
-//app.UseSerilogRequestLogging();
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
