@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Consts;
-using TekhneCafe.Business.Models;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.Filters.AppUser;
 
@@ -15,14 +14,10 @@ namespace TekhneCafe.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IAppUserService _userService;
-        private readonly IImageService _imageService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UsersController(IAppUserService userService, IImageService imageService, IHttpContextAccessor httpContextAccessor)
+        public UsersController(IAppUserService userService)
         {
             _userService = userService;
-            _imageService = imageService;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
