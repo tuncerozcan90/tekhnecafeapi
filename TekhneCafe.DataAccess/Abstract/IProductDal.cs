@@ -5,6 +5,7 @@ namespace TekhneCafe.DataAccess.Abstract
 {
     public interface IProductDal : IEntityRepository<Product>
     {
-        Task<Product> GetProductIncludeAttributeAsync(string id);
+        Task<Product> GetProductIncludeAllAsync(string id);
+        List<Product> GetProductsByCategory(string categoryId);
     }
 }

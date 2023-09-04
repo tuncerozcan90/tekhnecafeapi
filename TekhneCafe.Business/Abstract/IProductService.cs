@@ -9,5 +9,6 @@ namespace TekhneCafe.Business.Abstract
         Task CreateProductAsync(ProductAddDto productAddDto);
         Task DeleteProductAsync(string id);
         Task UpdateProductAsync(ProductUpdateDto productUpdateDto);
+        List<ProductListDto> GetProductsByCategory(string categoryId);
     }
 }
