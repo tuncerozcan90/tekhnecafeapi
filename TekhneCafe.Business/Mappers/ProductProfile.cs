@@ -8,8 +8,8 @@ namespace TekhneCafe.Business.Mappers
     {
         public ProductProfile()
         {
-            CreateMap<ProductAddDto, Product>();
-            CreateMap<ProductUpdateDto, Product>();
+            CreateMap<ProductAddDto, Product>().ReverseMap();
+            CreateMap<ProductUpdateDto, Product>().ReverseMap();
             CreateMap<Product, ProductListDto>().ReverseMap();
         }
     }

@@ -97,5 +97,21 @@ namespace TekhneCafe.Api.Controllers
             await _productService.UpdateProductAsync(productUpdateDto);
             return Ok();
         }
+
+        /// <summary>
+        /// Gets products by category.
+        /// </summary>
+        /// <param name="categoryId">The ID of the category to filter products.</param>
+        /// <returns>The list of products in the specified category.</returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Bad request</response>
+        /// <response code="500">Server error</response>
+        [HttpGet("category/{categoryId}")]
+        [Authorize]
+        public  IActionResult GetProductsByCategory(string categoryId)
+        {
+            var products = _productService.GetProductsByCategory(categoryId);
+            return Ok(products);
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace TekhneCafe.Business.Concrete
         private readonly IHttpContextAccessor _httpContext;
 
 
-        public ProductManager(IProductDal productDal, IMapper mapper, IHttpContextAccessor httpContext, IProductAttributeService productAttributeService)
+        public ProductManager(IProductDal productDal, IMapper mapper, IHttpContextAccessor httpContext)
         {
             _productDal = productDal;
             _mapper = mapper;
@@ -32,7 +32,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task DeleteProductAsync(string id)
         {
-            Product product = await _productDal.GetProductIncludeAttributeAsync(id);
+            Product product = await _productDal.GetProductIncludeAllAsync(id);
             ThrowErrorIfProductNotFound(product);
             product.IsDeleted = true;
             foreach (var item in product.ProductAttributes)
@@ -44,16 +44,21 @@ namespace TekhneCafe.Business.Concrete
 
         public List<ProductListDto> GetAllProducts()
         {
-
-            var product = _productDal.GetAll(_ => !_.IsDeleted).Include(_ => _.ProductAttributes).ThenInclude(_ => _.Attribute);
+            var product = _productDal.GetAll(_ => !_.IsDeleted).Include(_ => _.ProductAttributes).ThenInclude(_ => _.Attribute).Include(_ => _.Category).ToList();
             return _mapper.Map<List<ProductListDto>>(product);
         }
 
         public async Task<ProductListDto> GetProductByIdAsync(string id)
         {
-            Product product = await _productDal.GetProductIncludeAttributeAsync(id);
+            Product product = await _productDal.GetProductIncludeAllAsync(id);
             ThrowErrorIfProductNotFound(product);
             return _mapper.Map<ProductListDto>(product);
+        }
+
+        public  List<ProductListDto> GetProductsByCategory(string categoryId)
+        {
+            var products =  _productDal.GetProductsByCategory(categoryId);
+            return _mapper.Map<List<ProductListDto>>(products);
         }
 
         private static void ThrowErrorIfProductNotFound(Product product)
@@ -64,8 +69,7 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task UpdateProductAsync(ProductUpdateDto productUpdateDto)
         {
-
-            Product product = await _productDal.GetProductIncludeAttributeAsync(productUpdateDto.Id.ToLower());
+            Product product = await _productDal.GetProductIncludeAllAsync(productUpdateDto.Id.ToLower());
 
             ThrowErrorIfProductNotFound(product);
 
