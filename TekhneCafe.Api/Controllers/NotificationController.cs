@@ -8,11 +8,11 @@ namespace TekhneCafe.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class NotificationsController : ControllerBase
+    public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
 
-        public NotificationsController(INotificationService notificationService)
+        public NotificationController(INotificationService notificationService)
         {
             _notificationService = notificationService;
         }

@@ -21,7 +21,6 @@ namespace TekhneCafe.DataAccess.Extensions
             services.AddScoped<IAttributeDal, EfAttributeDal>();
             services.AddScoped<IProductAttributeDal, EfProductAttributeDal>();
             services.AddScoped<IImageDal, EfImageDal>();
-            services.AddScoped<INotificationDal, EfNotificationDal>();
             services.AddScoped<IOrderDal, EfOrderDal>();
             services.AddScoped<IOrderHistoryDal, EfOrderHistoryDal>();
             services.AddScoped<IProductDal, EfProductDal>();
@@ -30,6 +29,7 @@ namespace TekhneCafe.DataAccess.Extensions
             services.AddScoped<IOrderProductDal, EfOrderProductDal>();
             services.AddScoped<IOrderHistoryDal, EfOrderHistoryDal>();
             services.AddScoped<ITransactionManagement, EfTransactionManagement>();
+            services.AddScoped<INotificationDal, EfNotificationDal>();
             #endregion
         }
     }

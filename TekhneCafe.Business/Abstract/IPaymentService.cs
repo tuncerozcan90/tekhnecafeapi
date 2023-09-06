@@ -5,6 +5,5 @@ namespace TekhneCafe.Business.Abstract
     public interface IPaymentService
     {
         Task PayAsync(PaymentDto paymentDto);
-        Task ConfirmPaymentAsync(string id);
     }
 }

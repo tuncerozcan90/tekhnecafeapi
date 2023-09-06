@@ -24,18 +24,20 @@ namespace TekhneCafe.Business.Concrete
         private readonly IOrderDal _orderDal;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpContext _httpContext;
         private readonly IOrderHistoryService _orderHistoryService;
         private readonly IWalletService _walletService;
         private readonly IOrderProductService _orderProductService;
         private readonly ITransactionHistoryService _transactionHistoryService;
         private readonly ITransactionManagement _transactionManagement;
         private readonly IOrderNotificationService _orderNotificationService;
+        private readonly IOneSignalNotificationService _oneSignalNotificationService;
         private readonly INotificationService _notificationService;
+        private readonly HttpContext _httpContext;
 
         public OrderManager(IOrderDal orderDal, IMapper mapper, IHttpContextAccessor httpContextAccessor, IOrderHistoryService orderHistoryService,
             IWalletService walletService, IOrderProductService orderProductService, ITransactionHistoryService transactionHistoryService,
-            ITransactionManagement transactionManagement, IOrderNotificationService orderNotificationService, INotificationService notificationService)
+            ITransactionManagement transactionManagement, IOrderNotificationService orderNotificationService, IOneSignalNotificationService oneSignalNotificationService,
+            INotificationService notificationService)
         {
             _orderDal = orderDal;
             _mapper = mapper;
@@ -47,6 +49,7 @@ namespace TekhneCafe.Business.Concrete
             _transactionHistoryService = transactionHistoryService;
             _transactionManagement = transactionManagement;
             _orderNotificationService = orderNotificationService;
+            _oneSignalNotificationService = oneSignalNotificationService;
             _notificationService = notificationService;
         }
 
@@ -61,7 +64,8 @@ namespace TekhneCafe.Business.Concrete
                 try
                 {
                     await CreateOrderWhenValidAsync(order);
-                    await SendOrderNotificationAsync(order.Id);
+                    _orderHistoryService.SetOrderHistoryForOrder(order, OrderStatus.Ordered);
+                    await SendOrderNotificationWithSignalRAsync(order.Id);
                     result.Commit();
                 }
                 catch
@@ -89,11 +93,14 @@ namespace TekhneCafe.Business.Concrete
             _orderHistoryService.SetOrderHistoryForOrder(order, OrderStatus.OrderConfirmed);
             using (var result = await _transactionManagement.BeginTransactionAsync())
             {
+                string title = "Sipariş Alındı!",
+                content = "Siparişiniz alınmıştır. Afiyet olsun :)";
                 try
                 {
                     await _walletService.WithdrawFromWalletAsync(order.AppUserId, order.TotalPrice);
                     await _orderDal.UpdateAsync(order);
-                    await _notificationService.CreateNotificationAsync("Siparişiniz alınmıştır. Afiyet olsun :)", _httpContext.User.ActiveUserId(), true);
+                    await _oneSignalNotificationService.SendToGivenUserAsync(new() { Title = title, Content = content }, order.AppUserId.ToString());
+                    await _notificationService.CreateNotificationAsync(title, content, order.AppUserId.ToString());
                     result.Commit();
                 }
                 catch
@@ -109,7 +116,6 @@ namespace TekhneCafe.Business.Concrete
             ThrowErrorIfOrderNotFound(order);
             if (!IsActiveUsersOrder(order) && !_httpContext.User.IsInAnyRoles(RoleConsts.CafeService, RoleConsts.CafeAdmin))
                 throw new ForbiddenException();
-
             return _mapper.Map<OrderDetailDto>(order);
         }
 
@@ -118,13 +124,15 @@ namespace TekhneCafe.Business.Concrete
             var query = _orderDal.GetAll()
                 .Include(_ => _.TransactionHistories)
                 .ThenInclude(_ => _.AppUser)
-                .Include(_ => _.OrderProducts);
+                .Include(_ => _.OrderProducts)
+                .AsNoTracking()
+                .AsSplitQuery();
             var filteredResult = new OrderFilterService().FilterOrders(query, filters);
             new HeaderService(_httpContextAccessor).AddToHeaders(filteredResult.Headers);
-            return OrderListMapper(filteredResult.ResponseValue);
+            return OrderListDtoMapper(filteredResult.ResponseValue);
         }
 
-        private List<OrderListDto> OrderListMapper(List<Order> orders)
+        private List<OrderListDto> OrderListDtoMapper(List<Order> orders)
         {
             var orderList = new List<OrderListDto>();
             foreach (var order in orders)
@@ -180,13 +188,16 @@ namespace TekhneCafe.Business.Concrete
                 throw new OrderNotFoundException();
         }
 
-        private async Task SendOrderNotificationAsync(Guid orderId)
+        private async Task SendOrderNotificationWithSignalRAsync(Guid orderId)
         {
             Order order = _orderDal.GetAll(_ => _.Id == orderId)
                 .Include(_ => _.TransactionHistories)
                 .ThenInclude(_ => _.AppUser)
-                .Include(_ => _.OrderProducts).First();
-            await _orderNotificationService.SendOrderNotificationAsync(OrderListMapper(new List<Order>() { order }).First());
+                .Include(_ => _.OrderProducts)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .First();
+            await _orderNotificationService.SendOrderNotificationAsync(OrderListDtoMapper(new List<Order>() { order }).First());
         }
     }
 }
