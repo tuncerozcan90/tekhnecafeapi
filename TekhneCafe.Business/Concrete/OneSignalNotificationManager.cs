@@ -12,7 +12,7 @@ namespace TekhneCafe.Business.Concrete
         private readonly IConfiguration _configuration;
         private readonly string _appId;
         private readonly string _restApiKey;
-        private readonly RestRequest? _request;
+        private readonly RestRequest _request;
         public OneSignalNotificationManager(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -21,37 +21,6 @@ namespace TekhneCafe.Business.Concrete
             _request = new RestRequest("");
             _request.AddHeader("accept", "application/json");
             _request.AddHeader("Authorization", $"Basic {_restApiKey}");
-        }
-
-        //todo sonra bakılacak
-        public async Task<List<NotificationResponseModel>> GetUserNotifications()
-        {
-            string tagKey = "user_id";
-            string tagValue = "56623193-98F2-4603-0A13-08DBA30F860B";
-            var options = new RestClientOptions($"https://onesignal.com/api/v1/notifications?app_id={_appId}&tags=[{{\"key\":\"{tagKey}\",\"relation\":\"=\",\"value\":\"{tagValue}\"}}]");
-            var client = new RestClient(options);
-            var response = await client.GetAsync(_request);
-            var notificationResponse = new List<NotificationResponseModel>();
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                string responseBody = response.Content;
-                var responseObject = JsonConvert.DeserializeObject<JObject>(responseBody);
-                if (responseObject.TryGetValue("notifications", out JToken notifications))
-                    foreach (var notification in notifications)
-                    {
-                        long unixTimestamp = notification.Value<long>("completed_at");
-                        DateTime completedAt = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).LocalDateTime;
-                        notificationResponse.Add(new()
-                        {
-                            Title = notification["headings"]["en"].Value<string>(),
-                            Message = notification["contents"]["en"].Value<string>(),
-                            CreatedDate = completedAt
-                        });
-                    }
-                else
-                    Console.WriteLine("No notifications found in the response.");
-            }
-            return notificationResponse;
         }
 
         public async Task SendToGivenUserAsync(CreateNotificationModel notificationModel, string userId)
@@ -78,7 +47,7 @@ namespace TekhneCafe.Business.Concrete
                 {
                     en = notificationModel.Content,
                 },
-                app_id = "b7cb2a8a-9b56-40be-b877-d2bf27e892dc"
+                app_id = _appId
             }), false);
             var response = await client.PostAsync(_request);
         }

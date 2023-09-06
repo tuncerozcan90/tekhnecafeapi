@@ -64,6 +64,7 @@ namespace TekhneCafe.Business.Concrete
                 try
                 {
                     await CreateOrderWhenValidAsync(order);
+                    _orderHistoryService.SetOrderHistoryForOrder(order, OrderStatus.Ordered);
                     await SendOrderNotificationWithSignalRAsync(order.Id);
                     result.Commit();
                 }
@@ -115,7 +116,6 @@ namespace TekhneCafe.Business.Concrete
             ThrowErrorIfOrderNotFound(order);
             if (!IsActiveUsersOrder(order) && !_httpContext.User.IsInAnyRoles(RoleConsts.CafeService, RoleConsts.CafeAdmin))
                 throw new ForbiddenException();
-
             return _mapper.Map<OrderDetailDto>(order);
         }
 
@@ -193,7 +193,10 @@ namespace TekhneCafe.Business.Concrete
             Order order = _orderDal.GetAll(_ => _.Id == orderId)
                 .Include(_ => _.TransactionHistories)
                 .ThenInclude(_ => _.AppUser)
-                .Include(_ => _.OrderProducts).First();
+                .Include(_ => _.OrderProducts)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .First();
             await _orderNotificationService.SendOrderNotificationAsync(OrderListDtoMapper(new List<Order>() { order }).First());
         }
     }

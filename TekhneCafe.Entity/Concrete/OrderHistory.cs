@@ -7,12 +7,12 @@ namespace TekhneCafe.Entity.Concrete
     {
         public OrderHistory()
         {
-
         }
 
         public OrderHistory(OrderStatus orderStatus, Guid userId)
         {
-
+            OrderStatus = orderStatus;
+            AppUserId = userId;
         }
 
         public Guid AppUserId { get; set; }

@@ -54,7 +54,6 @@ namespace TekhneCafe.Business.Concrete
         {
             AppUser user = await _userDal.GetByIdAsync(Guid.Parse(id));
             ThrowExceptionUserNotExists(user);
-            AddEndpointToUserImage(user);
             return user;
         }
 
@@ -90,11 +89,7 @@ namespace TekhneCafe.Business.Concrete
             var user = await _userDal.GetByIdAsync(Guid.Parse(_httpContext.User.ActiveUserId()));
             string imagePath = await _imageService.UploadImageAsync(request);
             if (!string.IsNullOrEmpty(user.ImagePath))
-                await _imageService.RemoveImageAsync(new RemoveImageRequest()
-                {
-                    BucketName = bucketName,
-                    ObjectName = user.ImagePath.Replace(bucketName + "/", "")
-                });
+                await _imageService.RemoveImageAsync(new RemoveImageRequest() { BucketName = bucketName, ObjectName = user.ImagePath.Replace(bucketName + "/", "") });
             user.ImagePath = imagePath;
             try
             {

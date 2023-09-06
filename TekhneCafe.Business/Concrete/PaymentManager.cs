@@ -34,15 +34,15 @@ namespace TekhneCafe.Business.Concrete
         {
             using (var transaction = await _transactionManagement.BeginTransactionAsync())
             {
-                paymentDto.Description = paymentDto.Description == null ? "Ödeme yapıldı" : paymentDto.Description;
+                paymentDto.Description = paymentDto.Description == null ? "Ödeme yapıldı." : paymentDto.Description;
                 var userFullName = (await _userService.GetUserByIdAsync(paymentDto.UserId)).FullName;
                 try
                 {
                     await _walletService.AddToWalletAsync(Guid.Parse(paymentDto.UserId), paymentDto.Amount);
-                    await _transactionHistoryService.CreateTransactionHistoryAsync(paymentDto.Amount, TransactionType.Payment, $"{paymentDto.Description}\n ({userFullName} tarafından ödeme alındı.)", Guid.Parse(_httpContext.User.ActiveUserId()));
+                    await _transactionHistoryService.CreateTransactionHistoryAsync(paymentDto.Amount, TransactionType.Payment, $"{paymentDto.Description} ({userFullName} tarafından ödeme alındı.)", Guid.Parse(_httpContext.User.ActiveUserId()));
                     await _transactionHistoryService.CreateTransactionHistoryAsync(paymentDto.Amount, TransactionType.Payment, paymentDto.Description, Guid.Parse(paymentDto.UserId));
-                    await _oneSignalNotificationService.SendToGivenUserAsync(new() { Title = "Ödemeniz alınmıştır!", Content = "Ödeme işlemi başarıyla gerçekleştirildi!" }, paymentDto.UserId);
-                    await _notificationService.CreateNotificationAsync("Ödemeniz alınmıştır!", "Ödeme işlemi başarıyla gerçekleştirildi!", paymentDto.UserId);
+                    await _oneSignalNotificationService.SendToGivenUserAsync(new() { Title = "Ödemeniz alınmıştır!", Content = $"{paymentDto.Amount} TL tutarındaki ödeme işlemi başarıyla gerçekleştirildi!" }, paymentDto.UserId);
+                    await _notificationService.CreateNotificationAsync("Ödemeniz alınmıştır!", $"{paymentDto.Amount} TL tutarındaki ödeme işlemi başarıyla gerçekleştirildi!", paymentDto.UserId);
                     await transaction.CommitAsync();
                 }
                 catch
