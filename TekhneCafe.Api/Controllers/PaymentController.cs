@@ -28,13 +28,5 @@ namespace TekhneCafe.Api.Controllers
             await _paymentService.PayAsync(payment);
             return Ok();
         }
-
-        [HttpGet("confirm")]
-        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
-        public async Task<IActionResult> ConfirmPayment([FromQuery] string id)
-        {
-            await _paymentService.ConfirmPaymentAsync(id);
-            return Ok();
-        }
     }
 }

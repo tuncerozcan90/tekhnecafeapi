@@ -18,7 +18,7 @@ namespace TekhneCafe.Business.Concrete
         {
             foreach (var orderProductAttribute in orderProduct.OrderProductAttributes.ToList())
             {
-                var produdctAttribute = await _productAttributeDal.GetAll(_ => _.Id == orderProductAttribute.ProductAttributeId)
+                var produdctAttribute = await _productAttributeDal.GetAll(_ => _.Id == orderProductAttribute.ProductAttributeId && !_.IsDeleted)
                     .Include(_ => _.Attribute)
                     .FirstOrDefaultAsync();
                 if (produdctAttribute is null)

@@ -4,9 +4,9 @@ namespace TekhneCafe.Entity.Concrete
 {
     public class Notification : BaseEntity
     {
+        public string Title { get; set; }
         public string Message { get; set; }
         public Guid AppUserId { get; set; }
-        public bool IsConfirmed { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

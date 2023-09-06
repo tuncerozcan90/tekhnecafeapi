@@ -13,15 +13,19 @@ namespace TekhneCafe.Business.Concrete
         private readonly IWalletService _walletService;
         private readonly ITransactionManagement _transactionManagement;
         private readonly ITransactionHistoryService _transactionHistoryService;
+        private readonly IOneSignalNotificationService _oneSignalNotificationService;
+        private readonly IAppUserService _userService;
         private readonly INotificationService _notificationService;
         private readonly HttpContext _httpContext;
 
         public PaymentManager(IWalletService walletService, ITransactionManagement transactionManagement, ITransactionHistoryService transactionHistoryService,
-            IHttpContextAccessor httpContextAccessor, INotificationService notificationService)
+            IHttpContextAccessor httpContextAccessor, IOneSignalNotificationService oneSignalNotificationService, IAppUserService userService, INotificationService notificationService)
         {
             _walletService = walletService;
             _transactionManagement = transactionManagement;
             _transactionHistoryService = transactionHistoryService;
+            _oneSignalNotificationService = oneSignalNotificationService;
+            _userService = userService;
             _notificationService = notificationService;
             _httpContext = httpContextAccessor.HttpContext;
         }
@@ -31,38 +35,20 @@ namespace TekhneCafe.Business.Concrete
             using (var transaction = await _transactionManagement.BeginTransactionAsync())
             {
                 paymentDto.Description = paymentDto.Description == null ? "Ödeme yapıldı" : paymentDto.Description;
-                string notificationMessage = "Ödemeniz başarıyla alınmıştır. Bu yazıya tıklayarak ödeme yaptığınız tutarı onaylayınız.";
+                var userFullName = (await _userService.GetUserByIdAsync(paymentDto.UserId)).FullName;
                 try
                 {
                     await _walletService.AddToWalletAsync(Guid.Parse(paymentDto.UserId), paymentDto.Amount);
-                    await _transactionHistoryService.CreateTransactionHistoryAsync(paymentDto.Amount, TransactionType.Payment, paymentDto.Description, Guid.Parse(_httpContext.User.ActiveUserId()));
+                    await _transactionHistoryService.CreateTransactionHistoryAsync(paymentDto.Amount, TransactionType.Payment, $"{paymentDto.Description}\n ({userFullName} tarafından ödeme alındı.)", Guid.Parse(_httpContext.User.ActiveUserId()));
                     await _transactionHistoryService.CreateTransactionHistoryAsync(paymentDto.Amount, TransactionType.Payment, paymentDto.Description, Guid.Parse(paymentDto.UserId));
-                    await _notificationService.CreateNotificationAsync(notificationMessage, paymentDto.UserId, false);
+                    await _oneSignalNotificationService.SendToGivenUserAsync(new() { Title = "Ödemeniz alınmıştır!", Content = "Ödeme işlemi başarıyla gerçekleştirildi!" }, paymentDto.UserId);
+                    await _notificationService.CreateNotificationAsync("Ödemeniz alınmıştır!", "Ödeme işlemi başarıyla gerçekleştirildi!", paymentDto.UserId);
                     await transaction.CommitAsync();
                 }
                 catch
                 {
                     throw new InternalServerErrorException();
                 }
-            }
-        }
-
-        public async Task ConfirmPaymentAsync(string id)
-        {
-            try
-            {
-                using (var transaction = await _transactionManagement.BeginTransactionAsync())
-                {
-                    bool result = await _notificationService.ConfirmNotificationAsync(id);
-                    if (!result)
-                        return;
-                    await _notificationService.CreateNotificationAsync("Ödemenizi onayladınız. Keyifli günler :)", _httpContext.User.ActiveUserId(), true);
-                    await _transactionManagement.CommitTransactionAsync();
-                }
-            }
-            catch
-            {
-                throw new InternalServerErrorException();
             }
         }
     }

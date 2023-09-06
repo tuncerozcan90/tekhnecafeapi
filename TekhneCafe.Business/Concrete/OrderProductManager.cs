@@ -19,7 +19,7 @@ namespace TekhneCafe.Business.Concrete
             foreach (var orderProduct in order.OrderProducts.ToList())
             {
                 var product = await _productDal.GetByIdAsync(orderProduct.ProductId);
-                if (product is null)
+                if (product is null || product.IsDeleted)
                 {
                     order.OrderProducts.Remove(orderProduct);
                     continue;

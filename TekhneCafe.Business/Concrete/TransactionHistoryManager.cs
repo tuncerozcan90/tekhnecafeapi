@@ -37,14 +37,14 @@ namespace TekhneCafe.Business.Concrete
         public async Task<List<TransactionHistoryListDto>> GetAllTransactionHistoriesByIdAsync(TransactionHistoryRequestFilter filters, string userId)
         {
             var filteredResult = FilterTransactionHistories(filters, userId);
-            return await TransactionHistoryMappings(filteredResult.ResponseValue);
+            return await TransactionHistoryListDtoMapper(filteredResult.ResponseValue);
         }
 
         public async Task<List<TransactionHistoryListDto>> GetActiveUsersTransactionHistoriesAsync(TransactionHistoryRequestFilter filters)
         {
             string activeUserId = _httpContext.HttpContext.User.ActiveUserId();
             var filteredResult = FilterTransactionHistories(filters, activeUserId);
-            return await TransactionHistoryMappings(filteredResult.ResponseValue);
+            return await TransactionHistoryListDtoMapper(filteredResult.ResponseValue);
         }
 
         private TransactionHistoryResponseFilter<List<TransactionHistory>> FilterTransactionHistories(TransactionHistoryRequestFilter filters, string userId)
@@ -60,9 +60,11 @@ namespace TekhneCafe.Business.Concrete
                 .Include(_ => _.Order)
                     .ThenInclude(_ => _.OrderProducts)
                 .Include(_ => _.Order)
-                    .ThenInclude(_ => _.OrderHistories);
+                    .ThenInclude(_ => _.OrderHistories)
+                .AsNoTracking()
+                .AsSplitQuery();
 
-        private async Task<List<TransactionHistoryListDto>> TransactionHistoryMappings(List<TransactionHistory> filteredResult)
+        private async Task<List<TransactionHistoryListDto>> TransactionHistoryListDtoMapper(List<TransactionHistory> filteredResult)
         {
             List<TransactionHistoryListDto> transactionHistories = new();
             var user = await _userService.GetRawUserByIdAsync(filteredResult.FirstOrDefault().AppUserId.ToString());

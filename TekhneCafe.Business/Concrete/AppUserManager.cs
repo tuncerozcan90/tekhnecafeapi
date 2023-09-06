@@ -37,7 +37,7 @@ namespace TekhneCafe.Business.Concrete
 
         public List<AppUserListDto> GetUserList(AppUserRequestFilter filters = null)
         {
-            var users = _userDal.GetAll();
+            var users = _userDal.GetAll().AsNoTracking();
             var filteredResult = new AppUserFilterService().FilterAppUsers(users, filters);
             new HeaderService(_httpContextAccessor).AddToHeaders(filteredResult.Headers);
             return _mapper.Map<List<AppUserListDto>>(filteredResult.ResponseValue);
@@ -82,9 +82,11 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task<string> UpdateUserImageAsync(string bucketName)
         {
-            UploadImageRequest request = new();
-            request.BucketName = bucketName;
-            request.Image = _httpContext.Request.Form.Files.FirstOrDefault();
+            UploadImageRequest request = new()
+            {
+                BucketName = bucketName,
+                Image = _httpContext.Request.Form.Files.FirstOrDefault()
+            };
             var user = await _userDal.GetByIdAsync(Guid.Parse(_httpContext.User.ActiveUserId()));
             string imagePath = await _imageService.UploadImageAsync(request);
             if (!string.IsNullOrEmpty(user.ImagePath))
@@ -117,6 +119,9 @@ namespace TekhneCafe.Business.Concrete
         }
 
         private void AddEndpointToUserImage(AppUser user)
-            => user.ImagePath = string.Concat(_configuration.GetValue<string>("Minio:Endpoint"), "/", user.ImagePath);
+        {
+            if (user != null)
+                user.ImagePath = string.Concat(_configuration.GetValue<string>("Minio:Endpoint"), "/", user.ImagePath);
+        }
     }
 }
