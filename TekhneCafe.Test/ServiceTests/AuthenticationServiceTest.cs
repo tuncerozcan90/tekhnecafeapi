@@ -1,16 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Concrete;
 using TekhneCafe.Core.DTOs.Authentication;
-using TekhneCafe.Core.Exceptions;
 using TekhneCafe.Core.Exceptions.Authentication;
 
 namespace TekhneCafe.Test.ServiceTests
@@ -85,7 +79,7 @@ namespace TekhneCafe.Test.ServiceTests
             // Arrange
             _configuration.Setup(_ => _.GetSection("LdapSettings:Username").Value).Returns("invalidUser");
             _configuration.Setup(_ => _.GetSection("LdapSettings:Password").Value).Returns("invalidPassword");
-            _configuration.Setup(_ => _.GetSection("LdapSettings:Path").Value).Returns("invalidPath"); 
+            _configuration.Setup(_ => _.GetSection("LdapSettings:Path").Value).Returns("invalidPath");
             LdapAuthenticationManager authenticationManager = new(_configuration.Object, _tokenService.Object, _appUserService.Object);
 
             // Act

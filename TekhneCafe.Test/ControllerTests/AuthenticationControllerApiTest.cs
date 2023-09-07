@@ -1,13 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TekhneCafe.Api.Controllers;
 using TekhneCafe.Business.Abstract;
-using TekhneCafe.Core.DTOs.AppUser;
 using TekhneCafe.Core.DTOs.Authentication;
 using TekhneCafe.Core.Exceptions.Authentication;
 
@@ -18,7 +12,7 @@ namespace TekhneCafe.Test.ControllerTests
         Mock<IAuthenticationService> _authenticationService = new();
         public AuthenticationControllerApiTest()
         {
-            
+
         }
 
         [Fact]

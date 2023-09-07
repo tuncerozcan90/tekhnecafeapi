@@ -55,9 +55,9 @@ namespace TekhneCafe.Business.Concrete
             return _mapper.Map<ProductListDto>(product);
         }
 
-        public  List<ProductListDto> GetProductsByCategory(string categoryId)
+        public List<ProductListDto> GetProductsByCategory(string categoryId)
         {
-            var products =  _productDal.GetProductsByCategory(categoryId);
+            var products = _productDal.GetProductsByCategory(categoryId);
             return _mapper.Map<List<ProductListDto>>(products);
         }
 

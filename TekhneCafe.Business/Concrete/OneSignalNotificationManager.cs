@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RestSharp;
 using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Models;
