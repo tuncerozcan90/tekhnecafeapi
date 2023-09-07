@@ -31,7 +31,6 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpPost]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
-
         public async Task<IActionResult> CreateAttribute(AttributeAddDto attributeAddDto)
         {
             await _attributeService.CreateAttributeAsync(attributeAddDto);
@@ -76,7 +75,6 @@ namespace TekhneCafe.Api.Controllers
         /// <returns>A message indicating the success of the deletion.</returns>
         [HttpDelete("{id}")]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
-
         public async Task<IActionResult> DeleteAttribute(string id)
         {
 
@@ -92,7 +90,6 @@ namespace TekhneCafe.Api.Controllers
         /// <returns>A message indicating the success of the update.</returns>
         [HttpPut]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
-
         public async Task<IActionResult> UpdateAttribute([FromBody] AttributeUpdateDto attributeUpdateDto)
         {
             await _attributeService.UpdateAttributeAsync(attributeUpdateDto);

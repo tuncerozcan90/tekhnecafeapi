@@ -19,6 +19,7 @@ namespace TekhneCafe.DataAccess.Extensions
             #region IOC Scoped Services
             services.AddScoped<IAppUserDal, EfAppUserDal>();
             services.AddScoped<IAttributeDal, EfAttributeDal>();
+            services.AddScoped<ICategoryDal, EfCategoryDal>();
             services.AddScoped<IProductAttributeDal, EfProductAttributeDal>();
             services.AddScoped<IImageDal, EfImageDal>();
             services.AddScoped<IOrderDal, EfOrderDal>();

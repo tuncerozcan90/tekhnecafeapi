@@ -48,6 +48,7 @@ namespace TekhneCafe.Business.Extensions
             #region IOC Scoped Services
             services.AddScoped<ITokenService, JwtManager>();
             services.AddScoped<IAppUserService, AppUserManager>();
+            services.AddScoped<ICategoryService, CategoryManager>();
             services.AddScoped<IAttributeService, AttributeManager>();
             services.AddScoped<IProductAttributeService, ProductAttributeManager>();
             services.AddScoped<IAuthenticationService, LdapAuthenticationManager>();

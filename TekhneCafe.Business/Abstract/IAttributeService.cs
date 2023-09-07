@@ -7,7 +7,7 @@ namespace TekhneCafe.Business.Abstract
         Task CreateAttributeAsync(AttributeAddDto attributeAddDto);
         Task DeleteAttributeAsync(string id);
         List<AttributeListDto> GetAllAttribute();
-        Task<TekhneCafe.Entity.Concrete.Attribute> GetAttributeByIdAsync(string id);
+        Task<AttributeListDto> GetAttributeByIdAsync(string id);
         Task UpdateAttributeAsync(AttributeUpdateDto attributeUpdateDto);
     }
 }

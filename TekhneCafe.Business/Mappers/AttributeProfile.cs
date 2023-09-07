@@ -10,7 +10,7 @@ namespace TekhneCafe.Business.Mappers
         {
             CreateMap<AttributeAddDto, TekhneCafe.Entity.Concrete.Attribute>();
             CreateMap<AttributeUpdateDto, TekhneCafe.Entity.Concrete.Attribute>();
-            CreateMap<TekhneCafe.Entity.Concrete.Attribute, AttributeListDto>();
+            CreateMap<TekhneCafe.Entity.Concrete.Attribute, AttributeListDto>().ReverseMap();
 
         }
     }

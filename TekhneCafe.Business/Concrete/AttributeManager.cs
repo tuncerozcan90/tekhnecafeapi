@@ -34,11 +34,12 @@ namespace TekhneCafe.Business.Concrete
             return _mapper.Map<List<AttributeListDto>>(attribute);
         }
 
-        public async Task<ProductAttributes.Attribute> GetAttributeByIdAsync(string id)
+        public async Task<AttributeListDto> GetAttributeByIdAsync(string id)
         {
             ProductAttributes.Attribute attribute = await _attributeDal.GetByIdAsync(Guid.Parse(id));
             ThrowErrorIfAttributeNotFound(attribute);
-            return attribute;
+            return _mapper.Map<AttributeListDto>(attribute);
+
         }
         public async Task DeleteAttributeAsync(string id)
         {
@@ -59,7 +60,7 @@ namespace TekhneCafe.Business.Concrete
             ProductAttributes.Attribute attribute = await _attributeDal.GetByIdAsync(Guid.Parse(attributeUpdateDto.Id));
             ThrowErrorIfAttributeNotFound(attribute);
             _mapper.Map(attributeUpdateDto, attribute);
-            _attributeDal.UpdateAsync(attribute);
+            await _attributeDal.UpdateAsync(attribute);
         }
 
     }
