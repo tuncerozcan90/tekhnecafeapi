@@ -5,9 +5,8 @@ namespace TekhneCafe.Business.Abstract
     public interface ICategoryService
     {
         Task CreateCategoryAsync(CategoryAddDto categoryAddDto);
-        List<CategoryListDto> GetAllCategory(CategoryListDto categoryListDto);
-        Task UpdateCategoryAsync(CategoryUpdateDto categoryUpdateDto);
+        List<CategoryListDto> GetAllCategory();
         Task DeleteCategoryAsync(string id);
-
+        Task UpdateCategoryAsync(CategoryUpdateDto categoryUpdateDto);
     }
 }

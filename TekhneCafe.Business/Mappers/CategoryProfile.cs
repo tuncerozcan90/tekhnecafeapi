@@ -9,8 +9,8 @@ namespace TekhneCafe.Business.Mappers
         public CategoryProfile()
         {
             CreateMap<CategoryAddDto, Category>();
+            CreateMap<Category, CategoryListDto>();
             CreateMap<CategoryUpdateDto, Category>();
-            CreateMap<Category, CategoryListDto>().ReverseMap();
         }
     }
 }

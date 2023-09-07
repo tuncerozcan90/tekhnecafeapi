@@ -1,6 +1,4 @@
-﻿using TekhneCafe.Core.DTOs.Attribute;
-
-namespace TekhneCafe.Core.DTOs.ProductAttribute
+﻿namespace TekhneCafe.Core.DTOs.ProductAttribute
 {
     public class ProductAttributeAddDto
     {

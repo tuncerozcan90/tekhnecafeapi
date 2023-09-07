@@ -108,7 +108,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpGet("category/{categoryId}")]
         [Authorize]
-        public  IActionResult GetProductsByCategory(string categoryId)
+        public IActionResult GetProductsByCategory(string categoryId)
         {
             var products = _productService.GetProductsByCategory(categoryId);
             return Ok(products);

@@ -9,12 +9,14 @@ namespace TekhneCafe.Business.Concrete
     public class CategoryManager : ICategoryService
     {
         private readonly ICategoryDal _categoryDal;
+        private readonly IProductDal _productDal;
         private readonly IMapper _mapper;
 
-        public CategoryManager(ICategoryDal categoryDal, IMapper mapper)
+        public CategoryManager(ICategoryDal categoryDal, IMapper mapper, IProductDal productDal)
         {
             _categoryDal = categoryDal;
             _mapper = mapper;
+            _productDal = productDal;
         }
 
         public async Task CreateCategoryAsync(CategoryAddDto categoryAddDto)
@@ -26,11 +28,18 @@ namespace TekhneCafe.Business.Concrete
         public async Task DeleteCategoryAsync(string id)
         {
             Category category = await _categoryDal.GetByIdAsync(Guid.Parse(id));
+            var products = _productDal.GetProductsByCategory(id);
+            foreach (var product in products)
+            {
+                product.IsDeleted = true;
+                await _productDal.UpdateAsync(product);
+            }
             category.IsDeleted = true;
+
             await _categoryDal.SafeDeleteAsync(category);
         }
 
-        public List<CategoryListDto> GetAllCategory(CategoryListDto categoryListDto)
+        public List<CategoryListDto> GetAllCategory()
         {
             var category = _categoryDal.GetAll(_ => !_.IsDeleted);
             return _mapper.Map<List<CategoryListDto>>(category);

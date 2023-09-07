@@ -103,7 +103,7 @@ namespace TekhneCafe.Business.Concrete
                 await _imageService.RemoveImageAsync(new RemoveImageRequest() { BucketName = request.BucketName, ObjectName = imagePath.Replace(bucketName + "/", "") });
                 throw new InternalServerErrorException();
             }
-            return string.Concat(_configuration.GetValue<string>("Minio:Endpoint") , "/", imagePath);
+            return string.Concat(_configuration.GetValue<string>("Minio:Endpoint"), "/", imagePath);
         }
 
 

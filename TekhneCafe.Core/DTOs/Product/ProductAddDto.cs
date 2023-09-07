@@ -1,5 +1,4 @@
-﻿using TekhneCafe.Core.DTOs.Category;
-using TekhneCafe.Core.DTOs.ProductAttribute;
+﻿using TekhneCafe.Core.DTOs.ProductAttribute;
 
 namespace TekhneCafe.Core.DTOs.Product
 {

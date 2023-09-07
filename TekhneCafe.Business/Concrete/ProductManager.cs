@@ -12,16 +12,17 @@ namespace TekhneCafe.Business.Concrete
     public class ProductManager : IProductService
     {
         private readonly IProductDal _productDal;
+        private readonly IProductAttributeDal _productAttributeDal;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
 
 
-        public ProductManager(IProductDal productDal, IMapper mapper, IHttpContextAccessor httpContext)
+        public ProductManager(IProductDal productDal, IMapper mapper, IHttpContextAccessor httpContext, IProductAttributeDal productAttributeDal)
         {
             _productDal = productDal;
             _mapper = mapper;
             _httpContext = httpContext;
-
+            _productAttributeDal = productAttributeDal;
         }
 
         public async Task CreateProductAsync(ProductAddDto productAddDto)
@@ -37,7 +38,7 @@ namespace TekhneCafe.Business.Concrete
             product.IsDeleted = true;
             foreach (var item in product.ProductAttributes)
             {
-                item.IsDeleted = true;
+                await _productAttributeDal.HardDeleteAsync(item);
             }
             await _productDal.SafeDeleteAsync(product);
         }
@@ -55,9 +56,9 @@ namespace TekhneCafe.Business.Concrete
             return _mapper.Map<ProductListDto>(product);
         }
 
-        public  List<ProductListDto> GetProductsByCategory(string categoryId)
+        public List<ProductListDto> GetProductsByCategory(string categoryId)
         {
-            var products =  _productDal.GetProductsByCategory(categoryId);
+            var products = _productDal.GetProductsByCategory(categoryId);
             return _mapper.Map<List<ProductListDto>>(products);
         }
 
@@ -69,49 +70,77 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task UpdateProductAsync(ProductUpdateDto productUpdateDto)
         {
-            Product product = await _productDal.GetProductIncludeAllAsync(productUpdateDto.Id.ToLower());
+            Product product = await _productDal.GetProductIncludeAttributeAsync(productUpdateDto.Id.ToLower());
 
             ThrowErrorIfProductNotFound(product);
-
-            // Update product attributes
-            UpdateProductAttribute(productUpdateDto, product);
-
-            // Update product properties from the DTO
-            //_mapper.Map(productUpdateDto, product);
+            product.ModifiedDate = DateTime.Now;
             product.Name = productUpdateDto.Name;
             product.Description = productUpdateDto.Description;
             product.Price = productUpdateDto.Price;
+            product.CategoryId = Guid.Parse(productUpdateDto.CategoryId);
+
+            // Update product attributes
+            UpdateProductAttribute(productUpdateDto, product);
 
             // Save changes to the product and attributes
             await _productDal.UpdateAsync(product);
         }
 
+
+
         private void UpdateProductAttribute(ProductUpdateDto productUpdateDto, Product product)
         {
-            var newProductAttributeIds = productUpdateDto.ProductAttributes.Select(attr => attr.Attribute.Id.ToLower()).ToList();
+            var newProductAttributeIds = productUpdateDto.ProductAttributes?.Select(attr => attr.AttributeId.ToLower()).ToList();
             var existingAttributeIds = product.ProductAttributes.Select(attr => attr.AttributeId.ToString()).ToList();
-
-            // Remove attributes that are no longer associated
-            var attributesToRemove = product.ProductAttributes.Where(attr => !newProductAttributeIds.Contains(attr.AttributeId.ToString())).ToList();
-            foreach (var attribute in attributesToRemove)
-                product.ProductAttributes.Remove(attribute);
-
-            // Update attributes
-            var attributesToUpdate = newProductAttributeIds.Where(attr => existingAttributeIds.Contains(attr));
-            foreach (var attributeId in attributesToUpdate)
-            {
-                var updatedAttr = productUpdateDto.ProductAttributes.First(_ => _.Attribute.Id.ToLower() == attributeId.ToLower());
-                var existingAttr = product.ProductAttributes.First(_ => _.AttributeId == Guid.Parse(attributeId));
-                _mapper.Map(updatedAttr, existingAttr);
-            }
-
-            // Add new attributes
-            var attributesToAdd = newProductAttributeIds.Except(existingAttributeIds).ToList();
-            foreach (var attributeId in attributesToAdd)
-            {
-                var newAttr = productUpdateDto.ProductAttributes.First(_ => _.Attribute.Id.ToLower() == attributeId.ToLower());
-                product.ProductAttributes.Add(new ProductAttribute { IsRequired = newAttr.IsRequired, Price = newAttr.Price, AttributeId = Guid.Parse(newAttr.Attribute.Id) });
-            }
+            RemoveAttributesFromProduct(newProductAttributeIds, product);
+            UpdateAttributesOfProduct(existingAttributeIds, newProductAttributeIds, product, productUpdateDto);
+            AddNewAttributesToProduct(existingAttributeIds, newProductAttributeIds, product, productUpdateDto);
         }
+
+
+
+        private void RemoveAttributesFromProduct(List<string> newProductAttributeIds, Product product)
+        {
+            // Remove attributes that are no longer associated
+            var attributesToRemove = product.ProductAttributes?.Where(attr => { return !(newProductAttributeIds != null && newProductAttributeIds.Contains(attr.AttributeId.ToString())); }).ToList();
+            if (attributesToRemove != null)
+                foreach (var attribute in attributesToRemove)
+                    product.ProductAttributes.Remove(attribute);
+        }
+
+
+
+        private void UpdateAttributesOfProduct(List<string> existingAttributeIds, List<string> newProductAttributeIds, Product product, ProductUpdateDto productUpdateDto)
+        {
+            // Remove attributes that are no longer associated
+            IEnumerable<string> attributesToUpdate = null;
+            if (existingAttributeIds != null)
+                attributesToUpdate = newProductAttributeIds?.Where(attr => existingAttributeIds.Contains(attr));
+            if (attributesToUpdate != null)
+                foreach (var attributeId in attributesToUpdate)
+                {
+                    var updatedAttr = productUpdateDto.ProductAttributes?.First(_ => _.AttributeId.ToLower() == attributeId.ToLower());
+                    var existingAttr = product.ProductAttributes?.First(_ => _.AttributeId == Guid.Parse(attributeId));
+                    if (updatedAttr != null && existingAttr != null)
+                        _mapper.Map(updatedAttr, existingAttr);
+                }
+        }
+
+
+
+        private void AddNewAttributesToProduct(List<string> existingAttributeIds, List<string> newProductAttributeIds, Product product, ProductUpdateDto productUpdateDto)
+        {
+            // Add new attributes
+            if (existingAttributeIds is null)
+                return;
+            var attributesToAdd = newProductAttributeIds?.Except(existingAttributeIds).ToList();
+            if (attributesToAdd != null)
+                foreach (var attributeId in attributesToAdd)
+                {
+                    var newAttr = productUpdateDto.ProductAttributes?.First(_ => _.AttributeId.ToLower() == attributeId.ToLower());
+                    product.ProductAttributes?.Add(new ProductAttribute { IsRequired = newAttr.IsRequired, Price = newAttr.Price, AttributeId = Guid.Parse(newAttr.AttributeId) });
+                }
+        }
+
     }
 }
