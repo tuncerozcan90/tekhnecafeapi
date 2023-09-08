@@ -9,7 +9,7 @@ using TekhneCafe.Core.Exceptions.Authentication;
 using TekhneCafe.Core.Filters.AppUser;
 
 
-namespace TekhneCafe.Test
+namespace TekhneCafe.Test.ControllerTests
 {
     public class UserControllerApiTest
     {
@@ -59,7 +59,7 @@ namespace TekhneCafe.Test
             userServiceMock.Setup(service => service.GetUserList(filters)).Throws(new Exception("Service error"));
 
             var controller = new UsersController(userServiceMock.Object);
-            Assert.Throws<System.Exception>(() => controller.GetUsers(filters));
+            Assert.Throws<Exception>(() => controller.GetUsers(filters));
         }
 
         [Fact]
@@ -140,7 +140,7 @@ namespace TekhneCafe.Test
             };
 
             mockAuthenticationService.Setup(service => service.Login(userLoginDto))
-                                      .ThrowsAsync(new TekhneCafe.Core.Exceptions.Authentication.UserBadRequestException("Geçersiz kullanıcı bilgileri!"));
+                                      .ThrowsAsync(new UserBadRequestException("Geçersiz kullanıcı bilgileri!"));
             var result = async delegate ()
             {
                 var result = await controller.Login(userLoginDto);

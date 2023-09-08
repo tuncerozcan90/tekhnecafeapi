@@ -8,7 +8,7 @@ using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Transaction;
 using TekhneCafe.Core.Filters.Transaction;
 
-namespace TekhneCafe.Test
+namespace TekhneCafe.Test.ControllerTests
 {
     public class TransactionsControllerApiTest
     {
@@ -19,7 +19,7 @@ namespace TekhneCafe.Test
             var list = new List<TransactionHistoryListDto> { };
             var mockTransactionHistoryService = new Mock<ITransactionHistoryService>();
             mockTransactionHistoryService
-                .Setup(repo => repo.GetAllTransactionHistoriesByIdAsync(It.IsAny<TransactionHistoryRequestFilter>(), userId))
+                .Setup(repo => repo.GetAllTransactionHistoriesByUserIdAsync(It.IsAny<TransactionHistoryRequestFilter>(), userId))
                 .ReturnsAsync(list);
             var controller = new TransactionsController(mockTransactionHistoryService.Object);
             var result = await controller.GetUserTransactions(new TransactionHistoryRequestFilter(), userId);
@@ -91,7 +91,7 @@ namespace TekhneCafe.Test
         {
             var mockTransactionHistoryService = new Mock<ITransactionHistoryService>();
             mockTransactionHistoryService
-                .Setup(repo => repo.GetAllTransactionHistoriesByIdAsync(It.IsAny<TransactionHistoryRequestFilter>(), It.IsAny<string>()))
+                .Setup(repo => repo.GetAllTransactionHistoriesByUserIdAsync(It.IsAny<TransactionHistoryRequestFilter>(), It.IsAny<string>()))
                 .ReturnsAsync(new List<TransactionHistoryListDto>());
             var controller = new TransactionsController(mockTransactionHistoryService.Object);
             var filters = new TransactionHistoryRequestFilter();

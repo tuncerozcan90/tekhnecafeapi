@@ -2,7 +2,7 @@
 {
     public class InternalServerErrorException : Exception
     {
-        public InternalServerErrorException(string message = "İşlem sırasında eklenmeyen bir hata oluştu!") : base(message)
+        public InternalServerErrorException(string message = "İşlem sırasında beklenmeyen bir hata oluştu!") : base(message)
         {
 
         }

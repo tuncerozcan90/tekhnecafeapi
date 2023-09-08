@@ -86,7 +86,7 @@ namespace TekhneCafe.Test.ControllerTests
         public async Task Orders_WithInvalidOrderId_ThrowsOrderNotFoundException()
         {
             // Arrange
-            _orderService.Setup(_ => _.GetOrderDetailById(It.IsAny<string>())).ThrowsAsync(new OrderNotFoundException());
+            _orderService.Setup(_ => _.GetOrderDetailByIdAsync(It.IsAny<string>())).ThrowsAsync(new OrderNotFoundException());
             OrdersController controller = new(_orderService.Object);
 
             // Act

@@ -57,8 +57,6 @@ namespace TekhneCafe.Business.Concrete
         {
             Order order = _mapper.Map<Order>(orderAddDto);
             var validOrder = await GetValidOrderAsync(order);
-            if (validOrder is null)
-                throw new OrderBadRequestException();
             using (var result = await _transactionManagement.BeginTransactionAsync())
             {
                 try
@@ -73,14 +71,6 @@ namespace TekhneCafe.Business.Concrete
                     throw new InternalServerErrorException();
                 }
             }
-        }
-
-        public async Task<Order> GetValidOrderAsync(Order order)
-        {
-            await _orderProductService.ValidateOrderProductsAsync(order);
-            return order.OrderProducts.Count > 0
-                ? order
-                : null;
         }
 
         public async Task ConfirmOrderAsync(string id)
@@ -110,7 +100,7 @@ namespace TekhneCafe.Business.Concrete
             }
         }
 
-        public async Task<OrderDetailDto> GetOrderDetailById(string id)
+        public async Task<OrderDetailDto> GetOrderDetailByIdAsync(string id)
         {
             Order order = await _orderDal.GetOrderIncludeProductsAsync(id);
             ThrowErrorIfOrderNotFound(order);
@@ -119,7 +109,7 @@ namespace TekhneCafe.Business.Concrete
             return _mapper.Map<OrderDetailDto>(order);
         }
 
-        public async Task<List<OrderListDto>> GetOrdersAsync(OrderRequestFilter filters)
+        public List<OrderListDto> GetOrders(OrderRequestFilter filters)
         {
             var query = _orderDal.GetAll()
                 .Include(_ => _.TransactionHistories)
@@ -130,6 +120,16 @@ namespace TekhneCafe.Business.Concrete
             var filteredResult = new OrderFilterService().FilterOrders(query, filters);
             new HeaderService(_httpContextAccessor).AddToHeaders(filteredResult.Headers);
             return OrderListDtoMapper(filteredResult.ResponseValue);
+        }
+
+        private async Task<Order> GetValidOrderAsync(Order order)
+        {
+            if (order is null || order.OrderProducts is null)
+                throw new OrderBadRequestException();
+            await _orderProductService.ValidateOrderProductsAsync(order);
+            return order.OrderProducts.Count > 0
+                ? order
+                : throw new OrderBadRequestException();
         }
 
         private List<OrderListDto> OrderListDtoMapper(List<Order> orders)
@@ -169,12 +169,14 @@ namespace TekhneCafe.Business.Concrete
         private float GetOrderTotalPrice(Order order)
         {
             float totalPrice = 0;
-            foreach (var orderProduct in order.OrderProducts)
-            {
-                totalPrice += orderProduct.Price * orderProduct.Quantity;
-                foreach (var orderProductAttribute in orderProduct.OrderProductAttributes)
-                    totalPrice += orderProductAttribute.Price * orderProductAttribute.Quantity;
-            }
+            if (order.OrderProducts != null)
+                foreach (var orderProduct in order.OrderProducts)
+                {
+                    totalPrice += orderProduct.Price * orderProduct.Quantity;
+                    if (orderProduct.OrderProductAttributes != null)
+                        foreach (var orderProductAttribute in orderProduct.OrderProductAttributes)
+                            totalPrice += orderProductAttribute.Price * orderProductAttribute.Quantity;
+                }
 
             return totalPrice;
         }

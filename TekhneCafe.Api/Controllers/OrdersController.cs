@@ -67,7 +67,7 @@ namespace TekhneCafe.Api.Controllers
         [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> Orders([FromRoute] string id)
         {
-            var order = await _orderService.GetOrderDetailById(id);
+            var order = await _orderService.GetOrderDetailByIdAsync(id);
             return Ok(order);
         }
 
@@ -80,9 +80,9 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpGet]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
-        public async Task<IActionResult> Orders([FromQuery] OrderRequestFilter filters)
+        public IActionResult Orders([FromQuery] OrderRequestFilter filters)
         {
-            var orders = await _orderService.GetOrdersAsync(filters);
+            var orders = _orderService.GetOrders(filters);
             return Ok(orders);
         }
     }

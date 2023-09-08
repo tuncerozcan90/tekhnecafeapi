@@ -29,7 +29,7 @@ namespace TekhneCafe.Api.Controllers
         [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "userId" })]
         public async Task<IActionResult> GetUserTransactions([FromQuery] TransactionHistoryRequestFilter filters, [FromRoute] string userId)
         {
-            var transactions = await _transactionHistoryService.GetAllTransactionHistoriesByIdAsync(filters, userId);
+            var transactions = await _transactionHistoryService.GetAllTransactionHistoriesByUserIdAsync(filters, userId);
             return Ok(transactions);
         }
 

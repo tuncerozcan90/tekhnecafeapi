@@ -34,7 +34,7 @@ namespace TekhneCafe.Business.Concrete
             await _transactionHistoryDal.AddAsync(transactionHistory);
         }
 
-        public async Task<List<TransactionHistoryListDto>> GetAllTransactionHistoriesByIdAsync(TransactionHistoryRequestFilter filters, string userId)
+        public async Task<List<TransactionHistoryListDto>> GetAllTransactionHistoriesByUserIdAsync(TransactionHistoryRequestFilter filters, string userId)
         {
             var filteredResult = FilterTransactionHistories(filters, userId);
             return await TransactionHistoryListDtoMapper(filteredResult.ResponseValue);
