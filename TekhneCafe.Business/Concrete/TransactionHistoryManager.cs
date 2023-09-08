@@ -67,7 +67,10 @@ namespace TekhneCafe.Business.Concrete
         private async Task<List<TransactionHistoryListDto>> TransactionHistoryListDtoMapper(List<TransactionHistory> filteredResult)
         {
             List<TransactionHistoryListDto> transactionHistories = new();
-            var user = await _userService.GetRawUserByIdAsync(filteredResult.FirstOrDefault().AppUserId.ToString());
+            var appUserId = filteredResult.FirstOrDefault()?.AppUserId.ToString();
+            if (appUserId is null)
+                return transactionHistories;
+            var user = await _userService.GetRawUserByIdAsync(appUserId);
             foreach (var transactionHistory in filteredResult)
             {
                 transactionHistories.Add(new()
