@@ -5,6 +5,7 @@ using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.ValidationRules.FluentValidations.Product;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Product;
+using TekhneCafe.Core.Filters.Product;
 
 namespace TekhneCafe.Api.Controllers
 {
@@ -34,7 +35,7 @@ namespace TekhneCafe.Api.Controllers
         [Authorize]
         public async Task<IActionResult> GetProductById(string id)
         {
-            ProductListDto productList = await _productService.GetProductByIdAsync(id);
+            ProductDetailDto productList = await _productService.GetProductByIdAsync(id);
             return Ok(productList);
         }
 
@@ -62,9 +63,9 @@ namespace TekhneCafe.Api.Controllers
         /// <returns>The list of all products.</returns>
         [HttpGet]
         [Authorize]
-        public IActionResult GetAllProducts()
+        public IActionResult GetAllProducts([FromQuery] ProductRequestFilter filter)
         {
-            var products = _productService.GetAllProducts();
+            var products = _productService.GetAllProducts(filter);
             return Ok(products);
         }
 

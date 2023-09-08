@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.Helpers.FilterServices;
+using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.Product;
 using TekhneCafe.Core.Exceptions.Product;
+using TekhneCafe.Core.Filters.Product;
 using TekhneCafe.DataAccess.Abstract;
 using TekhneCafe.Entity.Concrete;
 
@@ -43,18 +46,30 @@ namespace TekhneCafe.Business.Concrete
             await _productDal.SafeDeleteAsync(product);
         }
 
-        public List<ProductListDto> GetAllProducts()
+        public List<ProductListDto> GetAllProducts(ProductRequestFilter filter)
         {
-            var product = _productDal.GetAll(_ => !_.IsDeleted).Include(_ => _.ProductAttributes).ThenInclude(_ => _.Attribute).Include(_ => _.Category).ToList();
-            return _mapper.Map<List<ProductListDto>>(product);
+            var filteredResult = FilterProducts(filter);
+            return _mapper.Map<List<ProductListDto>>(filteredResult.ResponseValue);
         }
 
-        public async Task<ProductListDto> GetProductByIdAsync(string id)
+        public async Task<ProductDetailDto> GetProductByIdAsync(string id)
         {
             Product product = await _productDal.GetProductIncludeAllAsync(id);
             ThrowErrorIfProductNotFound(product);
-            return _mapper.Map<ProductListDto>(product);
+            return _mapper.Map<ProductDetailDto>(product);
         }
+
+        private ProductResponseFilter<List<Product>> FilterProducts(ProductRequestFilter filter)
+        {
+            var query = GetProducts();
+            var filteredResult = new ProductFilterService().FilterProducts(query, filter);
+            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            return filteredResult;
+        }
+
+        private IQueryable<Product> GetProducts()
+         => _productDal.GetAll(_ => !_.IsDeleted).Include(_ => _.ProductAttributes).ThenInclude(_ => _.Attribute).Include(_ => _.Category).AsNoTracking()
+               .AsSingleQuery();
 
         public List<ProductListDto> GetProductsByCategory(string categoryId)
         {

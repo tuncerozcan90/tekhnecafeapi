@@ -1,4 +1,5 @@
 ﻿using TekhneCafe.Core.DTOs.Attribute;
+using TekhneCafe.Core.Filters.Attribute;
 
 namespace TekhneCafe.Business.Abstract
 {
@@ -6,8 +7,8 @@ namespace TekhneCafe.Business.Abstract
     {
         Task CreateAttributeAsync(AttributeAddDto attributeAddDto);
         Task DeleteAttributeAsync(string id);
-        List<AttributeListDto> GetAllAttribute();
-        Task<AttributeListDto> GetAttributeByIdAsync(string id);
+        List<AttributeDetailDto> GetAllAttribute(AttributeRequestFilter filters);
+        Task<AttributeDetailDto> GetAttributeByIdAsync(string id);
         Task UpdateAttributeAsync(AttributeUpdateDto attributeUpdateDto);
     }
 }
