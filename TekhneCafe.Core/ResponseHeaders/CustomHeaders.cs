@@ -1,4 +1,5 @@
-﻿using TekhneCafe.Core.Filters;
+﻿using System.Text.Json;
+using TekhneCafe.Core.Filters;
 
 namespace TekhneCafe.Core.ResponseHeaders
 {
@@ -6,7 +7,7 @@ namespace TekhneCafe.Core.ResponseHeaders
     {
         public Dictionary<string, string> AddPaginationHeader(Metadata metadata)
             => metadata != null
-            ? new Dictionary<string, string>() { { "X-Pagination", $"TotalPages:{metadata.TotalPages};CurrentPage:{metadata.CurrentPage};PageSize:{metadata.PageSize};TotalEntities:{metadata.TotalEntities};" } }
+            ? new Dictionary<string, string>() { { "X-Pagination", JsonSerializer.Serialize(metadata) } }
             : throw new Exception();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Sentry;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using TekhneCafe.Api.LoggerEnrichers;
@@ -8,7 +9,7 @@ namespace TekhneCafe.Api.Extensions
 {
     public static class ServiceRegistration
     {
-        public static void AddApiServices(this IServiceCollection services)
+        public static void AddApiServices(this IServiceCollection services, WebApplicationBuilder builder)
         {
             services.AddControllers().AddJsonOptions(options =>
             {
@@ -21,6 +22,8 @@ namespace TekhneCafe.Api.Extensions
             });
             services.AddEndpointsApiExplorer();
             services.AddSingleton<UserEnricher>();
+            builder.WebHost.UseSentry(); 
+            SentrySdk.CaptureMessage("Hello Sentry");
 
             #region Swagger Configuration
             services.AddSwaggerGen(config =>

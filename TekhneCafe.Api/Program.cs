@@ -40,7 +40,7 @@ using var log = new LoggerConfiguration()
 builder.Host.UseSerilog(log);
 #endregion
 
-builder.Services.AddApiServices();
+builder.Services.AddApiServices(builder);
 builder.Services.AddDataAccessServices(builder.Configuration);
 builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddSignalRServices();
@@ -70,8 +70,6 @@ if (app.Environment.IsDevelopment())
         _.SwaggerEndpoint("/swagger/v1/swagger.json", "TekhneCafe API v1");
     });
 }
-
-app.UseCors("_myAllowSpecificOrigins");
 
 #region ExceptionHandler Configuration
 app.UseExceptionHandler(
@@ -106,11 +104,12 @@ app.UseExceptionHandler(
 );
 #endregion
 
-app.UseSerilogRequestLogging();
+app.UseCors("_myAllowSpecificOrigins");
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseRouting();
+app.UseSentryTracing();
+app.UseSerilogRequestLogging();
 app.UseAuthorization();
 
 app.Use(async (context, next) =>
