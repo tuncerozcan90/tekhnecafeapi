@@ -34,6 +34,8 @@ namespace TekhneCafe.Api.ActionFilters
                 if (!validationResult.IsValid)
                     throw new BadRequestException(validationResult.Errors.First().ErrorMessage);
             }
+            else
+                throw new BadRequestException("Tüm alanları doldurunuz!");
         }
     }
 }

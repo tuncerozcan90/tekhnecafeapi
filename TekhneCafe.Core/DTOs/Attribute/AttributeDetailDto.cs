@@ -1,6 +1,6 @@
-﻿namespace TekhneCafe.Core.DTOs.Category
+﻿namespace TekhneCafe.Core.DTOs.Attribute
 {
-    public class CategoryListDto
+    public class AttributeDetailDto
     {
         public string Id { get; set; }
         public string Name { get; set; }
