@@ -10,24 +10,32 @@ namespace TekhneCafe.Business.ValidationRules.FluentValidations.Product
             RuleFor(_ => _.Name)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage("Name must contain a value !")
+                .WithMessage("Ürün adı boş olamaz!")
                 .MinimumLength(2)
-                .WithMessage("Name must contain at least 2 charachters !")
+                .WithMessage("Ürün adı en az 2 karakter olmalı !")
                 .MaximumLength(50)
-                .WithMessage("Name must contain at most 50 charachters !");
+                .WithMessage("Ürün adı en fazla 50 karakter olabilir !");
 
             RuleFor(_ => _.Description)
                 .MaximumLength(150)
-                .WithMessage("Description must contain at most 150 charachters !");
+                .WithMessage("Açıklama en fazla 50 karakter olabilir !");
 
             RuleFor(_ => _.Price)
                 .NotNull()
+                .WithMessage("Fiyat boş olamaz !")
                 .NotEmpty()
-                .WithMessage("Price must contain a value !")
+                .WithMessage("Fiyat boş olamaz !")
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Price must be greate or equal to 0 !")
+                .WithMessage("Fiyat 0 dan küçük olamaz !")
                 .LessThan(1000)
-                .WithMessage("Price must be less than 1000 !");
+                .WithMessage("Fiyat 1000 TL den fazla olamaz !");
+
+            RuleFor(_ => _.CategoryId)
+               .NotEmpty()
+               .WithMessage("CategoryId boş olamaz!")
+               .NotNull()
+               .WithMessage("CategoryId boş olamaz!");
+
         }
     }
 }

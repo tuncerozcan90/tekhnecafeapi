@@ -2,11 +2,11 @@
 
 namespace TekhneCafe.Core.DTOs.ProductAttribute
 {
-    public class ProductAttributeListDto
+    public class ProductAttributeDetailDto
     {
-        public AttributeListDto? Attribute { get; set; }
+        public string Id { get; set; }
+        public AttributeDetailDto? Attribute { get; set; }
         public bool IsRequired { get; set; }
         public float Price { get; set; }
-
     }
 }

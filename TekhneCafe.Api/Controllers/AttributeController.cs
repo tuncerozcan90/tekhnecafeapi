@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.ValidationRules.FluentValidations.Attribute;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Attribute;
+using TekhneCafe.Core.Filters.Attribute;
 
 namespace TekhneCafe.Api.Controllers
 {
@@ -31,6 +34,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpPost]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        [TypeFilter(typeof(FluentValidationFilterAttribute<AttributeAddDtoValidator, AttributeAddDto>), Arguments = new object[] { "attributeAddDto" })]
         public async Task<IActionResult> CreateAttribute(AttributeAddDto attributeAddDto)
         {
             await _attributeService.CreateAttributeAsync(attributeAddDto);
@@ -46,9 +50,9 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpGet]
         [Authorize]
-        public IActionResult GetAllAttributes()
+        public IActionResult GetAllAttributes([FromQuery] AttributeRequestFilter filters)
         {
-            var attributes = _attributeService.GetAllAttribute();
+            var attributes = _attributeService.GetAllAttribute(filters);
             return Ok(attributes);
         }
 
@@ -62,6 +66,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpGet("{id}")]
         [Authorize]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> GetAttributeById(string id)
         {
             var attribute = await _attributeService.GetAttributeByIdAsync(id);
@@ -75,6 +80,7 @@ namespace TekhneCafe.Api.Controllers
         /// <returns>A message indicating the success of the deletion.</returns>
         [HttpDelete("{id}")]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> DeleteAttribute(string id)
         {
 
@@ -90,6 +96,7 @@ namespace TekhneCafe.Api.Controllers
         /// <returns>A message indicating the success of the update.</returns>
         [HttpPut]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        [TypeFilter(typeof(FluentValidationFilterAttribute<AttributeUpdateDtoValidator, AttributeUpdateDto>), Arguments = new object[] { "attributeUpdateDto" })]
         public async Task<IActionResult> UpdateAttribute([FromBody] AttributeUpdateDto attributeUpdateDto)
         {
             await _attributeService.UpdateAttributeAsync(attributeUpdateDto);

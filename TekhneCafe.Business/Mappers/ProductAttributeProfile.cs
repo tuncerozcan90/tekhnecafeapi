@@ -10,8 +10,8 @@ namespace TekhneCafe.Business.Mappers
         {
             CreateMap<ProductAttribute, OrderProductAttribute>();
             CreateMap<ProductAttributeAddDto, ProductAttribute>();
-            CreateMap<ProductAttributeListDto, ProductAttribute>();
             CreateMap<ProductAttribute, ProductAttributeListDto>();
+            CreateMap<ProductAttribute, ProductAttributeDetailDto>();
             CreateMap<ProductAttributeUpdateDto, ProductAttribute>();
         }
     }

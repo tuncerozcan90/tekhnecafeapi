@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.Helpers.FilterServices;
+using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.Attribute;
 using TekhneCafe.Core.Exceptions.Attribute;
+using TekhneCafe.Core.Filters.Attribute;
 using TekhneCafe.DataAccess.Abstract;
 using ProductAttributes = TekhneCafe.Entity.Concrete;
 
@@ -28,17 +32,29 @@ namespace TekhneCafe.Business.Concrete
             await _attributeDal.AddAsync(attribute);
 
         }
-        public List<AttributeListDto> GetAllAttribute()
+        public List<AttributeDetailDto> GetAllAttribute(AttributeRequestFilter filters)
         {
-            var attribute = _attributeDal.GetAll(_ => !_.IsDeleted);
-            return _mapper.Map<List<AttributeListDto>>(attribute);
+            var filteredResult = FilterAttributes(filters);
+            return _mapper.Map<List<AttributeDetailDto>>(filteredResult.ResponseValue);
         }
 
-        public async Task<AttributeListDto> GetAttributeByIdAsync(string id)
+        private AttributeResponseFilter<List<ProductAttributes.Attribute>> FilterAttributes(AttributeRequestFilter filters)
+        {
+            var query = GetAttributes();
+            var filteredResult = new AttributeFilterService().FilterAttribute(query, filters);
+            new HeaderService(_httpContext).AddToHeaders(filteredResult.Headers);
+            return filteredResult;
+        }
+
+        private IQueryable<ProductAttributes.Attribute> GetAttributes()
+          => _attributeDal.GetAll(_ => !_.IsDeleted).AsNoTracking()
+                .AsSplitQuery();
+
+        public async Task<AttributeDetailDto> GetAttributeByIdAsync(string id)
         {
             ProductAttributes.Attribute attribute = await _attributeDal.GetByIdAsync(Guid.Parse(id));
             ThrowErrorIfAttributeNotFound(attribute);
-            return _mapper.Map<AttributeListDto>(attribute);
+            return _mapper.Map<AttributeDetailDto>(attribute);
 
         }
         public async Task DeleteAttributeAsync(string id)
