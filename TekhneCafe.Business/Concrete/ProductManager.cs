@@ -8,6 +8,7 @@ using TekhneCafe.Core.DTOs.Product;
 using TekhneCafe.Core.Exceptions.Product;
 using TekhneCafe.Core.Filters.Product;
 using TekhneCafe.DataAccess.Abstract;
+using TekhneCafe.DataAccess.Helpers.Transaction;
 using TekhneCafe.Entity.Concrete;
 
 namespace TekhneCafe.Business.Concrete
@@ -16,16 +17,18 @@ namespace TekhneCafe.Business.Concrete
     {
         private readonly IProductDal _productDal;
         private readonly IProductAttributeDal _productAttributeDal;
+        private readonly ITransactionManagement _transactionManagement;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContext;
 
 
-        public ProductManager(IProductDal productDal, IMapper mapper, IHttpContextAccessor httpContext, IProductAttributeDal productAttributeDal)
+        public ProductManager(IProductDal productDal, IMapper mapper, IHttpContextAccessor httpContext, IProductAttributeDal productAttributeDal, ITransactionManagement transactionManagement)
         {
             _productDal = productDal;
             _mapper = mapper;
             _httpContext = httpContext;
             _productAttributeDal = productAttributeDal;
+            _transactionManagement = transactionManagement;
         }
 
         public async Task CreateProductAsync(ProductAddDto productAddDto)
@@ -39,11 +42,20 @@ namespace TekhneCafe.Business.Concrete
             Product product = await _productDal.GetProductIncludeAllAsync(id);
             ThrowErrorIfProductNotFound(product);
             product.IsDeleted = true;
-            foreach (var item in product.ProductAttributes)
+            using (var transaction = await _transactionManagement.BeginTransactionAsync())
             {
-                await _productAttributeDal.HardDeleteAsync(item);
+                try
+                {
+                    foreach (var item in product.ProductAttributes)
+                        await _productAttributeDal.HardDeleteAsync(item);
+                    await _productDal.SafeDeleteAsync(product);
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    throw new ProductInternalServerException();
+                }
             }
-            await _productDal.SafeDeleteAsync(product);
         }
 
         public List<ProductListDto> GetAllProducts(ProductRequestFilter filter)
@@ -90,48 +102,47 @@ namespace TekhneCafe.Business.Concrete
         public async Task UpdateProductAsync(ProductUpdateDto productUpdateDto)
         {
             Product product = await _productDal.GetProductIncludeAttributeAsync(productUpdateDto.Id.ToLower());
-
             ThrowErrorIfProductNotFound(product);
             product.ModifiedDate = DateTime.Now;
             product.Name = productUpdateDto.Name;
             product.Description = productUpdateDto.Description;
             product.Price = productUpdateDto.Price;
             product.CategoryId = Guid.Parse(productUpdateDto.CategoryId);
+            using (var transaction = await _transactionManagement.BeginTransactionAsync())
+            {
+                try
+                {
+                    UpdateProductAttribute(productUpdateDto, product);
+                    await _productDal.UpdateAsync(product);
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    throw new ProductInternalServerException();
+                }
+            }
 
-            // Update product attributes
-            UpdateProductAttribute(productUpdateDto, product);
-
-            // Save changes to the product and attributes
-            await _productDal.UpdateAsync(product);
         }
-
-
 
         private void UpdateProductAttribute(ProductUpdateDto productUpdateDto, Product product)
         {
             var newProductAttributeIds = productUpdateDto.ProductAttributes?.Select(attr => attr.AttributeId.ToLower()).ToList();
-            var existingAttributeIds = product.ProductAttributes.Select(attr => attr.AttributeId.ToString()).ToList();
+            var existingAttributeIds = product.ProductAttributes?.Select(attr => attr.AttributeId.ToString()).ToList();
             RemoveAttributesFromProduct(newProductAttributeIds, product);
             UpdateAttributesOfProduct(existingAttributeIds, newProductAttributeIds, product, productUpdateDto);
             AddNewAttributesToProduct(existingAttributeIds, newProductAttributeIds, product, productUpdateDto);
         }
 
-
-
         private void RemoveAttributesFromProduct(List<string> newProductAttributeIds, Product product)
         {
-            // Remove attributes that are no longer associated
             var attributesToRemove = product.ProductAttributes?.Where(attr => { return !(newProductAttributeIds != null && newProductAttributeIds.Contains(attr.AttributeId.ToString())); }).ToList();
             if (attributesToRemove != null)
                 foreach (var attribute in attributesToRemove)
                     product.ProductAttributes.Remove(attribute);
         }
 
-
-
         private void UpdateAttributesOfProduct(List<string> existingAttributeIds, List<string> newProductAttributeIds, Product product, ProductUpdateDto productUpdateDto)
         {
-            // Remove attributes that are no longer associated
             IEnumerable<string> attributesToUpdate = null;
             if (existingAttributeIds != null)
                 attributesToUpdate = newProductAttributeIds?.Where(attr => existingAttributeIds.Contains(attr));
@@ -145,11 +156,8 @@ namespace TekhneCafe.Business.Concrete
                 }
         }
 
-
-
         private void AddNewAttributesToProduct(List<string> existingAttributeIds, List<string> newProductAttributeIds, Product product, ProductUpdateDto productUpdateDto)
         {
-            // Add new attributes
             if (existingAttributeIds is null)
                 return;
             var attributesToAdd = newProductAttributeIds?.Except(existingAttributeIds).ToList();
@@ -160,6 +168,5 @@ namespace TekhneCafe.Business.Concrete
                     product.ProductAttributes?.Add(new ProductAttribute { IsRequired = newAttr.IsRequired, Price = newAttr.Price, AttributeId = Guid.Parse(newAttr.AttributeId) });
                 }
         }
-
     }
 }

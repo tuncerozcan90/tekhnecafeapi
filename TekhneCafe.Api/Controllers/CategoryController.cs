@@ -29,12 +29,12 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="400">Invalid category</response>
         /// <response code="500">Server error</response>
         [HttpPost]
-        [Authorize(Roles = "CafeService, CafeAdmin")]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
         [TypeFilter(typeof(FluentValidationFilterAttribute<CategoryAddDtoValidator, CategoryAddDto>), Arguments = new object[] { "categoryAddDto" })]
         public async Task<IActionResult> CreateCategory(CategoryAddDto categoryAddDto)
         {
             await _categoryService.CreateCategoryAsync(categoryAddDto);
-            return StatusCode(201); // 201 Created
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         /// <summary>
@@ -49,7 +49,24 @@ namespace TekhneCafe.Api.Controllers
         public IActionResult GetAllCategories()
         {
             var categories = _categoryService.GetAllCategory();
-            return Ok(categories); // 200 OK
+            return Ok(categories);
+        }
+
+        /// <summary>
+        /// Retrieves an attribute by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the attribute.</param>
+        /// <returns>The attribute with the specified ID.</returns>  
+        /// <response code="200">Success</response>
+        /// <response code="404">Attribute not found</response>
+        /// <response code="500">Server error</response>
+        [HttpGet("{id}")]
+        [Authorize]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
+        public async Task<IActionResult> GetCategoryById(string id)
+        {
+            var attribute = await _categoryService.GetCategoryByIdAsync(id);
+            return Ok(attribute);
         }
 
         /// <summary>
@@ -60,12 +77,12 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="200">Success</response>
         /// <response code="500">Server error</response>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "CafeService, CafeAdmin")]
+        [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
         [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> DeleteCategory(string id)
         {
             await _categoryService.DeleteCategoryAsync(id);
-            return Ok("Category deleted successfully."); // 200 OK
+            return Ok();
         }
 
         /// <summary>
@@ -77,10 +94,10 @@ namespace TekhneCafe.Api.Controllers
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
         [TypeFilter(typeof(FluentValidationFilterAttribute<CategoryUpdateDtoValidator, CategoryUpdateDto>), Arguments = new object[] { "categoryUpdateDto" })]
 
-        public async Task<IActionResult> UpdateAttribute([FromBody] CategoryUpdateDto categoryUpdateDto)
+        public async Task<IActionResult> UpdateCategory([FromBody] CategoryUpdateDto categoryUpdateDto)
         {
             await _categoryService.UpdateCategoryAsync(categoryUpdateDto);
-            return Ok("Category updated successfully.");
+            return Ok();
         }
     }
 }

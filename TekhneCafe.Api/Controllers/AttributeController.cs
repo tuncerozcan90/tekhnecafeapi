@@ -83,10 +83,8 @@ namespace TekhneCafe.Api.Controllers
         [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> DeleteAttribute(string id)
         {
-
             await _attributeService.DeleteAttributeAsync(id);
-            return (Ok("Attribute deleted successfully."));
-
+            return Ok();
         }
 
         /// <summary>
@@ -100,9 +98,7 @@ namespace TekhneCafe.Api.Controllers
         public async Task<IActionResult> UpdateAttribute([FromBody] AttributeUpdateDto attributeUpdateDto)
         {
             await _attributeService.UpdateAttributeAsync(attributeUpdateDto);
-            return Ok("Attribute updated successfully.");
+            return Ok();
         }
-
-
     }
 }

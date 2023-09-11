@@ -4,6 +4,7 @@ using TekhneCafe.Business.Abstract;
 using TekhneCafe.Business.Helpers.FilterServices;
 using TekhneCafe.Business.Helpers.HeaderServices;
 using TekhneCafe.Core.DTOs.Transaction;
+using TekhneCafe.Core.Exceptions.AppUser;
 using TekhneCafe.Core.Extensions;
 using TekhneCafe.Core.Filters.Transaction;
 using TekhneCafe.DataAccess.Abstract;
@@ -36,18 +37,21 @@ namespace TekhneCafe.Business.Concrete
 
         public async Task<List<TransactionHistoryListDto>> GetAllTransactionHistoriesByUserIdAsync(TransactionHistoryRequestFilter filters, string userId)
         {
-            var filteredResult = FilterTransactionHistories(filters, userId);
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user is null)
+                throw new AppUserNotFoundException();
+            var filteredResult = await FilterTransactionHistories(filters, userId);
             return await TransactionHistoryListDtoMapper(filteredResult.ResponseValue);
         }
 
         public async Task<List<TransactionHistoryListDto>> GetActiveUsersTransactionHistoriesAsync(TransactionHistoryRequestFilter filters)
         {
             string activeUserId = _httpContext.HttpContext.User.ActiveUserId();
-            var filteredResult = FilterTransactionHistories(filters, activeUserId);
+            var filteredResult = await FilterTransactionHistories(filters, activeUserId);
             return await TransactionHistoryListDtoMapper(filteredResult.ResponseValue);
         }
 
-        private TransactionHistoryResponseFilter<List<TransactionHistory>> FilterTransactionHistories(TransactionHistoryRequestFilter filters, string userId)
+        private async Task<TransactionHistoryResponseFilter<List<TransactionHistory>>> FilterTransactionHistories(TransactionHistoryRequestFilter filters, string userId)
         {
             var query = GetTransactionHistoriesIncludeAll(userId);
             var filteredResult = new TransactionHistoryFilterService().FilterTransactionHistory(query, filters);
@@ -84,7 +88,6 @@ namespace TekhneCafe.Business.Concrete
                     Description = transactionHistory.Description
                 });
             }
-
             return transactionHistories;
         }
     }

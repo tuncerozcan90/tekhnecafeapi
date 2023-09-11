@@ -81,10 +81,10 @@ namespace TekhneCafe.Business.Concrete
                 return;
             order.OrderStatus = OrderStatus.OrderConfirmed;
             _orderHistoryService.SetOrderHistoryForOrder(order, OrderStatus.OrderConfirmed);
+            string title = "Sipariş Alındı!",
+                content = "Siparişiniz alınmıştır. Afiyet olsun :)";
             using (var result = await _transactionManagement.BeginTransactionAsync())
             {
-                string title = "Sipariş Alındı!",
-                content = "Siparişiniz alınmıştır. Afiyet olsun :)";
                 try
                 {
                     await _walletService.WithdrawFromWalletAsync(order.AppUserId, order.TotalPrice);

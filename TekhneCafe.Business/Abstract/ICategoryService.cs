@@ -6,6 +6,7 @@ namespace TekhneCafe.Business.Abstract
     {
         Task CreateCategoryAsync(CategoryAddDto categoryAddDto);
         List<CategoryListDto> GetAllCategory();
+        Task<CategoryListDto> GetCategoryByIdAsync(string id);
         Task DeleteCategoryAsync(string id);
         Task UpdateCategoryAsync(CategoryUpdateDto categoryUpdateDto);
     }

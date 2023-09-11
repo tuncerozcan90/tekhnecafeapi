@@ -9,10 +9,9 @@ namespace TekhneCafe.Business.Helpers.FilterServices
     {
         public ProductResponseFilter<List<Product>> FilterProducts(IQueryable<Product> products, ProductRequestFilter filters)
         {
-            var filteredProduct = products.Skip(filters.Page * filters.Size).Take(filters.Size).ToList();
+            var filteredProduct = products.OrderBy(_ => _.Name).Skip(filters.Page * filters.Size).Take(filters.Size).ToList();
             Metadata metadata = new(filters.Page, filters.Size, products.Count(), products.Count() / filters.Size + 1);
             var header = new CustomHeaders().AddPaginationHeader(metadata);
-
             return new()
             {
                 ResponseValue = filteredProduct,

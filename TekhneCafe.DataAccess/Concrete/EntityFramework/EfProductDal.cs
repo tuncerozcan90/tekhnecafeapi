@@ -13,17 +13,21 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework
 
         }
         public async Task<Product> GetProductIncludeAllAsync(string id)
-            => await _dbContext.Product.Include(_ => _.ProductAttributes)
+            => await _dbContext.Product
+            .Include(_ => _.ProductAttributes)
             .ThenInclude(pa => pa.Attribute)
             .Include(_ => _.Category)
-            .FirstAsync(_ => _.Id == Guid.Parse(id));
+            .FirstOrDefaultAsync(_ => _.Id == Guid.Parse(id));
 
         public async Task<Product> GetProductIncludeAttributeAsync(string v)
-        => await _dbContext.Product.Include(_ => _.ProductAttributes)
+        => await _dbContext.Product
+            .Include(_ => _.ProductAttributes)
             .ThenInclude(pa => pa.Attribute)
-            .FirstAsync(_ => _.Id == Guid.Parse(v));
+            .FirstOrDefaultAsync(_ => _.Id == Guid.Parse(v));
+
         public List<Product> GetProductsByCategory(string categoryId)
-     => _dbContext.Product.Where(p => p.CategoryId == Guid.Parse(categoryId) && !p.IsDeleted)
+     => _dbContext.Product
+            .Where(p => p.CategoryId == Guid.Parse(categoryId) && !p.IsDeleted)
             .Include(_ => _.ProductAttributes)
             .ThenInclude(_ => _.Attribute)
             .Include(_ => _.Category)

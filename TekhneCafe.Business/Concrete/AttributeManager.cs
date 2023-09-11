@@ -25,7 +25,6 @@ namespace TekhneCafe.Business.Concrete
             _httpContext = httpContext;
         }
 
-
         public async Task CreateAttributeAsync(AttributeAddDto attributeAddDto)
         {
             ProductAttributes.Attribute attribute = _mapper.Map<ProductAttributes.Attribute>(attributeAddDto);
@@ -47,8 +46,7 @@ namespace TekhneCafe.Business.Concrete
         }
 
         private IQueryable<ProductAttributes.Attribute> GetAttributes()
-          => _attributeDal.GetAll(_ => !_.IsDeleted).AsNoTracking()
-                .AsSplitQuery();
+          => _attributeDal.GetAll(_ => !_.IsDeleted).AsNoTracking().AsSplitQuery();
 
         public async Task<AttributeDetailDto> GetAttributeByIdAsync(string id)
         {
@@ -78,6 +76,5 @@ namespace TekhneCafe.Business.Concrete
             _mapper.Map(attributeUpdateDto, attribute);
             await _attributeDal.UpdateAsync(attribute);
         }
-
     }
 }
