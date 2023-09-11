@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TekhneCafe.Api.ActionFilters;
 using TekhneCafe.Business.Abstract;
+using TekhneCafe.Business.ValidationRules.FluentValidations.Category;
 using TekhneCafe.Core.Consts;
 using TekhneCafe.Core.DTOs.Category;
 
@@ -28,6 +30,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpPost]
         [Authorize(Roles = "CafeService, CafeAdmin")]
+        [TypeFilter(typeof(FluentValidationFilterAttribute<CategoryAddDtoValidator, CategoryAddDto>), Arguments = new object[] { "categoryAddDto" })]
         public async Task<IActionResult> CreateCategory(CategoryAddDto categoryAddDto)
         {
             await _categoryService.CreateCategoryAsync(categoryAddDto);
@@ -58,6 +61,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="500">Server error</response>
         [HttpDelete("{id}")]
         [Authorize(Roles = "CafeService, CafeAdmin")]
+        [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "id" })]
         public async Task<IActionResult> DeleteCategory(string id)
         {
             await _categoryService.DeleteCategoryAsync(id);
@@ -71,6 +75,8 @@ namespace TekhneCafe.Api.Controllers
         /// <returns>A message indicating the success of the update.</returns>
         [HttpPut]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
+        [TypeFilter(typeof(FluentValidationFilterAttribute<CategoryUpdateDtoValidator, CategoryUpdateDto>), Arguments = new object[] { "categoryUpdateDto" })]
+
         public async Task<IActionResult> UpdateAttribute([FromBody] CategoryUpdateDto categoryUpdateDto)
         {
             await _categoryService.UpdateCategoryAsync(categoryUpdateDto);
