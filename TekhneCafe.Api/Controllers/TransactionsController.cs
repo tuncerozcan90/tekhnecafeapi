@@ -24,6 +24,8 @@ namespace TekhneCafe.Api.Controllers
         /// </summary>
         /// <param name="filters">filters</param>
         /// <returns>Returns all the transactions with the given filters and userId</returns>
+        /// <response code="200"></response>
+        /// <response code="500">Server error</response>
         [HttpGet("{userId}")]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
         [TypeFilter(typeof(ModelValidationFilterAttribute), Arguments = new object[] { "userId" })]

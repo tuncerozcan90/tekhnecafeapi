@@ -25,6 +25,7 @@ namespace TekhneCafe.Api.Controllers
         /// <response code="200">User successful login</response>
         /// <response code="400">Invalid credentials</response>
         /// <response code="404">User not found</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost("[action]")]
         [TypeFilter(typeof(FluentValidationFilterAttribute<UserLoginDtoValidator, UserLoginDto>), Arguments = new object[] { "user" })]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
-using Sentry;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using TekhneCafe.Api.LoggerEnrichers;
@@ -22,8 +24,7 @@ namespace TekhneCafe.Api.Extensions
             });
             services.AddEndpointsApiExplorer();
             services.AddSingleton<UserEnricher>();
-            builder.WebHost.UseSentry(); 
-            SentrySdk.CaptureMessage("Hello Sentry");
+            builder.WebHost.UseSentry();
 
             #region Swagger Configuration
             services.AddSwaggerGen(config =>
@@ -64,6 +65,45 @@ namespace TekhneCafe.Api.Extensions
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 config.IncludeXmlComments(xmlPath);
+            });
+            #endregion
+
+            #region Serilog Configuration
+            SqlColumn sqlColumn = new SqlColumn();
+            sqlColumn.ColumnName = "UserId";
+            sqlColumn.DataType = System.Data.SqlDbType.UniqueIdentifier;
+            sqlColumn.PropertyName = "UserId";
+            sqlColumn.AllowNull = true;
+
+            ColumnOptions columnOpt = new ColumnOptions();
+            columnOpt.AdditionalColumns = new Collection<SqlColumn> { sqlColumn };
+
+            using var log = new LoggerConfiguration()
+                        .Enrich.FromLogContext()
+                        .Enrich.With(new UserEnricher())
+                        .MinimumLevel.Warning()
+                        .WriteTo.Console()
+                        .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+                        .WriteTo.MSSqlServer(
+                            connectionString: builder.Configuration.GetConnectionString("EfTekhneCafeContext"),
+                            sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents", AutoCreateSqlTable = true },
+                            columnOptions: columnOpt
+                            )
+                        .CreateLogger();
+            builder.Host.UseSerilog(log);
+            #endregion
+
+            #region Cors Configurations
+            var allowedHosts = builder.Configuration.GetValue<string>("AllowedHosts");
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("_myAllowSpecificOrigins",
+                    builder =>
+                    {
+                        builder.WithOrigins(allowedHosts) // Burada erişime izin vermek istediğiniz orijinleri belirtin
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
             });
             #endregion
         }

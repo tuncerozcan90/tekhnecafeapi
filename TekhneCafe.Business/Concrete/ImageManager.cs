@@ -57,7 +57,6 @@ namespace TekhneCafe.Business.Concrete
             {
                 string randomImageName = Path.GetRandomFileName().Replace(".", "");
                 var objectName = randomImageName + Path.GetExtension(request.ObjectName);
-                // Make a bucket on the server, if not already present.
                 var beArgs = new BucketExistsArgs()
                     .WithBucket(bucketName);
                 bool found = await minio.BucketExistsAsync(beArgs);

@@ -17,6 +17,13 @@ namespace TekhneCafe.Api.Controllers
             _notificationService = notificationService;
         }
 
+        /// <summary>
+        /// Get Notifications
+        /// </summary>
+        /// <param name="filters">Notification filters</param>
+        /// <returns>Notifications</returns>
+        /// <response code="200">Returns notifications</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet]
         public async Task<IActionResult> Notifications([FromQuery] NotificationRequestFilter filters)
         {

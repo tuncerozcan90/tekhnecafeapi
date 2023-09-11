@@ -20,6 +20,14 @@ namespace TekhneCafe.Api.Controllers
             _paymentService = paymentService;
         }
 
+        /// <summary>
+        /// Payment for selected user.
+        /// </summary>
+        /// <param name="payment">Payment details</param>
+        /// <returns>OK result</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">User not found</response>
+        /// <response code="500">Server error</response>
         [HttpPost]
         [Authorize(Roles = $"{RoleConsts.CafeAdmin}, {RoleConsts.CafeService}")]
         [TypeFilter(typeof(FluentValidationFilterAttribute<PaymentDtoValidator, PaymentDto>), Arguments = new object[] { "payment" })]
