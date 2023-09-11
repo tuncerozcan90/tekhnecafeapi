@@ -21,7 +21,6 @@ namespace TekhneCafe.DataAccess.Extensions
             services.AddScoped<IAttributeDal, EfAttributeDal>();
             services.AddScoped<ICategoryDal, EfCategoryDal>();
             services.AddScoped<IProductAttributeDal, EfProductAttributeDal>();
-            services.AddScoped<IImageDal, EfImageDal>();
             services.AddScoped<IOrderDal, EfOrderDal>();
             services.AddScoped<IOrderHistoryDal, EfOrderHistoryDal>();
             services.AddScoped<IProductDal, EfProductDal>();
