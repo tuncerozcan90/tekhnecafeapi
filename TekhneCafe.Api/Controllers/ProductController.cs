@@ -51,7 +51,7 @@ namespace TekhneCafe.Api.Controllers
         [Route("create")]
         [Authorize(Roles = $"{RoleConsts.CafeService}, {RoleConsts.CafeAdmin}")]
         [TypeFilter(typeof(FluentValidationFilterAttribute<ProductAddDtoValidator, ProductAddDto>), Arguments = new object[] { "productAddDto" })]
-        public async Task<IActionResult> CreateProduct(ProductAddDto productAddDto)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductAddDto productAddDto)
         {
             await _productService.CreateProductAsync(productAddDto);
             return StatusCode(StatusCodes.Status201Created);

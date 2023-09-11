@@ -87,9 +87,8 @@ namespace TekhneCafe.Business.Concrete
                 Image = _httpContext.Request.Form.Files.FirstOrDefault()
             };
             var user = await _userDal.GetByIdAsync(Guid.Parse(_httpContext.User.ActiveUserId()));
+            string oldImagePath = user.ImagePath;
             string imagePath = await _imageService.UploadImageAsync(request);
-            if (!string.IsNullOrEmpty(user.ImagePath))
-                await _imageService.RemoveImageAsync(new RemoveImageRequest() { BucketName = bucketName, ObjectName = user.ImagePath.Replace(bucketName + "/", "") });
             user.ImagePath = imagePath;
             try
             {
@@ -97,9 +96,12 @@ namespace TekhneCafe.Business.Concrete
             }
             catch
             {
-                await _imageService.RemoveImageAsync(new RemoveImageRequest() { BucketName = request.BucketName, ObjectName = imagePath.Replace(bucketName + "/", "") });
+                if (imagePath != null)
+                    await _imageService.RemoveImageAsync(new RemoveImageRequest() { BucketName = request.BucketName, ObjectName = imagePath.Replace(bucketName + "/", "") });
                 throw new InternalServerErrorException();
             }
+            if (oldImagePath != null && imagePath != null)
+                await _imageService.RemoveImageAsync(new RemoveImageRequest() { BucketName = bucketName, ObjectName = oldImagePath.Replace(bucketName + "/", "") });
             return string.Concat(_configuration.GetValue<string>("Minio:Endpoint"), "/", imagePath);
         }
 
@@ -116,7 +118,7 @@ namespace TekhneCafe.Business.Concrete
         private void AddEndpointToUserImage(AppUser user)
         {
             if (user != null)
-                user.ImagePath = string.Concat(_configuration.GetValue<string>("Minio:Endpoint"), "/", user.ImagePath);
+                user.ImagePath = !string.IsNullOrEmpty(user.ImagePath) ? string.Concat(_configuration.GetValue<string>("Minio:Endpoint"), "/", user.ImagePath) : null;
         }
     }
 }
