@@ -68,8 +68,12 @@ namespace TekhneCafe.Business.Concrete
         }
 
         private IQueryable<Product> GetProducts()
-         => _productDal.GetAll(_ => !_.IsDeleted).Include(_ => _.ProductAttributes).ThenInclude(_ => _.Attribute).Include(_ => _.Category).AsNoTracking()
-               .AsSingleQuery();
+         => _productDal.GetAll(_ => !_.IsDeleted)
+            .Include(_ => _.ProductAttributes)
+            .ThenInclude(_ => _.Attribute)
+            .Include(_ => _.Category)
+            .AsNoTracking()
+            .AsSingleQuery();
 
         public List<ProductListDto> GetProductsByCategory(string categoryId)
         {
