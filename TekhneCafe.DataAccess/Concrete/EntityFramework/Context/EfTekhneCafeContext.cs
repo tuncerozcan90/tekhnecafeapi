@@ -32,7 +32,6 @@ namespace TekhneCafe.DataAccess.Concrete.EntityFramework.Context
         public DbSet<Category> Category { get; set; }
         public DbSet<OrderProduct> OrderProduct { get; set; }
         public DbSet<OrderProductAttribute> OrderProductAttribute { get; set; }
-        public DbSet<Image> Image { get; set; }
         public DbSet<OrderHistory> OrderHistory { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<TekhneCafe.Entity.Concrete.Attribute> Attribute { get; set; }

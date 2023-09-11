@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 
@@ -11,9 +12,11 @@ using TekhneCafe.DataAccess.Concrete.EntityFramework.Context;
 namespace TekhneCafe.DataAccess.Migrations
 {
     [DbContext(typeof(EfTekhneCafeContext))]
-    partial class EfTekhneCafeContextModelSnapshot : ModelSnapshot
+    [Migration("20230911090052_imageEntityRemoved")]
+    partial class imageEntityRemoved
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +34,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 9, 11, 12, 2, 20, 783, DateTimeKind.Local).AddTicks(4057));
+                        .HasDefaultValue(new DateTime(2023, 9, 11, 12, 0, 52, 395, DateTimeKind.Local).AddTicks(9094));
 
                     b.Property<string>("Department")
                         .HasMaxLength(100)
@@ -127,7 +130,7 @@ namespace TekhneCafe.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 9, 11, 12, 2, 20, 784, DateTimeKind.Local).AddTicks(1424));
+                        .HasDefaultValue(new DateTime(2023, 9, 11, 12, 0, 52, 396, DateTimeKind.Local).AddTicks(5973));
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -282,6 +285,7 @@ namespace TekhneCafe.DataAccess.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ImagePath")
+                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 

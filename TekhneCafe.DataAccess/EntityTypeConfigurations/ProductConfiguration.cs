@@ -19,10 +19,7 @@ namespace TekhneCafe.DataAccess.EntityTypeConfigurations
             builder.Property(_ => _.CreatedDate).IsRequired();
             builder.Property(_ => _.Description).HasMaxLength(200);
 
-            builder.HasMany(_ => _.Images)
-                   .WithOne(_ => _.Product)
-                   .HasForeignKey(_ => _.ProductId)
-                   .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(_ => _.ImagePath).HasMaxLength(300);
 
             builder.HasMany(_ => _.ProductAttributes)
                    .WithOne(_ => _.Product)

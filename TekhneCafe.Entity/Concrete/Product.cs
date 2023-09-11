@@ -9,10 +9,10 @@ namespace TekhneCafe.Entity.Concrete
         public float Price { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? ModifiedDate { get; set; }
+        public string? ImagePath { get; set; }
         public bool IsDeleted { get; set; }
         public Guid CategoryId { get; set; }
         public Category? Category { get; set; }
-        public virtual ICollection<Image>? Images { get; set; }
         public virtual ICollection<ProductAttribute>? ProductAttributes { get; set; }
     }
 }
